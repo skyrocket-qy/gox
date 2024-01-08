@@ -1,1 +1,1 @@
-# go-utils
+# go-utility
