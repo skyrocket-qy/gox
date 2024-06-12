@@ -41,7 +41,13 @@ import (
 	"time"
 )
 
-func FixedTimeCheck(getCurrentStatus func() (int, error), targetStatus int, checkFunc func(int, int) bool, interval time.Duration, timeout time.Duration) error {
+func FixedTimeCheck(
+	getCurrentStatus func() (int, error),
+	targetStatus int,
+	checkFunc func(int, int) bool,
+	interval time.Duration,
+	timeout time.Duration,
+) error {
 	startTime := time.Now()
 
 	for {
@@ -62,7 +68,13 @@ func FixedTimeCheck(getCurrentStatus func() (int, error), targetStatus int, chec
 	return nil
 }
 
-func ExponentialTimeCheck(getCurrentStatus func() (int, error), targetStatus int, checkFunc func(int, int) bool, startInterval time.Duration, timeout time.Duration) error {
+func ExponentialTimeCheck(
+	getCurrentStatus func() (int, error),
+	targetStatus int,
+	checkFunc func(int, int) bool,
+	startInterval time.Duration,
+	timeout time.Duration,
+) error {
 	startTime := time.Now()
 	interval := startInterval
 	for {
@@ -84,7 +96,13 @@ func ExponentialTimeCheck(getCurrentStatus func() (int, error), targetStatus int
 	return nil
 }
 
-func DiffTimeCheck(getCurrentStatus func() (int, error), targetStatus int, checkFunc func(int, int) bool, diffInterval, maxInterval time.Duration, timeout time.Duration) error {
+func DiffTimeCheck(
+	getCurrentStatus func() (int, error),
+	targetStatus int,
+	checkFunc func(int, int) bool,
+	diffInterval, maxInterval time.Duration,
+	timeout time.Duration,
+) error {
 	startTime := time.Now()
 
 	for {
@@ -99,13 +117,24 @@ func DiffTimeCheck(getCurrentStatus func() (int, error), targetStatus int, check
 			return errors.New("timeout")
 		}
 		log.Printf("Current status is %d, waiting for %d\n", curStatus, targetStatus)
-		time.Sleep(min(time.Duration((curStatus-targetStatus))*diffInterval, maxInterval) * time.Second)
+		time.Sleep(
+			min(
+				time.Duration((curStatus-targetStatus))*diffInterval,
+				maxInterval,
+			) * time.Second,
+		)
 	}
 
 	return nil
 }
 
-func SelfAdaptiveTimeCheck(getCurrentStatus func() (int, error), targetStatus int, checkFunc func(int, int) bool, startInterval, maxInterval time.Duration, timeout time.Duration) error {
+func SelfAdaptiveTimeCheck(
+	getCurrentStatus func() (int, error),
+	targetStatus int,
+	checkFunc func(int, int) bool,
+	startInterval, maxInterval time.Duration,
+	timeout time.Duration,
+) error {
 	startTime := time.Now()
 	startInterval = min(startInterval, maxInterval)
 	var preDiff, preInterval time.Duration
