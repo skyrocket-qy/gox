@@ -1,4 +1,4 @@
-package set
+package Collection
 
 type Set[T comparable] struct {
 	data map[T]bool

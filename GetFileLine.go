@@ -1,4 +1,4 @@
-package logger
+package GoUtils
 
 import (
 	"errors"
@@ -15,7 +15,3 @@ func GetFileAndLine(callerSkip int) (string, error) {
 
 	return fmt.Sprintf("%s %d", file, line), nil
 }
-
-// func main() {
-// 	fmt.Println(GetFileAndLine(1))
-// }
