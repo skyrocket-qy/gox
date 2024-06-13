@@ -6,31 +6,38 @@ import (
 	"time"
 )
 
-type TokenMapImpl2[info any] struct {
-	tokens        map[string]TokenWrap[info]
-	CleanInterval time.Duration
-	mu            sync.Mutex
-	pq            PriorityQueue
+type tokenTime struct {
+	token      string
+	expiration time.Time
 }
 
-// TokenMap implements with heap for dynamic clean interval
-func NewTokenMapImpl2[info any](options ...Options) *TokenMap[info] {
+type TokenMapFixedExpire[info any] struct {
+	tokens        map[string]info
+	CleanInterval time.Duration
+	mu            sync.Mutex
+	tokenTimes    []tokenTime
+}
+
+/*
+TokenMapFixedExpire implements for fixed expiration
+clean interval use to periodically clean the expired tokens
+*/
+func NewTokenMapFixedExpire[info any](options ...Options) *TokenMapFixedExpire[info] {
 	cleanInternval := time.Minute
 	if len(options) > 0 {
 		cleanInternval = options[0].CleanInterval
 	}
-	tm := &TokenMap[info]{
+	tm := &TokenMapFixedExpire[info]{
 		tokens:        make(map[string]TokenWrap[info]),
-		pq:            make(PriorityQueue, 0),
+		tokenTimes:    make([]tokenTime, 0),
 		CleanInterval: cleanInternval,
 		mu:            sync.Mutex{},
 	}
-	heap.Init(&tm.pq)
 	go tm.periodicCleanup()
 	return tm
 }
 
-func (tm *TokenMapImpl2[info]) SetToken(token string, value info,
+func (tm *TokenMapFixedExpire[info]) SetToken(token string, value info,
 	expireTime time.Time,
 ) bool {
 	tm.mu.Lock()
@@ -50,7 +57,7 @@ func (tm *TokenMapImpl2[info]) SetToken(token string, value info,
 	return true
 }
 
-func (tm *TokenMapImpl2[info]) GetToken(token string) (info, bool) {
+func (tm *TokenMapFixedExpire[info]) GetToken(token string) (info, bool) {
 	tm.mu.Lock()
 	defer tm.mu.Unlock()
 	tokenInfo, exists := tm.tokens[token]
@@ -61,7 +68,7 @@ func (tm *TokenMapImpl2[info]) GetToken(token string) (info, bool) {
 	return tokenInfo.Info, true
 }
 
-func (tm *TokenMapImpl2[info]) periodicCleanup() {
+func (tm *TokenMapFixedExpire[info]) periodicCleanup() {
 	for {
 		time.Sleep(tm.CleanInterval)
 		now := time.Now()
