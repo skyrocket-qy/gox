@@ -6,36 +6,33 @@ import (
 	"time"
 )
 
-type tokens struct {
+type TokenWrap[info any] struct {
 	Info       info
 	ExpireTime time.Time
 }
 
 type TokenMap[info any] struct {
-	tokens map[string]struct {
-		Info       info
-		ExpireTime time.Time
-	}
-	// tokens          map[string]info
-	cleanInternaval time.Duration
-	mu              sync.Mutex
-	pq              PriorityQueue
+	tokens        map[string]TokenWrap[info]
+	CleanInterval time.Duration
+	mu            sync.Mutex
+	pq            PriorityQueue
 }
 
 type Options struct {
-	CleanInternaval time.Duration
+	CleanInterval time.Duration
 }
 
+// TokenMap implements with heap for dynamic clean interval
 func NewTokenMap[info any](options ...Options) *TokenMap[info] {
 	cleanInternval := time.Minute
 	if len(options) > 0 {
-		cleanInternval = options[0].CleanInternaval
+		cleanInternval = options[0].CleanInterval
 	}
 	tm := &TokenMap[info]{
-		tokens:          make(map[string]info),
-		pq:              make(PriorityQueue, 0),
-		cleanInternaval: cleanInternval,
-		mu:              sync.Mutex{},
+		tokens:        make(map[string]TokenWrap[info]),
+		pq:            make(PriorityQueue, 0),
+		CleanInterval: cleanInternval,
+		mu:            sync.Mutex{},
 	}
 	heap.Init(&tm.pq)
 	go tm.periodicCleanup()
@@ -44,22 +41,22 @@ func NewTokenMap[info any](options ...Options) *TokenMap[info] {
 
 func (tm *TokenMap[info]) SetToken(token string, value info,
 	expireTime time.Time,
-) {
+) bool {
 	tm.mu.Lock()
 	defer tm.mu.Unlock()
-
-	type Wrap struct {
-		Info       info
-		ExpireTime time.Time
+	if _, exists := tm.tokens[token]; exists {
+		return false
 	}
-	tm.tokens[token] = Wrap{
-		Info:       info,
+
+	tm.tokens[token] = TokenWrap[info]{
+		Info:       value,
 		ExpireTime: expireTime,
 	}
 	heap.Push(&tm.pq, &Item{
 		token:      token,
 		expiration: expireTime,
 	})
+	return true
 }
 
 func (tm *TokenMap[info]) GetToken(token string) (info, bool) {
@@ -68,14 +65,14 @@ func (tm *TokenMap[info]) GetToken(token string) (info, bool) {
 	tokenInfo, exists := tm.tokens[token]
 	if !exists || tokenInfo.ExpireTime.Before(time.Now()) {
 		delete(tm.tokens, token)
-		return "", false
+		return tokenInfo.Info, false
 	}
 	return tokenInfo.Info, true
 }
 
 func (tm *TokenMap[info]) periodicCleanup() {
 	for {
-		time.Sleep(1 * time.Minute)
+		time.Sleep(tm.CleanInterval)
 		now := time.Now()
 		tm.mu.Lock()
 		for tm.pq.Len() > 0 && tm.pq[0].expiration.Before(now) {
