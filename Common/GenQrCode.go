@@ -1,4 +1,4 @@
-package GoUtils
+package Common
 
 import (
 	"encoding/json"

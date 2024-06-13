@@ -60,3 +60,5 @@
 - QRCode
   - https://github.com/skip2/go-qrcode
 
+- Leak
+  - github.com/fortytw2/leaktest

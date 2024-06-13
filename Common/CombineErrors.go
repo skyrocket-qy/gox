@@ -1,4 +1,4 @@
-package GoUtils
+package Common
 
 type CombineErrors struct {
 	Errs []error
