@@ -18,10 +18,6 @@ type TokenMap[info any] struct {
 	pq            PriorityQueue
 }
 
-type Options struct {
-	CleanInterval time.Duration
-}
-
 // TokenMap implements with heap for dynamic clean interval
 func NewTokenMap[info any](options ...Options) *TokenMap[info] {
 	cleanInternval := time.Minute
