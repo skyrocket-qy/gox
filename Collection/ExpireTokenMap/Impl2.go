@@ -1,7 +1,8 @@
-package ExpireTokenMap
+package ExpireTokenMapImpl2
 
 import (
 	"container/heap"
+	"errors"
 	"sync"
 	"time"
 )
@@ -11,31 +12,41 @@ type TokenWrap[info any] struct {
 	ExpireTime time.Time
 }
 
-type TokenMap[info any] struct {
+type TokenMapImpl2[info any] struct {
 	tokens        map[string]TokenWrap[info]
-	CleanInterval time.Duration
+	cleanInterval time.Duration
 	mu            sync.Mutex
-	pq            PriorityQueue
+	tokenTimes    PriorityQueue
+	targetLen     int
 }
 
-// TokenMap implements with heap for dynamic clean interval
-func NewTokenMap[info any](options ...Options) *TokenMap[info] {
-	cleanInternval := time.Minute
-	if len(options) > 0 {
-		cleanInternval = options[0].CleanInterval
-	}
-	tm := &TokenMap[info]{
+// TokenMapImpl2 implements with heap for dynamic clean interval
+func NewTokenMapImpl2[info any](
+	cleanInternval time.Duration,
+	options ...Options,
+) (*TokenMapImpl2[info], error) {
+	tm := &TokenMapImpl2[info]{
 		tokens:        make(map[string]TokenWrap[info]),
-		pq:            make(PriorityQueue, 0),
-		CleanInterval: cleanInternval,
+		tokenTimes:    make(PriorityQueue, 0),
+		cleanInterval: cleanInternval,
 		mu:            sync.Mutex{},
 	}
-	heap.Init(&tm.pq)
-	go tm.periodicCleanup()
+	heap.Init(&tm.tokenTimes)
+	if len(options) > 0 {
+		if options[0].AdaptiveCleanInterval {
+			if options[0].TargetLen == 0 {
+				return nil, errors.New("target length must greater than zero")
+			}
+			tm.targetLen = options[0].TargetLen
+			go tm.adaptiveCleanup()
+		} else {
+			go tm.periodicCleanup()
+		}
+	}
 	return tm
 }
 
-func (tm *TokenMap[info]) SetToken(token string, value info,
+func (tm *TokenMapImpl2[info]) SetToken(token string, value info,
 	expireTime time.Time,
 ) bool {
 	tm.mu.Lock()
@@ -48,14 +59,14 @@ func (tm *TokenMap[info]) SetToken(token string, value info,
 		Info:       value,
 		ExpireTime: expireTime,
 	}
-	heap.Push(&tm.pq, &Item{
+	heap.Push(&tm.tokenTimes, &Item{
 		token:      token,
 		expiration: expireTime,
 	})
 	return true
 }
 
-func (tm *TokenMap[info]) GetToken(token string) (info, bool) {
+func (tm *TokenMapImpl2[info]) GetToken(token string) (info, bool) {
 	tm.mu.Lock()
 	defer tm.mu.Unlock()
 	tokenInfo, exists := tm.tokens[token]
@@ -66,13 +77,13 @@ func (tm *TokenMap[info]) GetToken(token string) (info, bool) {
 	return tokenInfo.Info, true
 }
 
-func (tm *TokenMap[info]) periodicCleanup() {
+func (tm *TokenMapImpl2[info]) periodicCleanup() {
 	for {
-		time.Sleep(tm.CleanInterval)
+		time.Sleep(tm.cleanInterval)
 		now := time.Now()
 		tm.mu.Lock()
-		for tm.pq.Len() > 0 && tm.pq[0].expiration.Before(now) {
-			item := heap.Pop(&tm.pq).(*Item)
+		for tm.tokenTimes.Len() > 0 && tm.tokenTimes[0].expiration.Before(now) {
+			item := heap.Pop(&tm.tokenTimes).(*Item)
 			delete(tm.tokens, item.token)
 		}
 		tm.mu.Unlock()
@@ -88,31 +99,53 @@ type Item struct {
 
 type PriorityQueue []*Item
 
-func (pq PriorityQueue) Len() int { return len(pq) }
+func (tokenTimes PriorityQueue) Len() int { return len(tokenTimes) }
 
-func (pq PriorityQueue) Less(i, j int) bool {
-	return pq[i].expiration.Before(pq[j].expiration)
+func (tokenTimes PriorityQueue) Less(i, j int) bool {
+	return tokenTimes[i].expiration.Before(tokenTimes[j].expiration)
 }
 
-func (pq PriorityQueue) Swap(i, j int) {
-	pq[i], pq[j] = pq[j], pq[i]
-	pq[i].index = i
-	pq[j].index = j
+func (tokenTimes PriorityQueue) Swap(i, j int) {
+	tokenTimes[i], tokenTimes[j] = tokenTimes[j], tokenTimes[i]
+	tokenTimes[i].index = i
+	tokenTimes[j].index = j
 }
 
-func (pq *PriorityQueue) Push(x interface{}) {
-	n := len(*pq)
+func (tokenTimes *PriorityQueue) Push(x interface{}) {
+	n := len(*tokenTimes)
 	item := x.(*Item)
 	item.index = n
-	*pq = append(*pq, item)
+	*tokenTimes = append(*tokenTimes, item)
 }
 
-func (pq *PriorityQueue) Pop() interface{} {
-	old := *pq
+func (tokenTimes *PriorityQueue) Pop() interface{} {
+	old := *tokenTimes
 	n := len(old)
 	item := old[n-1]
 	old[n-1] = nil  // avoid memory leak
 	item.index = -1 // for safety
-	*pq = old[0 : n-1]
+	*tokenTimes = old[0 : n-1]
 	return item
+}
+
+func (tm *TokenMapImpl2Impl1[V]) adaptiveCleanup() {
+	for {
+		time.Sleep(tm.cleanInterval)
+		now := time.Now()
+		tm.mu.Lock()
+
+		for len(tm.tokenTimes) > 0 && tm.tokens[tm.tokenTimes[0]].expiration.Before(now) {
+			token := tm.tokenTimes[0]
+			tm.tokenTimes = tm.tokenTimes[1:]
+			delete(tm.tokens, token)
+		}
+
+		tm.mu.Unlock()
+
+		if len(tm.tokens) > tm.targetLen {
+			tm.cleanInterval = max(tm.cleanInterval>>1, 4*time.Second)
+		} else if len(tm.tokens) < tm.targetLen {
+			tm.cleanInterval = min(tm.cleanInterval<<1, 600*time.Second)
+		}
+	}
 }

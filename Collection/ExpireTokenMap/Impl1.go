@@ -12,13 +12,12 @@ type ValueWrap[V any] struct {
 }
 
 type TokenMapImpl1[V any] struct {
-	tokens                map[string]*ValueWrap[V]
-	expireInterval        time.Duration
-	cleanInterval         time.Duration
-	mu                    sync.RWMutex
-	tokenTimes            []string
-	adaptiveCleanInterval bool
-	targetLen             int
+	tokens         map[string]*ValueWrap[V]
+	expireInterval time.Duration
+	cleanInterval  time.Duration
+	mu             sync.RWMutex
+	tokenTimes     []string
+	targetLen      int
 }
 
 /*
@@ -42,7 +41,6 @@ func NewTokenMapImpl1[V any](
 			if options[0].TargetLen == 0 {
 				return nil, errors.New("target length must greater than zero")
 			}
-			tm.adaptiveCleanInterval = true
 			tm.targetLen = options[0].TargetLen
 			go tm.adaptiveCleanup()
 		} else {
@@ -86,21 +84,8 @@ func (tm *TokenMapImpl1[V]) periodicCleanup() {
 		now := time.Now()
 		tm.mu.Lock()
 
-		// m := int(math.Round(tm.cleanInterval.Seconds() /
-		// 	(tm.cleanInterval.Seconds() + tm.expireInterval.Seconds()) *
-		// 	float64(len(tm.tokenTimes))))
-		// l, r := 0, len(tm.tokenTimes)
-		// for l <= r {
-		// 	if tm.tokenTimes[m].expiration.After(now) {
-		// 		r = m - 1
-		// 	} else {
-		// 		l = m + 1
-		// 	}
-		// 	m = l + ((r - l) >> 1)
-		// }
-
-		for len(tm.tokenTimes) > 0 && tm.tokenTimes[0].expiration.Before(now) {
-			token := tm.tokenTimes[0].token
+		for len(tm.tokenTimes) > 0 && tm.tokens[tm.tokenTimes[0]].expiration.Before(now) {
+			token := tm.tokenTimes[0]
 			tm.tokenTimes = tm.tokenTimes[1:]
 			delete(tm.tokens, token)
 		}
@@ -108,15 +93,24 @@ func (tm *TokenMapImpl1[V]) periodicCleanup() {
 	}
 }
 
-func (tm *TokenMapImpl1[value]) adaptiveCleanup() {
-	// for {
-	// 	time.Sleep(tm.CleanInterval)
-	// 	now := time.Now()
-	// 	tm.mu.Lock()
-	// 	for tm.pq.Len() > 0 && tm.pq[0].expiration.Before(now) {
-	// 		item := heap.Pop(&tm.pq).(*Item)
-	// 		delete(tm.tokens, item.token)
-	// 	}
-	// 	tm.mu.Unlock()
-	// }
+func (tm *TokenMapImpl1[V]) adaptiveCleanup() {
+	for {
+		time.Sleep(tm.cleanInterval)
+		now := time.Now()
+		tm.mu.Lock()
+
+		for len(tm.tokenTimes) > 0 && tm.tokens[tm.tokenTimes[0]].expiration.Before(now) {
+			token := tm.tokenTimes[0]
+			tm.tokenTimes = tm.tokenTimes[1:]
+			delete(tm.tokens, token)
+		}
+
+		tm.mu.Unlock()
+
+		if len(tm.tokens) > tm.targetLen {
+			tm.cleanInterval = max(tm.cleanInterval>>1, 4*time.Second)
+		} else if len(tm.tokens) < tm.targetLen {
+			tm.cleanInterval = min(tm.cleanInterval<<1, 600*time.Second)
+		}
+	}
 }
