@@ -5,6 +5,25 @@ package main;
 option go_package = "./api";
 
 message Person {
-    string name = 1;
-    int32 age = 2;
+  string name = 1;            // String type
+  int32 age = 2;              // 32-bit integer
+  int64 height = 3;           // 64-bit integer
+  uint32 weight = 4;          // Unsigned 32-bit integer
+  uint64 net_worth = 5;       // Unsigned 64-bit integer
+  sint32 temperature = 6;     // Signed 32-bit integer (uses ZigZag encoding)
+  sint64 distance = 7;        // Signed 64-bit integer (uses ZigZag encoding)
+  fixed32 fixed_salary = 8;   // Fixed 32-bit integer
+  fixed64 fixed_assets = 9;   // Fixed 64-bit integer
+  sfixed32 s_fixed_bonus = 10;// Signed fixed 32-bit integer
+  sfixed64 s_fixed_liabilities = 11;// Signed fixed 64-bit integer
+  bool is_employed = 12;      // Boolean type
+  float gpa = 13;             // 32-bit floating point
+  double accuracy = 14;       // 64-bit floating point
+  bytes profile_picture = 15; // Byte array
+  repeated string hobbies = 16; // Repeated string type
+  map<string, string> contacts = 17; // Map type with string keys and values
+  oneof employment_status {   // Oneof type
+      string job_title = 18;
+      bool retired = 19;
+  }
 }

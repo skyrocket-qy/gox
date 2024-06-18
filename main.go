@@ -35,7 +35,30 @@ func mapPBToCustom(pb interface{}, custom interface{}) error {
 }
 
 func main() {
-	// Create an instance of PBPerson
+	_ := &pb.Person{
+		Name:              "Alice",
+		Age:               30,
+		Height:            170,
+		Weight:            65,
+		NetWorth:          1000000,
+		Temperature:       37,
+		Distance:          10000,
+		FixedSalary:       50000,
+		FixedAssets:       200000,
+		SFixedBonus:       10000,
+		SFixedLiabilities: 5000,
+		IsEmployed:        true,
+		Gpa:               3.75,
+		Accuracy:          0.99,
+		ProfilePicture:    []byte("picture_data"),
+		Hobbies:           []string{"reading", "hiking"},
+		Contacts: map[string]string{
+			"email": "alice@example.com",
+			"phone": "123-456-7890",
+		},
+		EmploymentStatus: &pb.Person_JobTitle{JobTitle: "Software Engineer"},
+	}
+	// Create an in
 	pbPerson := &PBPerson{Name: "Alice", Age: 30}
 
 	// Create an instance of CustomPerson
