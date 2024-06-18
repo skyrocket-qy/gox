@@ -1,4 +1,4 @@
-package ExpireTokenMapImpl2
+package ExpireTokenMapImpl
 
 import (
 	"container/heap"
