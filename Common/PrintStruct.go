@@ -1,15 +1,14 @@
 package Common
 
 import (
-	"errors"
 	"fmt"
 	"reflect"
 )
 
-func FPrintStruct(s any) (string, error) {
+func PrintStruct(s any) {
 	val := reflect.ValueOf(s)
 	if val.Kind() != reflect.Struct {
-		return "", errors.New("not a struct")
+		panic("not a struct")
 	}
 
 	out := ""
@@ -18,5 +17,6 @@ func FPrintStruct(s any) (string, error) {
 		fieldValue := val.Field(i)
 		out += fmt.Sprintf("%s: %v\n", field.Name, fieldValue.Interface())
 	}
-	return out, nil
+
+	fmt.Println(out)
 }
