@@ -5,7 +5,7 @@ import (
 )
 
 func BenchmarkLinkedListQueue(b *testing.B) {
-	q := NewQueue[int]()
+	q := New[int]()
 	for i := 0; i < 1000000000; i++ {
 		q.Push(i)
 	}

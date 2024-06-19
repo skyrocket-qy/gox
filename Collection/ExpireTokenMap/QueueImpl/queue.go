@@ -1,4 +1,4 @@
-package queue
+package QueueImpl
 
 import "errors"
 
@@ -7,25 +7,25 @@ type node[T any] struct {
 	next  *node[T]
 }
 
-type queueImpl[T any] struct {
+type queue[T any] struct {
 	head *node[T]
 	tail *node[T]
 	size int
 }
 
-func New[T any]() *queueImpl[T] {
-	return &queueImpl[T]{}
+func NewQueue[T any]() *queue[T] {
+	return &queue[T]{}
 }
 
-func (q *queueImpl[T]) Len() int {
+func (q *queue[T]) Len() int {
 	return q.size
 }
 
-func (q *queueImpl[T]) IsEmpty() bool {
+func (q *queue[T]) IsEmpty() bool {
 	return q.size == 0
 }
 
-func (q *queueImpl[T]) Front() (T, error) {
+func (q *queue[T]) Front() (T, error) {
 	if q.IsEmpty() {
 		var zeroValue T
 		return zeroValue, errors.New("queue is empty")
@@ -33,7 +33,7 @@ func (q *queueImpl[T]) Front() (T, error) {
 	return q.head.value, nil
 }
 
-func (q *queueImpl[T]) Pop() (T, error) {
+func (q *queue[T]) Pop() (T, error) {
 	if q.IsEmpty() {
 		var zeroValue T
 		return zeroValue, errors.New("queue is empty")
@@ -50,7 +50,7 @@ func (q *queueImpl[T]) Pop() (T, error) {
 	return elem, nil
 }
 
-func (q *queueImpl[T]) Push(elem T) {
+func (q *queue[T]) Push(elem T) {
 	newNode := &node[T]{value: elem, next: nil}
 	if q.IsEmpty() {
 		q.head = newNode
@@ -62,7 +62,7 @@ func (q *queueImpl[T]) Push(elem T) {
 	q.size++
 }
 
-func (q *queueImpl[T]) ToSlice() []T {
+func (q *queue[T]) ToSlice() []T {
 	slice := make([]T, 0, q.Len())
 	current := q.head
 	for current != nil {

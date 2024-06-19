@@ -1,4 +1,5 @@
 backup:
+	./scripts/add_gitkeep.sh
 	golines . -w -m 93
 	gofumpt -w .
 	git add .
