@@ -84,8 +84,8 @@ func (tm *TokenMapImpl1[V]) periodicCleanup() {
 		now := time.Now()
 		tm.mu.Lock()
 
-		for len(tm.tokenTimes) > 0 && tm.Totm.tokenTimes[0].expiration.Before(now) {
-			token := tm.tokenTimes[0].token
+		for len(tm.tokenTimes) > 0 && tm.tokens[tm.tokenTimes[0]].expiration.Before(now) {
+			token := tm.tokenTimes[0]
 
 			tm.tokenTimes = tm.tokenTimes[1:]
 			delete(tm.tokens, token)

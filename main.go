@@ -2,36 +2,19 @@ package main
 
 import (
 	"fmt"
-	"reflect"
+
+	"github.com/skyrocketOoO/GoUtils/Common"
 )
 
 type PBPerson struct {
-	Name string
-	Age  int32
+	Name   string
+	Age    int32
+	Option string
 }
 
 type CustomPerson struct {
-	Name string
-	Age  int32
-}
-
-// Function to map values from PBPerson to CustomPerson
-func mapPBToCustom(pb interface{}, custom interface{}) error {
-	pbVal := reflect.ValueOf(pb).Elem()
-	customVal := reflect.ValueOf(custom).Elem()
-
-	for i := 0; i < pbVal.NumField(); i++ {
-		pbField := pbVal.Type().Field(i)
-		customField := customVal.FieldByName(pbField.Name)
-
-		// Check if the field exists in the custom struct and the types are assignable
-		if customField.IsValid() && customField.CanSet() &&
-			customField.Type() == pbField.Type {
-			customField.Set(pbVal.Field(i))
-		}
-	}
-
-	return nil
+	// Name string
+	Age int32
 }
 
 func main() {
@@ -65,7 +48,7 @@ func main() {
 	customPerson := &CustomPerson{}
 
 	// Map values from PBPerson to CustomPerson
-	err := mapPBToCustom(pbPerson, customPerson)
+	err := Common.MapStructToStruct(pbPerson, customPerson)
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
