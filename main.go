@@ -3,18 +3,25 @@ package main
 import (
 	"fmt"
 
-	"github.com/skyrocketOoO/GoUtils/Common"
+	"github.com/skyrocketOoO/GoUtils/StructMapper"
 )
 
 type PBPerson struct {
-	Name   string
-	Age    int32
-	Option string
+	Name string
+	Age  int64
+	// Option string
+	Number string
+}
+
+type BankCard struct {
+	Number string
 }
 
 type CustomPerson struct {
-	// Name string
-	Age int32
+	Name   string
+	Age    string
+	Option string
+	BankCard
 }
 
 func main() {
@@ -42,17 +49,19 @@ func main() {
 	// 	EmploymentStatus: &pb.Person_JobTitle{JobTitle: "Software Engineer"},
 	// }
 	// Create an in
-	pbPerson := &PBPerson{Name: "Alice", Age: 30}
-
+	pbPerson := &PBPerson{Name: "Alice", Age: 30, Number: "eafawef"}
 	// Create an instance of CustomPerson
 	customPerson := &CustomPerson{}
 
+	fmt.Printf("%+v\n", customPerson) // Output: &{Name:Alice Age:30}
 	// Map values from PBPerson to CustomPerson
-	err := Common.MapStructToStruct(pbPerson, customPerson)
+	err := StructMapper.MapStructToStruct(pbPerson, customPerson)
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
 
 	// Print the mapped custom struct
 	fmt.Printf("%+v\n", customPerson) // Output: &{Name:Alice Age:30}
+
+	// StructMapper.PrintStructInfo(PBPerson{})
 }
