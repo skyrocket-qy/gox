@@ -9,6 +9,9 @@ import (
 //
 //	err = SetBoolFieldsTrue(&struct)
 func SetBoolFieldsTrue(v any) error {
+	if v == nil {
+		return errors.New("v must not be nil")
+	}
 	if !isPointerOfStruct(v) {
 		return errors.New("v must be pointer of struct")
 	}
