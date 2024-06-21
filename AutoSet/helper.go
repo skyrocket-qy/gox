@@ -1,4 +1,4 @@
-package StructMapper
+package AutoSet
 
 import (
 	"fmt"
@@ -50,4 +50,14 @@ func printFields(t reflect.Type, v reflect.Value) {
 
 func isEmbedded(field reflect.StructField) bool {
 	return field.Anonymous && field.Type.Kind() == reflect.Struct
+}
+
+func isPointerOfStruct(v any) bool {
+	if reflect.TypeOf(v).Kind() != reflect.Ptr {
+		return false
+	}
+	if reflect.ValueOf(v).Elem().Kind() != reflect.Struct {
+		return false
+	}
+	return true
 }

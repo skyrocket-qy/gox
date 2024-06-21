@@ -1,4 +1,4 @@
-package StructMapper
+package AutoSet
 
 import (
 	"fmt"

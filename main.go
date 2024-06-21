@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/skyrocketOoO/GoUtils/StructMapper"
+	"github.com/skyrocketOoO/GoUtils/AutoSet"
 )
 
 type PBPerson struct {
@@ -55,7 +55,7 @@ func main() {
 
 	fmt.Printf("%+v\n", customPerson) // Output: &{Name:Alice Age:30}
 	// Map values from PBPerson to CustomPerson
-	err := StructMapper.MapStructToStruct(pbPerson, customPerson)
+	err := AutoSet.MapStructToStruct(pbPerson, customPerson)
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
@@ -64,4 +64,17 @@ func main() {
 	fmt.Printf("%+v\n", customPerson) // Output: &{Name:Alice Age:30}
 
 	// StructMapper.PrintStructInfo(PBPerson{})
+
+	type Auth struct {
+		A bool
+		Q struct {
+			B bool
+		}
+	}
+	auth := Auth{}
+	if err := AutoSet.SetBoolFieldsTrue(&auth); err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	fmt.Println(auth)
 }
