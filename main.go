@@ -72,7 +72,7 @@ func main() {
 		}
 	}
 	auth := Auth{}
-	if err := AutoSet.SetBoolFieldsTrue(&auth); err != nil {
+	if err := AutoSet.SetBoolFieldsTrue(nil); err != nil {
 		fmt.Println(err.Error())
 		return
 	}
