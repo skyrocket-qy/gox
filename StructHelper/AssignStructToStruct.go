@@ -10,7 +10,7 @@ func AssignStructToStruct(from any, to any) error {
 	if from == nil || to == nil {
 		return fmt.Errorf("from or to must not be nil")
 	}
-	if !(reflect.TypeOf(from).Kind() == reflect.Struct) &&
+	if reflect.TypeOf(from).Kind() != reflect.Struct &&
 		!isPointerOfStruct(from) {
 		return fmt.Errorf("from must be a struct or pointer of struct")
 	}
@@ -19,7 +19,6 @@ func AssignStructToStruct(from any, to any) error {
 	}
 
 	mapStructToStructHelper(getElem(from), reflect.ValueOf(to).Elem())
-
 	return nil
 }
 

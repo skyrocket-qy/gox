@@ -5,12 +5,12 @@ import (
 	"reflect"
 )
 
-func getElem(in any) reflect.Value {
-	if reflect.TypeOf(in).Kind() == reflect.Ptr {
-		return reflect.ValueOf(in).Elem()
-	} else {
-		return reflect.ValueOf(in)
+func getElem(v any) reflect.Value {
+	val := reflect.ValueOf(v)
+	if val.Kind() == reflect.Ptr {
+		return val.Elem()
 	}
+	return val
 }
 
 func PrintStructInfo(s interface{}) {
@@ -49,7 +49,7 @@ func printFields(t reflect.Type, v reflect.Value) {
 }
 
 func isEmbedded(field reflect.StructField) bool {
-	return field.Anonymous && field.Type.Kind() == reflect.Struct
+	return field.Anonymous
 }
 
 func isPointerOfStruct(v any) bool {
