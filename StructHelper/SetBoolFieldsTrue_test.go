@@ -1,4 +1,4 @@
-package AutoSet
+package StructHelper
 
 import (
 	"reflect"
