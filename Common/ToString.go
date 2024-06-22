@@ -5,8 +5,8 @@ import (
 	"strconv"
 )
 
-func ToString[T any](v T) string {
-	switch val := any(v).(type) {
+func ToString(v any) string {
+	switch val := v.(type) {
 	case string:
 		return val
 	case bool:

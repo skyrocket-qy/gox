@@ -5,36 +5,53 @@ import (
 	"reflect"
 )
 
-// Auto map value with same key and type including embedded fields
-func MapStructToStruct(from any, to any) error {
+// Assign value with same key including embedded fields on same layer
+func AssignStructToStruct(from any, to any) error {
 	if from == nil || to == nil {
 		return fmt.Errorf("from or to must not be nil")
 	}
-	if !((reflect.TypeOf(from).Kind() == reflect.Struct) ||
-		(reflect.TypeOf(from).Kind() == reflect.Ptr)) {
+	if !(reflect.TypeOf(from).Kind() == reflect.Struct) &&
+		!isPointerOfStruct(from) {
 		return fmt.Errorf("from must be a struct or pointer of struct")
 	}
-	if reflect.TypeOf(to).Kind() != reflect.Ptr &&
-		reflect.ValueOf(to).Elem().Kind() != reflect.Struct {
+	if !isPointerOfStruct(to) {
 		return fmt.Errorf("to must be a pointer of struct")
 	}
 
-	fromStruct, toStruct := getElem(from), getElem(to)
+	mapStructToStructHelper(getElem(from), reflect.ValueOf(to).Elem())
 
-	for i := 0; i < toStruct.NumField(); i++ {
-		toField := toStruct.Type().Field(i)
-		toVal := toStruct.Field(i)
-		fromField := fromStruct.FieldByName(toField.Name)
+	return nil
+}
 
-		if fromField.IsValid() && toVal.CanSet() {
-			switch toField.Type.Kind() {
-			case fromField.Type().Kind():
-				toVal.Set(fromField)
-			case reflect.String:
-				toVal.SetString(fmt.Sprintf("%v", fromField.Interface()))
+func mapStructToStructHelper(from, to reflect.Value) {
+	for i := 0; i < to.NumField(); i++ {
+		toFieldType := to.Type().Field(i)
+		toField := to.Field(i)
+		if isEmbedded(toFieldType) {
+			mapStructToStructHelper(from, toField)
+		}
+		if !toField.CanSet() {
+			continue
+		}
+		fromField := from.FieldByName(toFieldType.Name)
+		if !fromField.IsValid() {
+			continue
+		}
+
+		switch toFieldType.Type.Kind() {
+		case reflect.Struct:
+			if fromField.Type().Kind() == reflect.Struct {
+				mapStructToStructHelper(fromField, toField)
+			}
+		case fromField.Type().Kind():
+			toField.Set(fromField)
+		case reflect.String:
+			switch fromField.Type().Kind() {
+			case reflect.Struct:
+			default:
+				fmt.Println(fromField.Type().Kind(), toFieldType.Type.Kind())
+				toField.SetString(fmt.Sprintf("%v", fromField.Interface()))
 			}
 		}
 	}
-
-	return nil
 }

@@ -7,21 +7,23 @@ import (
 )
 
 type PBPerson struct {
-	Name string
-	Age  int64
+	Name   map[string]string
+	Age    int
+	Option map[string]string
 	// Option string
-	Number string
+	BankCard
 }
 
 type BankCard struct {
 	Number string
+	GG     int
 }
 
 type CustomPerson struct {
-	Name   string
+	Name   map[string]string
 	Age    string
 	Option string
-	BankCard
+	Number string
 }
 
 func main() {
@@ -49,13 +51,18 @@ func main() {
 	// 	EmploymentStatus: &pb.Person_JobTitle{JobTitle: "Software Engineer"},
 	// }
 	// Create an in
-	pbPerson := &PBPerson{Name: "Alice", Age: 30, Number: "eafawef"}
+	pbPerson := PBPerson{
+		Name:   map[string]string{"1": "2", "2": "3", "3": "4"},
+		Age:    30,
+		Option: map[string]string{"1": "2", "2": "3", "3": "4"},
+	}
+	pbPerson.Number = "abc"
 	// Create an instance of CustomPerson
-	customPerson := &CustomPerson{}
+	customPerson := &CustomPerson{Name: map[string]string{"5": "6"}}
 
-	fmt.Printf("%+v\n", customPerson) // Output: &{Name:Alice Age:30}
+	fmt.Printf("%+v\n", pbPerson) // Output: &{Name:Alice Age:30}
 	// Map values from PBPerson to CustomPerson
-	err := AutoSet.MapStructToStruct(pbPerson, customPerson)
+	err := AutoSet.AssignStructToStruct(pbPerson, customPerson)
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
@@ -64,17 +71,4 @@ func main() {
 	fmt.Printf("%+v\n", customPerson) // Output: &{Name:Alice Age:30}
 
 	// StructMapper.PrintStructInfo(PBPerson{})
-
-	type Auth struct {
-		A bool
-		Q struct {
-			B bool
-		}
-	}
-	auth := Auth{}
-	if err := AutoSet.SetBoolFieldsTrue(nil); err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-	fmt.Println(auth)
 }
