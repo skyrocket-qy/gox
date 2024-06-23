@@ -1,28 +1,17 @@
 package main
 
-import (
-	"fmt"
-	"reflect"
-)
-
-type Address struct {
-	City  string
-	State string
-}
+// "github.com/glebarez/sqlite" // Pure go SQLite driver, checkout https://github.com/glebarez/sqlite for details
 
 type User struct {
-	Name string
-	Age  int
-	Address
-	Info struct {
-		Email string
-		Phone string
-	}
+	Val int
+	Info
+}
+
+type Info struct {
+	Number string
 }
 
 func main() {
-	u := User{}
-	f, _ := reflect.ValueOf(u).Type().FieldByName("Address")
-	fmt.Println(f.Type.Kind())
-	fmt.Println(f.Anonymous)
+	user := User{}
+	user.Number = "abc"
 }
