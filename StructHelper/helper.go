@@ -52,12 +52,12 @@ func isEmbedded(field reflect.StructField) bool {
 	return field.Anonymous
 }
 
-func isPointerOfStruct(v any) bool {
+func isNonNilPointerOfStruct(v any) bool {
 	if reflect.TypeOf(v).Kind() != reflect.Ptr {
 		return false
 	}
-	if reflect.ValueOf(v).Elem().Kind() != reflect.Struct {
+	if reflect.ValueOf(v).IsNil() {
 		return false
 	}
-	return true
+	return reflect.TypeOf(v).Elem().Kind() == reflect.Struct
 }

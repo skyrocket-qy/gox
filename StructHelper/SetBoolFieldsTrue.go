@@ -12,7 +12,7 @@ func SetBoolFieldsTrue(v any) error {
 	if v == nil {
 		return errors.New("v must not be nil")
 	}
-	if !isPointerOfStruct(v) {
+	if !isNonNilPointerOfStruct(v) {
 		return errors.New("v must be pointer of struct")
 	}
 	setBoolFieldsTrueHelper(reflect.ValueOf(v).Elem())

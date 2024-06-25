@@ -1,17 +1,37 @@
 package main
 
-// "github.com/glebarez/sqlite" // Pure go SQLite driver, checkout https://github.com/glebarez/sqlite for details
+import (
+	"fmt"
 
-type User struct {
-	Val int
-	Info
-}
-
-type Info struct {
-	Number string
-}
+	"github.com/skyrocketOoO/GoUtils/StructHelper"
+)
 
 func main() {
-	user := User{}
-	user.Number = "abc"
+	exampleFunction()
+}
+
+func exampleFunction() {
+	nestedFunction()
+}
+
+type A struct {
+	Name string
+	*Aa
+}
+
+type B struct {
+	Name string
+}
+
+type Aa struct {
+	Number int
+}
+
+func nestedFunction() {
+	a := new(A)
+	b := new(B)
+	if err := StructHelper.ScanStructToStruct(b, a); err != nil {
+		fmt.Println(err.Error())
+	}
+	fmt.Println(a)
 }
