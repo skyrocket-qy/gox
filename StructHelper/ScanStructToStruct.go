@@ -37,8 +37,10 @@ func ScanStructToStruct(from any, to any) error {
 }
 
 func scanStructToStructHelper(from, to reflect.Value) {
-	fmt.Println(from.Type())
-	fmt.Println(to.Type())
+	if !from.IsValid() || !to.IsValid() {
+		return
+	}
+
 	for i := 0; i < to.NumField(); i++ {
 		toFieldType := to.Type().Field(i)
 		toField := to.Field(i)
@@ -48,13 +50,27 @@ func scanStructToStructHelper(from, to reflect.Value) {
 		if !toField.CanSet() {
 			continue
 		}
+
 		fromField := from.FieldByName(toFieldType.Name)
 		if !fromField.IsValid() {
 			continue
 		}
 
-		switch toFieldType.Type.Kind() {
+		toKind := toFieldType.Type.Kind()
+		if toKind == reflect.Ptr {
+			toField = toField.Elem()
+			toKind = toField.Kind()
+		}
+		if !toField.CanSet() {
+			continue
+		}
+		switch toKind {
 		case reflect.Struct:
+			if fromField.Type().Kind() == reflect.Ptr {
+				if getElem(fromField).Type().Kind() == reflect.Struct {
+					scanStructToStructHelper(fromField.Elem(), toField)
+				}
+			}
 			if fromField.Type().Kind() == reflect.Struct {
 				scanStructToStructHelper(fromField, toField)
 			}
@@ -72,4 +88,6 @@ func scanStructToStructHelper(from, to reflect.Value) {
 			}
 		}
 	}
+
+	return
 }

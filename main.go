@@ -3,35 +3,50 @@ package main
 import (
 	"fmt"
 
+	"github.com/skyrocketOoO/GoUtils/Common"
 	"github.com/skyrocketOoO/GoUtils/StructHelper"
 )
 
+type NestedFrom struct {
+	InnerID int
+}
+
+type FromStruct struct {
+	ID     int
+	Nested *NestedFrom
+	EmbeddedFrom
+}
+
+type EmbeddedFrom struct {
+	EmbeddedID int
+}
+
+type NestedTo struct {
+	InnerID int
+}
+type EmbeddedTo struct {
+	EmbeddedID int
+}
+
+type ToStruct struct {
+	ID     int
+	Nested NestedTo
+}
+
 func main() {
-	exampleFunction()
-}
+	from := FromStruct{
+		ID:     1,
+		Nested: &NestedFrom{InnerID: 2},
+		EmbeddedFrom: EmbeddedFrom{
+			EmbeddedID: 3,
+		},
+	}
+	to := &FromStruct{Nested: &NestedFrom{}}
 
-func exampleFunction() {
-	nestedFunction()
-}
-
-type A struct {
-	Name string
-	*Aa
-}
-
-type B struct {
-	Name string
-}
-
-type Aa struct {
-	Number int
-}
-
-func nestedFunction() {
-	a := new(A)
-	b := new(B)
-	if err := StructHelper.ScanStructToStruct(b, a); err != nil {
+	if err := StructHelper.ScanStructToStruct(from, to); err != nil {
 		fmt.Println(err.Error())
 	}
-	fmt.Println(a)
+
+	Common.PrintStruct(*to)
+	fmt.Println(to)
 }
