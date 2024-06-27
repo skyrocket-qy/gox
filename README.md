@@ -66,3 +66,14 @@
   - https://github.com/elliotchance/orderedmap/tree/master
 - phonenumber
   - https://github.com/nyaruka/phonenumbers
+- decimal
+  - https://github.com/shopspring/decimal
+- jsonrpc
+  - https://github.com/sourcegraph/jsonrpc2
+- toml
+  - https://github.com/BurntSushi/toml
+- clickhouse
+  - https://github.com/ClickHouse/ch-go
+- barcode
+  - https://github.com/boombuler/barcode
+  - 
