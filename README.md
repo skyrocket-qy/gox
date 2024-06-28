@@ -76,4 +76,7 @@
   - https://github.com/ClickHouse/ch-go
 - barcode
   - https://github.com/boombuler/barcode
-  - 
+- https://www.linode.com/
+- https://www.digitalocean.com/
+- https://www.namecheap.com/
+- https://www.ssdnodes.com/pricing/
