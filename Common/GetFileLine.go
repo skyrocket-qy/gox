@@ -63,11 +63,11 @@ func WithTrace(err error) error {
 	if _, ok := err.(*CustomError); !ok {
 		ud := uuid.New().String()
 		callStkMsg := getCallStack(3)
-		Error( // use your log method
-			fmt.Sprintf("uuid: %s\n", ud),
-			fmt.Sprintf("error: %s\n", err.Error()),
-			fmt.Sprintf("stack: %s\n", callStkMsg),
-		)
+
+		fmt.Sprintf("uuid: %s\n", ud)
+		fmt.Sprintf("error: %s\n", err.Error())
+		fmt.Sprintf("stack: %s\n", callStkMsg)
+
 		return &CustomError{
 			msg: fmt.Sprintf("uuid: %s \nerror: %s", ud, err.Error()),
 		}

@@ -1,34 +1,7 @@
-package main
+package StructHelper
 
-import (
-	"fmt"
-	"reflect"
-)
+import "reflect"
 
-// Struct C definition
-type C struct {
-	Val string
-}
-
-// Struct B definition
-type B struct {
-	C     *C
-	Value string
-}
-
-// Struct A definition
-type A struct {
-	B *B
-}
-
-// NewA creates a new instance of A with initialized fields using reflection
-func NewA() *A {
-	a := new(A)
-	InitializeFields(a)
-	return a
-}
-
-// initializeFields initializes the fields of A using reflection
 func InitializeFields(a any) {
 	// Get the reflect.Value of A
 	val := reflect.ValueOf(a).Elem()
@@ -75,12 +48,4 @@ func initializeStructFields(val reflect.Value) {
 			}
 		}
 	}
-}
-
-func main() {
-	// Create a new instance of A
-	a := NewA()
-
-	// Print the value of a.B.C.Val
-	fmt.Println(a.B.C) // This will print an empty string ""
 }
