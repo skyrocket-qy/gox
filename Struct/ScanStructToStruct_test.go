@@ -1,4 +1,4 @@
-package StructHelper
+package Struct
 
 import (
 	"errors"
@@ -70,16 +70,20 @@ func TestScanStructToStruct(t *testing.T) {
 			expectedErr: errors.New("from must be a struct or pointer of struct"),
 		},
 		{
-			name:        "to is nil pointer",
-			from:        FromStruct{ID: 1},
-			to:          (*ToStruct)(nil),
-			expectedErr: errors.New("to must be a non-nil pointer of struct, got type: ptr"),
+			name: "to is nil pointer",
+			from: FromStruct{ID: 1},
+			to:   (*ToStruct)(nil),
+			expectedErr: errors.New(
+				"to must be a non-nil pointer of struct, got type: ptr",
+			),
 		},
 		{
-			name:        "to is not a struct",
-			from:        FromStruct{ID: 1},
-			to:          42,
-			expectedErr: errors.New("to must be a non-nil pointer of struct, got type: int"),
+			name: "to is not a struct",
+			from: FromStruct{ID: 1},
+			to:   42,
+			expectedErr: errors.New(
+				"to must be a non-nil pointer of struct, got type: int",
+			),
 		},
 		// {
 		// 	name:        "from substruct is nil pointer",
@@ -156,7 +160,9 @@ func TestScanStructToStruct(t *testing.T) {
 			},
 			to:          &FromStruct{},
 			expectedErr: nil,
-			expectedTo:  &FromStruct{EmbeddedFrom: EmbeddedFrom{EmbeddedString: "embstr"}},
+			expectedTo: &FromStruct{
+				EmbeddedFrom: EmbeddedFrom{EmbeddedString: "embstr"},
+			},
 		},
 	}
 

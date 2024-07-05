@@ -1,4 +1,4 @@
-package StructHelper
+package Struct
 
 import (
 	"fmt"
