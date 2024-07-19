@@ -82,3 +82,5 @@
 - https://www.ssdnodes.com/pricing/
 - goroutine
   - https://github.com/sourcegraph/conc
+- Backup
+  - https://github.com/restic/restic
