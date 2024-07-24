@@ -1,86 +1,64 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"reflect"
+	"log"
+
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
-// Struct C definition
-type C struct {
-	Val string
+type User struct {
+	ID   uint
+	Name string
 }
 
-// Struct B definition
-type B struct {
-	C     *C
-	Value string
-}
-
-// Struct A definition
-type A struct {
-	B *B
-}
-
-// NewA creates a new instance of A with initialized fields using reflection
-func NewA() *A {
-	a := new(A)
-	InitializeFields(a)
-	return a
-}
-
-// initializeFields initializes the fields of A using reflection
-func InitializeFields(a any) {
-	// Get the reflect.Value of A
-	val := reflect.ValueOf(a).Elem()
-
-	// Iterate through fields of A
-	for i := 0; i < val.NumField(); i++ {
-		field := val.Field(i)
-
-		// Check if the field is a pointer and nil
-		if field.Kind() == reflect.Ptr && field.IsNil() {
-			// Allocate memory for the pointer field
-			field.Set(reflect.New(field.Type().Elem()))
-
-			// If the field is a struct pointer, recursively initialize its fields
-			if field.Type().Elem().Kind() == reflect.Struct {
-				// Get the actual value of the pointer
-				fieldVal := field.Elem()
-
-				// Initialize fields of the nested struct recursively
-				initializeStructFields(fieldVal)
-			}
-		}
-	}
-}
-
-// initializeStructFields initializes the fields of a struct using reflection recursively
-func initializeStructFields(val reflect.Value) {
-	// Iterate through fields of the struct
-	for i := 0; i < val.NumField(); i++ {
-		field := val.Field(i)
-
-		// Check if the field is a pointer and nil
-		if field.Kind() == reflect.Ptr && field.IsNil() {
-			// Allocate memory for the pointer field
-			field.Set(reflect.New(field.Type().Elem()))
-
-			// If the field is a struct pointer, recursively initialize its fields
-			if field.Type().Elem().Kind() == reflect.Struct {
-				// Get the actual value of the pointer
-				fieldVal := field.Elem()
-
-				// Recursively initialize fields of the nested struct
-				initializeStructFields(fieldVal)
-			}
-		}
-	}
+type Order struct {
+	ID     uint
+	Amount float64
 }
 
 func main() {
-	// Create a new instance of A
-	a := NewA()
+	// Setup the first database connection (dbA)
+	dbA, err := gorm.Open(sqlite.Open("dbA.db"), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("failed to connect to dbA: %v", err)
+	}
 
-	// Print the value of a.B.C.Val
-	fmt.Println(a.B.C) // This will print an empty string ""
+	// Setup the second database connection (dbB)
+	dbB, err := gorm.Open(sqlite.Open("dbB.db"), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("failed to connect to dbB: %v", err)
+	}
+
+	// Auto-migrate the schema
+	if err := dbA.AutoMigrate(&User{}); err != nil {
+		log.Fatalf("failed to migrate schema in dbA: %v", err)
+	}
+	if err := dbB.AutoMigrate(&Order{}); err != nil {
+		log.Fatalf("failed to migrate schema in dbB: %v", err)
+	}
+
+	if err := dbA.Transaction(func(txA *gorm.DB) error {
+		if err := txA.Create(&User{Name: "John Doe"}).Error; err != nil {
+			return err
+		}
+
+		if err := dbB.Transaction(func(txB *gorm.DB) error {
+			if err := txB.Create(&Order{Amount: 100.0}).Error; err != nil {
+				return err
+			}
+			return nil
+		}); err != nil {
+			return err
+		}
+
+		// suppose this is failed
+		return errors.New("mock failed ")
+	}); err != nil {
+		log.Fatalf("failed to do transaction in dbA: %v", err)
+	}
+
+	fmt.Println("both transactions committed successfully")
 }
