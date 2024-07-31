@@ -1,64 +1,50 @@
 package main
 
 import (
-	"errors"
-	"fmt"
-	"log"
+	"net/http"
 
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
+	"github.com/pquerna/otp/totp"
+	"github.com/skip2/go-qrcode"
 )
 
-type User struct {
-	ID   uint
-	Name string
+func generateOTPURI() (string, error) {
+	key, err := totp.Generate(totp.GenerateOpts{
+		Issuer:      "MyApp",
+		AccountName: "user@example.com",
+	})
+	if err != nil {
+		return "", err
+	}
+	return key.URL(), nil
 }
 
-type Order struct {
-	ID     uint
-	Amount float64
+func generateQRCode(uri string) ([]byte, error) {
+	var png []byte
+	png, err := qrcode.Encode(uri, qrcode.Medium, 256)
+	if err != nil {
+		return nil, err
+	}
+	return png, nil
+}
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	uri, err := generateOTPURI()
+	if err != nil {
+		http.Error(w, "Failed to generate OTP URI", http.StatusInternalServerError)
+		return
+	}
+
+	png, err := generateQRCode(uri)
+	if err != nil {
+		http.Error(w, "Failed to generate QR code", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "image/png")
+	w.Write(png)
 }
 
 func main() {
-	// Setup the first database connection (dbA)
-	dbA, err := gorm.Open(sqlite.Open("dbA.db"), &gorm.Config{})
-	if err != nil {
-		log.Fatalf("failed to connect to dbA: %v", err)
-	}
-
-	// Setup the second database connection (dbB)
-	dbB, err := gorm.Open(sqlite.Open("dbB.db"), &gorm.Config{})
-	if err != nil {
-		log.Fatalf("failed to connect to dbB: %v", err)
-	}
-
-	// Auto-migrate the schema
-	if err := dbA.AutoMigrate(&User{}); err != nil {
-		log.Fatalf("failed to migrate schema in dbA: %v", err)
-	}
-	if err := dbB.AutoMigrate(&Order{}); err != nil {
-		log.Fatalf("failed to migrate schema in dbB: %v", err)
-	}
-
-	if err := dbA.Transaction(func(txA *gorm.DB) error {
-		if err := txA.Create(&User{Name: "John Doe"}).Error; err != nil {
-			return err
-		}
-
-		if err := dbB.Transaction(func(txB *gorm.DB) error {
-			if err := txB.Create(&Order{Amount: 100.0}).Error; err != nil {
-				return err
-			}
-			return nil
-		}); err != nil {
-			return err
-		}
-
-		// suppose this is failed
-		return errors.New("mock failed ")
-	}); err != nil {
-		log.Fatalf("failed to do transaction in dbA: %v", err)
-	}
-
-	fmt.Println("both transactions committed successfully")
+	http.HandleFunc("/qrcode", handler)
+	http.ListenAndServe(":8080", nil)
 }
