@@ -30,11 +30,11 @@ func EmbeddedLogger(logger logger) {
 }
 
 type CustomError struct {
-	msg string
+	Msg string
 }
 
 func (e *CustomError) Error() string {
-	return e.msg
+	return e.Msg
 }
 
 func New(msg string) (out error) {
@@ -57,7 +57,7 @@ func Wrap(in error) (out error) {
 	logInstance.Log(msg)
 
 	return &CustomError{
-		msg: msg,
+		Msg: msg,
 	}
 }
 
