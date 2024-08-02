@@ -1,6 +1,7 @@
 package Error
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"runtime"
@@ -30,11 +31,25 @@ func EmbeddedLogger(logger logger) {
 }
 
 type CustomError struct {
-	Msg string
+	Code     uint
+	LogMsg   LogMessage
+	ErrorMsg ErrorMessage
+}
+
+type ErrorMessage struct {
+	LogId uuid.UUID
+	Msg   string
+}
+
+type LogMessage struct {
+	LogId uuid.UUID
+	Trace string
+	Msg   string
 }
 
 func (e *CustomError) Error() string {
-	return e.Msg
+	jsonstr, _ := json.Marshal(e.ErrorMsg)
+	return string(jsonstr)
 }
 
 func New(msg string) (out error) {
