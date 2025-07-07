@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	common "github.com/skyrocketOoO/gox/Common"
+	"github.com/skyrocketOoO/gox/common"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )

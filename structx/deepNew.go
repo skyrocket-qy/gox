@@ -4,11 +4,11 @@ import "reflect"
 
 func DeepNew[V any]() *V {
 	out := new(V)
-	InitializeFields(out)
+	InitFields(out)
 	return out
 }
 
-func InitializeFields(v any) {
+func InitFields(v any) {
 	if v == nil || reflect.ValueOf(v).IsNil() {
 		typ := reflect.TypeOf(v).Elem()
 		newA := reflect.New(typ).Interface()
@@ -24,13 +24,13 @@ func InitializeFields(v any) {
 
 			if field.Type().Elem().Kind() == reflect.Struct {
 				fieldVal := field.Elem()
-				initializeStructFields(fieldVal)
+				initStructFields(fieldVal)
 			}
 		}
 	}
 }
 
-func initializeStructFields(val reflect.Value) {
+func initStructFields(val reflect.Value) {
 	for i := 0; i < val.NumField(); i++ {
 		field := val.Field(i)
 
@@ -39,7 +39,7 @@ func initializeStructFields(val reflect.Value) {
 
 			if field.Type().Elem().Kind() == reflect.Struct {
 				fieldVal := field.Elem()
-				initializeStructFields(fieldVal)
+				initStructFields(fieldVal)
 			}
 		}
 	}
