@@ -1,4 +1,4 @@
-package Phone
+package phone
 
 import (
 	"fmt"

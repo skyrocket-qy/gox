@@ -1,4 +1,4 @@
-package SequenceTransaction
+package sequenceTransaction
 
 import (
 	"math"

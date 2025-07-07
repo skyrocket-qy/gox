@@ -1,4 +1,4 @@
-package Reflex
+package refletx
 
 import (
 	"reflect"
@@ -23,7 +23,7 @@ func IsNil(it reflect.Value) (ok bool) {
 		}
 	}()
 
-	if false == it.IsValid() {
+	if !it.IsValid() {
 		ok = true
 		return
 	}

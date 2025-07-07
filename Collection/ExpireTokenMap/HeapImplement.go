@@ -1,4 +1,4 @@
-package ExpireTokenMap
+package expiretokenmap
 
 import (
 	"errors"

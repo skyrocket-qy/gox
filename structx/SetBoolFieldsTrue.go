@@ -1,4 +1,4 @@
-package Struct
+package structx
 
 import (
 	"errors"

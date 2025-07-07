@@ -1,4 +1,4 @@
-package ExpireTokenMap
+package expiretokenmap
 
 type Options struct {
 	AdaptiveCleanInterval bool // Dynamic adjust clean interval to keep memory usage

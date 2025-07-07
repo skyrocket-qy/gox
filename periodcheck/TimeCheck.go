@@ -33,7 +33,7 @@ Example Usage:
 	}
 */
 
-package timecheck
+package periodcheck
 
 import (
 	"errors"
@@ -170,11 +170,4 @@ func abs(x int) int {
 		return -x
 	}
 	return x
-}
-
-func min(a, b time.Duration) time.Duration {
-	if a < b {
-		return a
-	}
-	return b
 }
