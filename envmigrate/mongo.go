@@ -7,7 +7,56 @@ import (
 	"github.com/skyrocketOoO/gox/common"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+func copyIndexes(ctx context.Context, db *mongo.Database, srcCol, dstCol *mongo.Collection) error {
+	// Get indexes from source
+	cursor, err := srcCol.Indexes().List(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to list indexes: %w", err)
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var index bson.M
+		if err := cursor.Decode(&index); err != nil {
+			return fmt.Errorf("failed to decode index: %w", err)
+		}
+
+		// Skip default _id index
+		if name, ok := index["name"].(string); ok && name == "_id_" {
+			continue
+		}
+
+		keys := index["key"].(bson.M)
+
+		opts := options.Index()
+		if name, ok := index["name"].(string); ok {
+			opts.SetName(name)
+		}
+		if unique, ok := index["unique"].(bool); ok {
+			opts.SetUnique(unique)
+		}
+		if sparse, ok := index["sparse"].(bool); ok {
+			opts.SetSparse(sparse)
+		}
+		if expireAfterSeconds, ok := index["expireAfterSeconds"].(int32); ok {
+			opts.SetExpireAfterSeconds(expireAfterSeconds)
+		}
+
+		model := mongo.IndexModel{
+			Keys:    keys,
+			Options: opts,
+		}
+
+		if _, err := dstCol.Indexes().CreateOne(ctx, model); err != nil {
+			return fmt.Errorf("failed to create index: %w", err)
+		}
+	}
+
+	return nil
+}
 
 func CopyMongoData(
 	ctx context.Context,
