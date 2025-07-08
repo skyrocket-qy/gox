@@ -239,6 +239,9 @@ func ToColsList[K comparable, V any](table [][]string) (data map[K][]V, err erro
 			if len(table[i]) < j+1 {
 				break
 			}
+			if table[i][j] == "" {
+				break
+			}
 
 			val, err := StrToType[V](table[i][j])
 			if err != nil {

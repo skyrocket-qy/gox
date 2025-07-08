@@ -65,3 +65,149 @@ func TestToExcel1D(t *testing.T) {
 		})
 	}
 }
+
+func TestToColsList(t *testing.T) {
+	type testCase[K comparable, V any] struct {
+		name  string
+		table [][]string
+		want  map[K][]V
+		isErr bool
+	}
+
+	tests := []testCase[string, int]{
+		{
+			name: "normal case - 2 cols",
+			table: [][]string{
+				{"col1", "col2"},
+				{"1", "2"},
+				{"3", "4"},
+			},
+			want: map[string][]int{
+				"col1": {1, 3},
+				"col2": {2, 4},
+			},
+			isErr: false,
+		},
+		{
+			name: "diff len cols",
+			table: [][]string{
+				{"col1", "col2"},
+				{"1", "2"},
+				{"3", "4"},
+				{"", "5"},
+			},
+			want: map[string][]int{
+				"col1": {1, 3},
+				"col2": {2, 4, 5},
+			},
+			isErr: false,
+		},
+		{
+			name:  "empty table",
+			table: [][]string{},
+			isErr: true,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			got, err := ToColsList[string, int](tc.table)
+
+			if tc.isErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tc.want, got)
+			}
+		})
+	}
+}
+
+func TestToExcelGroup(t *testing.T) {
+	type testCase[K comparable] struct {
+		name     string
+		table    [][]string
+		pattern  string
+		wantKeys []K
+		wantData map[K][][]string
+		wantErr  bool
+	}
+
+	tests := []testCase[string]{
+		{
+			name: "two groups, valid structure",
+			table: [][]string{
+				{"group1", "", "col1", "col2", "group2", "", "col3"},
+				{"", "row1", "1", "3", "", "row1", "5"},
+				{"", "row2", "2", "4", "", "row2", "6"},
+			},
+			pattern:  `^group\d+`,
+			wantKeys: []string{"group1", "group2"},
+			wantData: map[string][][]string{
+				"group1": {
+					{"", "col1", "col2"},
+					{"row1", "1", "3"},
+					{"row2", "2", "4"},
+				},
+				"group2": {
+					{"", "col3"},
+					{"row1", "5"},
+					{"row2", "6"},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name:    "empty table",
+			table:   [][]string{},
+			pattern: `^group\d+`,
+			wantErr: true,
+		},
+		{
+			name: "invalid header (not enough cols)",
+			table: [][]string{
+				{"group1"},
+			},
+			pattern: `^group\d+`,
+			wantErr: true,
+		},
+		{
+			name: "group key not found at start",
+			table: [][]string{
+				{"", "col1", "col2"},
+				{"row1", "1", "2"},
+			},
+			pattern: `^group\d+`,
+			wantErr: true,
+		},
+		{
+			name: "group key at both ends but no data between",
+			table: [][]string{
+				{"group1", "group2"},
+				{"val1", "val2"},
+			},
+			pattern:  `^group\d+`,
+			wantKeys: []string{"group1", "group2"},
+			wantData: map[string][][]string{
+				"group1": {},
+				"group2": {},
+			},
+			wantErr: false,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			keys, data, err := ToExcelGroup[string](tc.table, tc.pattern)
+
+			if tc.wantErr {
+				assert.Error(t, err)
+				return
+			}
+
+			assert.NoError(t, err)
+			assert.Equal(t, tc.wantKeys, keys)
+			assert.Equal(t, tc.wantData, data)
+		})
+	}
+}
