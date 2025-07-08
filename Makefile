@@ -5,4 +5,3 @@ bk:
 	git commit -m "backup"
 	git push
 	./semver
-	git push --tags
