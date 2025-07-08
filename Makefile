@@ -5,6 +5,7 @@ bk:
 	git commit -m "backup"
 	git push
 
+PATCHVER=$(shell git pull --tags | ./semver get patch $(shell git describe --tags $(shell git rev-list --tags --max-count=1)))
 NEWVER=$(shell echo $(PATCHVER) + 1 | bc)
 
 nt: 
