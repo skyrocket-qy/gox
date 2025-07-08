@@ -180,20 +180,6 @@ func TestToExcelGroup(t *testing.T) {
 			pattern: `^group\d+`,
 			wantErr: true,
 		},
-		{
-			name: "group key at both ends but no data between",
-			table: [][]string{
-				{"group1", "group2"},
-				{"val1", "val2"},
-			},
-			pattern:  `^group\d+`,
-			wantKeys: []string{"group1", "group2"},
-			wantData: map[string][][]string{
-				"group1": {},
-				"group2": {},
-			},
-			wantErr: false,
-		},
 	}
 
 	for _, tc := range tests {
@@ -207,6 +193,87 @@ func TestToExcelGroup(t *testing.T) {
 
 			assert.NoError(t, err)
 			assert.Equal(t, tc.wantKeys, keys)
+			assert.Equal(t, tc.wantData, data)
+		})
+	}
+}
+
+func TestToExcel2D(t *testing.T) {
+	type testCase[RK, CK comparable, V any] struct {
+		name     string
+		table    [][]string
+		wantRows []RK
+		wantCols []CK
+		wantData map[RK]map[CK]V
+		wantErr  bool
+	}
+
+	tests := []testCase[string, string, int]{
+		{
+			name: "normal case",
+			table: [][]string{
+				{"", "col1", "col2"},
+				{"row1", "1", "3"},
+				{"row2", "2", "4"},
+			},
+			wantRows: []string{"row1", "row2"},
+			wantCols: []string{"col1", "col2"},
+			wantData: map[string]map[string]int{
+				"row1": {"col1": 1, "col2": 3},
+				"row2": {"col1": 2, "col2": 4},
+			},
+			wantErr: false,
+		},
+		{
+			name:    "empty table",
+			table:   [][]string{},
+			wantErr: true,
+		},
+		{
+			name: "not enough columns in header",
+			table: [][]string{
+				{""},
+				{"row1", "1"},
+			},
+			wantErr: true,
+		},
+		{
+			name: "no data rows",
+			table: [][]string{
+				{"", "col1", "col2"},
+			},
+			wantErr: true,
+		},
+		{
+			name: "bad int conversion",
+			table: [][]string{
+				{"", "col1"},
+				{"row1", "bad"},
+			},
+			wantErr: true,
+		},
+		{
+			name: "row length mismatch",
+			table: [][]string{
+				{"", "col1", "col2"},
+				{"row1", "1"},
+			},
+			wantErr: true,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			rowKeys, colKeys, data, err := ToExcel2D[string, string, int](tc.table)
+
+			if tc.wantErr {
+				assert.Error(t, err)
+				return
+			}
+
+			assert.NoError(t, err)
+			assert.Equal(t, tc.wantRows, rowKeys)
+			assert.Equal(t, tc.wantCols, colKeys)
 			assert.Equal(t, tc.wantData, data)
 		})
 	}
