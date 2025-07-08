@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func CopyIndexes(ctx context.Context, db *mongo.Database, srcCol, dstCol *mongo.Collection) error {
+func CopyMongoIndexes(ctx context.Context, srcCol, dstCol *mongo.Collection) error {
 	// Get indexes from source
 	cursor, err := srcCol.Indexes().List(ctx)
 	if err != nil {
