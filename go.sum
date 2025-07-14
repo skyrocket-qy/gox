@@ -6,6 +6,8 @@ github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ3
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/go-echarts/go-echarts/v2 v2.6.0 h1:4wEquGT/I7lipHnOCh/z3qa8E4dY0SYFdEEnaTzzzvU=
+github.com/go-echarts/go-echarts/v2 v2.6.0/go.mod h1:56YlvzhW/a+du15f3S2qUGNDfKnFOeJSThBIrVFHDtI=
 github.com/godbus/dbus/v5 v5.0.4/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5xrFpKfA=
 github.com/gogf/gf/v2 v2.9.0 h1:semN5Q5qGjDQEv4620VzxcJzJlSD07gmyJ9Sy9zfbHk=
 github.com/gogf/gf/v2 v2.9.0/go.mod h1:sWGQw+pLILtuHmbOxoe0D+0DdaXxbleT57axOLH2vKI=
