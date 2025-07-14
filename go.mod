@@ -1,6 +1,6 @@
-module github.com/skyrocketOoO/gox
+module github.com/skyrocket-qy/gox
 
-replace github.com/skyrocketOoO/gox => .
+replace github.com/skyrocket-qy/gox => .
 
 go 1.24.4
 
