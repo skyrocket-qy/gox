@@ -1,0 +1,1 @@
+The operator const definition use to avoid hard code string
