@@ -5,6 +5,7 @@ replace github.com/skyrocket-qy/gox => .
 go 1.24.4
 
 require (
+	github.com/go-echarts/go-echarts/v2 v2.6.0
 	github.com/gogf/gf/v2 v2.9.0
 	github.com/nyaruka/phonenumbers v1.6.3
 	github.com/oleiade/reflections v1.1.0
@@ -19,7 +20,6 @@ require (
 require (
 	github.com/boombuler/barcode v1.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/go-echarts/go-echarts/v2 v2.6.0 // indirect
 	github.com/golang/snappy v1.0.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect

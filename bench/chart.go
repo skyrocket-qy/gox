@@ -18,7 +18,12 @@ func generateLineItems() []opts.LineData {
 	return items
 }
 
-func writeChartToFile(filename string) error {
+type LineData struct {
+	Name string
+	Data []opts.LineData
+}
+
+func WriteChartToFile(filename string, x []string, datas ...LineData) error {
 	line := charts.NewLine()
 	line.SetGlobalOptions(
 		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeWesteros}),
@@ -27,11 +32,12 @@ func writeChartToFile(filename string) error {
 			Subtitle: "Line chart rendered by the http server this time",
 		}))
 
-	line.SetXAxis([]string{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}).
-		AddSeries("Category A", generateLineItems()).
-		AddSeries("Category B", generateLineItems()).
+	line.SetXAxis(x).
 		SetSeriesOptions(charts.WithLineChartOpts(opts.LineChart{Smooth: opts.Bool(true)}))
 
+	for _, data := range datas {
+		line.AddSeries(data.Name, data.Data)
+	}
 	f, err := os.Create(filename)
 	if err != nil {
 		return err
@@ -40,8 +46,3 @@ func writeChartToFile(filename string) error {
 
 	return line.Render(f)
 }
-
-// func main() {
-// 	http.HandleFunc("/", httpserver)
-// 	http.ListenAndServe(":8081", nil)
-// }
