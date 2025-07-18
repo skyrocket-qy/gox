@@ -7,11 +7,7 @@ import (
 
 type Err string
 
-func (e Err) Code() string {
-	return string(e)
-}
-
-func (e Err) Msg() string {
+func (e Err) Str() string {
 	return string(e)
 }
 
