@@ -11,7 +11,7 @@ require (
 	github.com/oleiade/reflections v1.1.0
 	github.com/rs/zerolog v1.34.0
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
-	github.com/skyrocketOoO/erx v0.3.18
+	github.com/skyrocket-qy/erx v0.3.18
 	go.mongodb.org/mongo-driver v1.17.4
 	golang.org/x/crypto v0.39.0
 	gorm.io/gorm v1.30.0
