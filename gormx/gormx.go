@@ -1,7 +1,7 @@
 package gormx
 
 import (
-	"github.com/skyrocketOoO/erx"
+	"github.com/skyrocket-qy/erx"
 	"gorm.io/gorm"
 )
 
