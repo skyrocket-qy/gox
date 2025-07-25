@@ -1,43 +1,64 @@
 package middleware
 
 import (
+	"errors"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/skyrocket-qy/erx"
 )
 
-func Jwt() gin.HandlerFunc {
+type InterAuthMid struct{}
+
+func NewInterAuthMid() *InterAuthMid {
+	return &InterAuthMid{}
+}
+
+func (a *InterAuthMid) CheckAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Get the token from the Authorization header
-		authHeader := c.GetHeader("Authorization")
-		if authHeader == "" || len(authHeader) <= 7 || authHeader[:7] != "Bearer " {
-			pkg.Bind(c, erx.New(pkg.ErrMissingAuthorizationHeader))
-			c.Abort()
+		token := c.GetHeader("Authorization")
+		if token == "" {
+			httpx.Bind(c, erx.New(pkg.ErrMissingAuthorizationHeader))
+
 			return
 		}
 
-		tokenString := authHeader[7:]
+		const bearerPrefix = "Bearer "
 
-		// Parse and validate the token
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			// Validate the signing method
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, jwt.ErrSignatureInvalid
-			}
-			return cfg.Cfg.Jwt.Secret, nil
-		})
-		if err != nil || !token.Valid {
-			pkg.Bind(c, erx.New(pkg.ErrUnauthorized))
-			c.Abort()
+		token = strings.TrimPrefix(token, bearerPrefix)
+
+		calm, err := ParseJWT(token, []byte(cfg.Cfg.Jwt.Secret))
+		if err != nil {
+			httpx.Bind(c, erx.W(err).SetCode(pkg.ErrUnauthorized))
+
 			return
 		}
 
-		// Token is valid, store the claims in the context
-		if claims, ok := token.Claims.(jwt.RegisteredClaims); ok {
-			c.Set("userID", claims.Subject)
-		}
+		c.Set("userId", calm.Issuer)
 
-		// Continue to the next handler
 		c.Next()
 	}
+}
+
+func ParseJWT(tokenString string, secret []byte) (*jwt.RegisteredClaims, error) {
+	claims := &jwt.RegisteredClaims{}
+
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		// Check that the signing method is HMAC
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("unexpected signing method")
+		}
+		return secret, nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, errors.New("invalid token")
+	}
+
+	return claims, nil
 }
