@@ -7,10 +7,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/skyrocket-qy/erx"
+	"github.com/skyrocket-qy/gox/errcode"
 	"github.com/skyrocket-qy/gox/httpx"
 )
 
-type InterAuthMid struct{}
+type InterAuthMid struct {
+	errBinder *httpx.ErrBinder
+}
 
 func NewInterAuthMid() *InterAuthMid {
 	return &InterAuthMid{}
@@ -20,7 +23,7 @@ func (a *InterAuthMid) CheckAuth(jwtSecret []byte) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.GetHeader("Authorization")
 		if token == "" {
-			httpx.Bind(c, erx.New(pkg.ErrMissingAuthorizationHeader))
+			a.errBinder.Bind(c, erx.New(errcode.ErrMissingAuthorizationHeader))
 
 			return
 		}
@@ -31,7 +34,7 @@ func (a *InterAuthMid) CheckAuth(jwtSecret []byte) gin.HandlerFunc {
 
 		calm, err := ParseJWT(token, jwtSecret)
 		if err != nil {
-			httpx.Bind(c, erx.W(err).SetCode(pkg.ErrUnauthorized))
+			a.errBinder.Bind(c, erx.W(err).SetCode(errcode.ErrUnauthorized))
 
 			return
 		}

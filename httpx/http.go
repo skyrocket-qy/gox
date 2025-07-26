@@ -34,7 +34,8 @@ func (b *ErrBinder) Bind(c *gin.Context, err error) {
 		c.JSON(http.StatusInternalServerError, ErrResp{ReqId: reqId, Code: erx.ErrUnknown.Str()})
 
 		callerInfos := getCallStack(2)
-		log.Error().Err(err).Str("call", fmt.Sprintf("%+v", callerInfos)).Msg("error not wrapped by erx")
+		log.Error().Err(err).Str("call",
+			fmt.Sprintf("%+v", callerInfos)).Msg("error not wrapped by erx")
 		return
 	}
 
