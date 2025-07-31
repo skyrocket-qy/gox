@@ -36,6 +36,7 @@ func (a *InterAuthMid) CheckAuth(jwtSecret []byte) gin.HandlerFunc {
 		if err != nil {
 			a.errBinder.Bind(c, erx.W(err).SetCode(errcode.ErrUnauthorized))
 
+			
 			return
 		}
 
