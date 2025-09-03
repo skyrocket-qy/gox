@@ -3,7 +3,7 @@ package errcode
 import (
 	"net/http"
 
-	"github.com/skyrocket-qy/gox/erx"
+	"github.com/skyrocket-qy/erx"
 )
 
 type err string

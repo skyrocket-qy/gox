@@ -10,7 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
-	"github.com/skyrocket-qy/gox/erx"
+	"github.com/skyrocket-qy/erx"
 )
 
 type ErrBinder struct {
@@ -40,8 +40,8 @@ func (b *ErrBinder) Bind(c *gin.Context, err error) {
 	}
 
 	e := log.Error()
-	if ctxErr.Cause != "" {
-		e.Str("cause", ctxErr.Cause)
+	if ctxErr.Unwrap().Error() != "" {
+		e.Str("cause", ctxErr.Unwrap().Error())
 	}
 	e.Str("code", ctxErr.Code.Str())
 
