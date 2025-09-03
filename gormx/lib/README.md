@@ -1,0 +1,1 @@
+This directory contains core library components for GORM extensions.

@@ -1,0 +1,1 @@
+This directory contains common utilities and helper functions.

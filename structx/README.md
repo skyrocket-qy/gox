@@ -1,0 +1,1 @@
+This directory contains struct-related utilities and helpers.

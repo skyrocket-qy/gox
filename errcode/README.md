@@ -1,0 +1,1 @@
+This directory defines error codes for the application.

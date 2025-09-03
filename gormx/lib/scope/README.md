@@ -1,0 +1,1 @@
+This directory contains GORM scope implementations.

@@ -1,0 +1,1 @@
+This directory contains GORM where clause utilities.

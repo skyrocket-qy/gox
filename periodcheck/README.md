@@ -1,0 +1,1 @@
+This directory contains period checking functionalities.

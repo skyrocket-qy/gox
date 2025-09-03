@@ -1,0 +1,1 @@
+This directory contains general utilities for GORM extensions.
