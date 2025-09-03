@@ -13,13 +13,32 @@ func ToString(v any) string {
 		return strconv.FormatBool(val)
 	case int:
 		return strconv.Itoa(val)
-	case int8, int16, int32, int64:
-		return strconv.FormatInt(val.(int64), 10)
-	case uint, uint8, uint16, uint32, uint64:
-		return strconv.FormatUint(val.(uint64), 10)
-	case float32, float64:
-		return strconv.FormatFloat(val.(float64), 'f', -1, 64)
+	case int8:
+		return strconv.FormatInt(int64(val), 10)
+	case int16:
+		return strconv.FormatInt(int64(val), 10)
+	case int32:
+		return strconv.FormatInt(int64(val), 10)
+	case int64:
+		return strconv.FormatInt(val, 10)
+	case uint:
+		return strconv.FormatUint(uint64(val), 10)
+	case uint8:
+		return strconv.FormatUint(uint64(val), 10)
+	case uint16:
+		return strconv.FormatUint(uint64(val), 10)
+	case uint32:
+		return strconv.FormatUint(uint64(val), 10)
+	case uint64:
+		return strconv.FormatUint(val, 10)
+	case float32:
+		return strconv.FormatFloat(float64(val), 'f', -1, 32)
+	case float64:
+		return strconv.FormatFloat(val, 'f', -1, 64)
 	default:
-		return fmt.Sprintf("%v", val)
+		if v == nil {
+			return "<nil>"
+		}
+		return fmt.Sprintf("%v", v)
 	}
 }
