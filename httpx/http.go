@@ -40,8 +40,9 @@ func (b *ErrBinder) Bind(c *gin.Context, err error) {
 	}
 
 	e := log.Error()
-	if ctxErr.Unwrap().Error() != "" {
-		e.Str("cause", ctxErr.Unwrap().Error())
+	underlyingErr := ctxErr.Unwrap()
+	if underlyingErr != nil && underlyingErr.Error() != "" {
+		e.Str("cause", underlyingErr.Error())
 	}
 	e.Str("code", ctxErr.Code.Str())
 
@@ -91,6 +92,9 @@ func filterCallerInfos(infos []erx.CallerInfo) []erx.CallerInfo {
 		} else {
 			break
 		}
+	}
+	if filtered == nil {
+		return []erx.CallerInfo{}
 	}
 	return filtered
 }
