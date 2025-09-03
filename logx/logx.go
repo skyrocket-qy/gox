@@ -1,43 +1,37 @@
 package logx
 
-import "github.com/rs/zerolog/log"
+import (
+	"context"
 
-func Infof(format string, args ...any) {
-	log.Info().CallerSkipFrame(1).Msgf(format, args...)
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+	"go.opentelemetry.io/otel/trace"
+)
+
+func Info(ctx context.Context) *zerolog.Event {
+	return newWithSpan(ctx, zerolog.InfoLevel)
 }
 
-func Errorf(format string, args ...any) {
-	log.Error().CallerSkipFrame(1).Msgf(format, args...)
+func Debug(ctx context.Context) *zerolog.Event {
+	return newWithSpan(ctx, zerolog.DebugLevel)
 }
 
-func Warnf(format string, args ...any) {
-	log.Warn().CallerSkipFrame(1).Msgf(format, args...)
+func Warn(ctx context.Context) *zerolog.Event {
+	return newWithSpan(ctx, zerolog.WarnLevel)
 }
 
-func Debugf(format string, args ...any) {
-	log.Debug().CallerSkipFrame(1).Msgf(format, args...)
+func Error(ctx context.Context) *zerolog.Event {
+	return newWithSpan(ctx, zerolog.ErrorLevel)
 }
 
-func Fatalf(format string, args ...any) {
-	log.Fatal().CallerSkipFrame(1).Msgf(format, args...)
-}
+func newWithSpan(ctx context.Context, lvl zerolog.Level) *zerolog.Event {
+	span := trace.SpanFromContext(ctx)
 
-func Info(msg string) {
-	log.Info().CallerSkipFrame(1).Msg(msg)
-}
+	e := log.WithLevel(lvl).CallerSkipFrame(1) //nolint:zerologlint
+	if span.SpanContext().IsValid() {
+		e = e.Str("trace_id", span.SpanContext().TraceID().String()).
+			Str("span_id", span.SpanContext().SpanID().String())
+	}
 
-func Error(msg string) {
-	log.Error().CallerSkipFrame(1).Msg(msg)
-}
-
-func Warn(msg string) {
-	log.Warn().CallerSkipFrame(1).Msg(msg)
-}
-
-func Debug(msg string) {
-	log.Debug().CallerSkipFrame(1).Msg(msg)
-}
-
-func Fatal(msg string) {
-	log.Fatal().CallerSkipFrame(1).Msg(msg)
+	return e
 }

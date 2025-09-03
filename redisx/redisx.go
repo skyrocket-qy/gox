@@ -4,21 +4,83 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
+	"os"
 	"time"
 
 	"github.com/redis/go-redis/v9"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 const (
 	JobStatusCompleted = "completed"
 )
 
+// Try attempts to execute a job until it is successfully marked as complete,
+// gracefully handling context cancellation. It returns an error if the context
+// is canceled before the job can be completed.
+func Try(ctx context.Context, rdb *redis.Client, baseKey string, lockTTL time.Duration, job func() error) error {
+	log := zerolog.New(os.Stderr).With().Timestamp().Logger()
+
+	errorRetryDelay := 1 * time.Second
+	const maxErrorRetryDelay = 30 * time.Second
+	const lockPollInterval = 3 * time.Second
+
+	for {
+		// First, check if the context has been canceled before we even try.
+		if err := ctx.Err(); err != nil {
+			log.Warn().Msg("Context canceled before starting job attempt.")
+			return err
+		}
+
+		isFinished, err := ExecuteExactlyOnce(ctx, rdb, baseKey, lockTTL, job)
+
+		if err != nil {
+			log.Error().Err(err).Msgf("Error during job execution, will retry in %v", errorRetryDelay)
+
+			// Replace time.Sleep with a context-aware select block
+			select {
+			case <-ctx.Done():
+				log.Info().Msg("Context canceled during error backoff period.")
+				return ctx.Err()
+			case <-time.After(errorRetryDelay):
+				// The timer finished, continue to the next iteration.
+			}
+
+			errorRetryDelay *= 2
+			if errorRetryDelay > maxErrorRetryDelay {
+				errorRetryDelay = maxErrorRetryDelay
+			}
+			continue
+		}
+
+		errorRetryDelay = 1 * time.Second
+
+		if isFinished {
+			log.Info().Msgf("Job '%s' is complete.", baseKey)
+			return nil // Success!
+		}
+
+		log.Info().Msgf("Job '%s' is locked by another instance. Polling again in %v.", baseKey, lockPollInterval)
+
+		// Replace the second time.Sleep with a context-aware select block
+		select {
+		case <-ctx.Done():
+			log.Info().Msg("Context canceled while waiting for job lock.")
+			return ctx.Err()
+		case <-time.After(lockPollInterval):
+			// The timer finished, continue to the next iteration.
+		}
+	}
+}
+
 // ExecuteExactlyOnce ensures a job is performed only once across all services.
 // It uses a permanent status key to check for prior completion and a temporary
 // lock to prevent concurrent execution.
 // It returns true if the job was executed by this call, false otherwise.
-func ExecuteExactlyOnce(ctx context.Context, rdb *redis.Client, baseKey string, lockTTL time.Duration, job func() error) (bool, error) {
+func ExecuteExactlyOnce(ctx context.Context, rdb *redis.Client, baseKey string, lockTTL time.Duration,
+	job func() error) (isFinished bool, err error,
+) {
 	statusKey := fmt.Sprintf("job:status:%s", baseKey)
 	lockKey := fmt.Sprintf("job:lock:%s", baseKey)
 
@@ -30,7 +92,7 @@ func ExecuteExactlyOnce(ctx context.Context, rdb *redis.Client, baseKey string, 
 	}
 	if status == JobStatusCompleted {
 		log.Printf("Job '%s' was already completed. Skipping.", baseKey)
-		return false, nil
+		return true, nil
 	}
 
 	// 2. Attempt to acquire the temporary lock.

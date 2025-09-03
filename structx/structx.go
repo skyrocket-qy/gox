@@ -19,7 +19,7 @@ func InitFields(v any) {
 	for i := 0; i < val.NumField(); i++ {
 		field := val.Field(i)
 
-		if field.Kind() == reflect.Ptr && field.IsNil() {
+		if field.Kind() == reflect.Pointer && field.IsNil() {
 			field.Set(reflect.New(field.Type().Elem()))
 
 			if field.Type().Elem().Kind() == reflect.Struct {
