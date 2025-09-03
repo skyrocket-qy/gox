@@ -74,15 +74,14 @@ func CallField[Self any](
 	name string,
 	arguments []reflect.Value,
 ) (out []reflect.Value, throw error) {
-	value := ValueOf(it, false)
+	value := reflect.ValueOf(it) // Use the reflect.Value of the pointer directly
 
-	_, ok := value.Type().MethodByName(name)
-	if false == ok {
+	// Check if the method exists on the pointer receiver
+	method := value.MethodByName(name)
+	if !method.IsValid() {
 		throw = gerror.NewCodef(gcode.CodeInvalidParameter, "method is not exist: %s", name)
 		return
 	}
-
-	method := value.MethodByName(name)
 
 	count := len(arguments)
 	if method.Type().NumIn() != count {
@@ -94,11 +93,22 @@ func CallField[Self any](
 		return
 	}
 
+	defer func() {
+		if r := recover(); r != nil {
+			throw = gerror.NewCodef(gcode.CodeInvalidParameter, "failed to call method %s: %v", name, r)
+		}
+	}()
+
 	out = method.Call(arguments)
 	return
 }
 
 func GetMap[Out any, In any](it *In) (out map[string]Out, throw error) {
+	// Add a check for nil input
+	if reflect.ValueOf(it).IsNil() {
+		return nil, gerror.NewCode(gcode.CodeInvalidParameter, "input cannot be nil")
+	}
+
 	anyOut, throw := reflections.ItemsDeep(it)
 	if nil != throw {
 		return
