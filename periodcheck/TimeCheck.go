@@ -62,7 +62,7 @@ func FixedTimeCheck(
 			return errors.New("timeout")
 		}
 		log.Printf("Current status is %d, waiting to %d\n", curStatus, targetStatus)
-		time.Sleep(interval * time.Second)
+		time.Sleep(interval)
 	}
 
 	return nil
@@ -89,7 +89,7 @@ func ExponentialTimeCheck(
 			return errors.New("timeout")
 		}
 		log.Printf("Current status is %d, waiting for %d\n", curStatus, targetStatus)
-		time.Sleep(interval * time.Second)
+		time.Sleep(interval)
 		interval *= 2
 	}
 
@@ -121,7 +121,7 @@ func DiffTimeCheck(
 			min(
 				time.Duration((curStatus-targetStatus))*diffInterval,
 				maxInterval,
-			) * time.Second,
+			),
 		)
 	}
 
@@ -151,14 +151,20 @@ func SelfAdaptiveTimeCheck(
 		}
 		log.Printf("Current status is %d, waiting for %d\n", curStatus, targetStatus)
 		if preDiff == 0 {
-			time.Sleep(startInterval * time.Second)
+			time.Sleep(startInterval)
 			preDiff, preInterval = time.Duration(abs(curStatus-targetStatus)), startInterval
 		} else {
 			diff := time.Duration(abs(curStatus - targetStatus))
-			unitInterval := preInterval / time.Duration(abs(int(diff-preDiff)))
-			interval := min(unitInterval*diff, maxInterval)
-			time.Sleep(interval * time.Second)
-			preDiff, preInterval = diff, interval
+							denominator := abs(int(diff - preDiff))
+				if denominator == 0 {
+					time.Sleep(maxInterval) // Or some other sensible default
+					preDiff, preInterval = diff, maxInterval // Update preInterval as well
+				} else {
+					unitInterval := preInterval / time.Duration(denominator)
+					interval := min(unitInterval*diff, maxInterval)
+					time.Sleep(interval)
+					preDiff, preInterval = diff, interval
+				}
 		}
 	}
 

@@ -8,7 +8,7 @@ import (
 )
 
 func Parse(phone string) (out *phonenumbers.PhoneNumber, throw error) {
-	region := "US"
+	region := ""
 	data, throw := phonenumbers.Parse(phone, region)
 	if nil != throw {
 		return
