@@ -278,3 +278,56 @@ func TestToExcel2D(t *testing.T) {
 		})
 	}
 }
+
+func TestGetGroup(t *testing.T) {
+	tests := []struct {
+		name  string
+		table [][]string
+		left  int
+		right int
+		want  [][]string
+	}{
+		{
+			name:  "basic case",
+			table: [][]string{{"A", "B", "C"}, {"1", "2", "3"}, {"4", "5", "6"}},
+			left:  1,
+			right: 2,
+			want:  [][]string{{"B", "C"}, {"2", "3"}, {"5", "6"}},
+		},
+		{
+			name:  "empty table",
+			table: [][]string{},
+			left:  0,
+			right: 0,
+			want:  [][]string{},
+		},
+		{
+			name:  "right out of bounds",
+			table: [][]string{{"A", "B"}, {"1", "2"}},
+			left:  0,
+			right: 2, // Out of bounds for row[1:]
+			want:  [][]string{{"A", "B"}, {"1", "2"}},
+		},
+		{
+			name:  "left and right same",
+			table: [][]string{{"A", "B", "C"}, {"1", "2", "3"}},
+			left:  1,
+			right: 1,
+			want:  [][]string{{"B"}, {"2"}},
+		},
+		{
+			name:  "single row table",
+			table: [][]string{{"A", "B", "C"}},
+			left:  0,
+			right: 2,
+			want:  [][]string{{"A", "B", "C"}},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			got := GetGroup(tc.table, tc.left, tc.right)
+			assert.Equal(t, tc.want, got)
+		})
+	}
+}

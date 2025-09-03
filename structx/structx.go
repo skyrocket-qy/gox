@@ -9,10 +9,8 @@ func DeepNew[V any]() *V {
 }
 
 func InitFields(v any) {
-	if v == nil || reflect.ValueOf(v).IsNil() {
-		typ := reflect.TypeOf(v).Elem()
-		newA := reflect.New(typ).Interface()
-		v = newA
+	if !isNonNilPointerOfStruct(v) {
+		return
 	}
 	val := reflect.ValueOf(v).Elem()
 
