@@ -7,6 +7,7 @@ go 1.25.0
 require (
 	github.com/gin-gonic/gin v1.10.1
 	github.com/go-echarts/go-echarts/v2 v2.6.2
+	github.com/go-redis/redismock/v9 v9.2.0
 	github.com/gogf/gf/v2 v2.9.3
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/nyaruka/phonenumbers v1.6.5
