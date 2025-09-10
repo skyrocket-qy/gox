@@ -1,8 +1,8 @@
 package stringmatch
 
 // reference: https://magiclen.org/boyer-moore-magiclen/
-func BoyerMoore()
+func BoyerMoore() {}
 
-func goodSuffixShift()
+func goodSuffixShift() {}
 
-func badCharacterShift()
+func badCharacterShift() {}
