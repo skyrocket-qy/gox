@@ -277,7 +277,9 @@ func TestGetFunctionName(t *testing.T) {
 
 func TestGetCallerName(t *testing.T) {
 	// Helper function to test GetCallerName
-	helperFunc := GetCallerName
+	helperFunc := func(skip int, shortName bool) string {
+		return GetCallerName(skip, shortName)
+	}
 
 	// Test GetCallerName from within a test function
 	// skip = 0: GetCallerName itself
