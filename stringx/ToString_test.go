@@ -1,7 +1,9 @@
-package common
+package stringx_test
 
 import (
 	"testing"
+
+	"github.com/skyrocket-qy/gox/stringx"
 )
 
 func TestToString(t *testing.T) {
@@ -34,7 +36,7 @@ func TestToString(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ToString(tt.input); got != tt.want {
+			if got := stringx.ToString(tt.input); got != tt.want {
 				t.Errorf("ToString() = %v, want %v", got, tt.want)
 			}
 		})
