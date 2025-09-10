@@ -1,4 +1,4 @@
-package main
+package bitx
 
 func Multiple2(in int) int {
 	return in << 1
