@@ -2,6 +2,7 @@ package redisx
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -18,7 +19,11 @@ func BloomFilterExists(ctx context.Context, rdb *redis.Client, key, value string
 		return false, err
 	}
 
-	return res.(int64) == 1, nil
+	if val, ok := res.(int64); ok {
+		return val == 1, nil
+	}
+
+	return false, fmt.Errorf("unexpected type for BF.EXISTS result: %T", res)
 }
 
 // BloomFilterReserve reserves a bloom filter with a specific error rate and capacity.

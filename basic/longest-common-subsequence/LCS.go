@@ -10,24 +10,26 @@ func LongestCommonSubsequence(text1, text2 string) int {
 
 	for i := range m {
 		for j := range n {
-			if text1[i] == text2[j] {
+			switch text1[i] {
+			case text2[j]:
+				prevVal := 0
 				if i > 0 && j > 0 {
-					arr[i][j] = arr[i-1][j-1] + 1
-				} else {
-					arr[i][j] = 1
+					prevVal = arr[i-1][j-1]
 				}
-			} else if i > 0 {
+
+				arr[i][j] = prevVal + 1
+			default: // text1[i] != text2[j]
+				val1 := 0
+				if i > 0 {
+					val1 = arr[i-1][j]
+				}
+
+				val2 := 0
 				if j > 0 {
-					if arr[i-1][j] >= arr[i][j-1] {
-						arr[i][j] = arr[i-1][j]
-					} else {
-						arr[i][j] = arr[i][j-1]
-					}
-				} else {
-					arr[i][j] = arr[i-1][j]
+					val2 = arr[i][j-1]
 				}
-			} else if j > 0 {
-				arr[i][j] = arr[i][j-1]
+
+				arr[i][j] = max(val1, val2)
 			}
 		}
 	}

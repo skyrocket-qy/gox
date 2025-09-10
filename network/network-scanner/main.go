@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"sync"
 
 	"github.com/skyrocket-qy/gox/network/network-scanner/utils"
@@ -13,16 +14,31 @@ func main() {
 		startPort, endPort int
 	)
 
-	fmt.Print("Enter hostname or IP: ")
-	fmt.Scanln(&hostname)
-	fmt.Print("Enter protocol (tcp or tcp6): ")
-	fmt.Scanln(&protocol)
-	fmt.Print("Enter start port: ")
-	fmt.Scanln(&startPort)
-	fmt.Print("Enter end port: ")
-	fmt.Scanln(&endPort)
+	log.Print("Enter hostname or IP: ")
 
-	fmt.Printf(
+	if _, err := fmt.Scanln(&hostname); err != nil {
+		log.Fatalf("Error reading hostname: %v", err)
+	}
+
+	log.Print("Enter protocol (tcp or tcp6): ")
+
+	if _, err := fmt.Scanln(&protocol); err != nil {
+		log.Fatalf("Error reading protocol: %v", err)
+	}
+
+	log.Print("Enter start port: ")
+
+	if _, err := fmt.Scanln(&startPort); err != nil {
+		log.Fatalf("Error reading start port: %v", err)
+	}
+
+	log.Print("Enter end port: ")
+
+	if _, err := fmt.Scanln(&endPort); err != nil {
+		log.Fatalf("Error reading end port: %v", err)
+	}
+
+	log.Printf(
 		"Scanning %s (%s) for open ports (%d-%d)...\n",
 		hostname,
 		protocol,
@@ -35,5 +51,5 @@ func main() {
 	utils.ScanPorts(protocol, hostname, startPort, endPort, &wg)
 
 	wg.Wait()
-	fmt.Println("Scan complete.")
+	log.Println("Scan complete.")
 }

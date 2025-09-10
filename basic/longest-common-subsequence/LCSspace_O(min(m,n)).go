@@ -12,11 +12,12 @@ func LongestCommonSubsequence3(text1, text2 string) int {
 
 	for i := range m {
 		for j := 1; j <= n; j++ {
-			if text1[i] == text2[j-1] {
+			switch {
+			case text1[i] == text2[j-1]:
 				arr2[j] = arr1[j-1] + 1
-			} else if arr2[j-1] >= arr1[j] {
+			case arr2[j-1] >= arr1[j]:
 				arr2[j] = arr2[j-1]
-			} else {
+			default:
 				arr2[j] = arr1[j]
 			}
 		}

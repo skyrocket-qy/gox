@@ -61,28 +61,44 @@ func StrToType[T any](s string) (T, error) {
 
 	switch t.Kind() {
 	case reflect.String:
-		return any(s).(T), nil
+		if assertedVal, ok := any(s).(T); ok {
+			return assertedVal, nil
+		}
+
+		return zero, fmt.Errorf("failed to assert string to type %v", t)
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		i, err := strconv.ParseInt(s, 10, 64)
 		if err != nil {
 			return zero, err
 		}
 
-		return any(int(i)).(T), nil // careful, might truncate for smaller ints
+		if assertedVal, ok := any(int(i)).(T); ok {
+			return assertedVal, nil
+		}
+
+		return zero, fmt.Errorf("failed to assert int to type %v", t)
 	case reflect.Float32, reflect.Float64:
 		f, err := strconv.ParseFloat(s, 64)
 		if err != nil {
 			return zero, err
 		}
 
-		return any(f).(T), nil
+		if assertedVal, ok := any(f).(T); ok {
+			return assertedVal, nil
+		}
+
+		return zero, fmt.Errorf("failed to assert float to type %v", t)
 	case reflect.Bool:
 		b, err := strconv.ParseBool(s)
 		if err != nil {
 			return zero, err
 		}
 
-		return any(b).(T), nil
+		if assertedVal, ok := any(b).(T); ok {
+			return assertedVal, nil
+		}
+
+		return zero, fmt.Errorf("failed to assert bool to type %v", t)
 	default:
 		return zero, fmt.Errorf("unsupported type %v", t)
 	}
@@ -205,10 +221,8 @@ func ToExcelGroup[GroupKey comparable](
 			preGroupKey = groupKey
 			groupKeys = append(groupKeys, groupKey)
 			left = i + 1
-		} else {
-			if left == 0 {
-				return nil, nil, errors.New("group key not found")
-			}
+		} else if left == 0 {
+			return nil, nil, errors.New("group key not found")
 		}
 
 		if i == len(table[0])-1 {

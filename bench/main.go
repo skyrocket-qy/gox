@@ -1,5 +1,9 @@
 package main
 
+import "log"
+
 func main() {
-	WriteChartToFile("chart.html", []string{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"})
+	if err := WriteChartToFile("chart.html", []string{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}); err != nil {
+		log.Printf("Error writing chart to file: %v", err)
+	}
 }

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"math/rand"
+	"math/rand/v2"
 	"os"
 
 	"github.com/go-echarts/go-echarts/v2/charts"
@@ -13,7 +13,7 @@ import (
 func generateLineItems() []opts.LineData {
 	items := make([]opts.LineData, 0)
 	for range 7 {
-		items = append(items, opts.LineData{Value: rand.Intn(300)})
+		items = append(items, opts.LineData{Value: rand.IntN(300)})
 	}
 
 	return items
@@ -44,7 +44,12 @@ func WriteChartToFile(filename string, x []string, datas ...LineData) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+
+	defer func() {
+		if cerr := f.Close(); cerr != nil && err == nil {
+			err = cerr // Only set err if no other error occurred
+		}
+	}()
 
 	return line.Render(f)
 }

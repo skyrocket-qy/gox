@@ -39,14 +39,14 @@ func TestStrToType(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			switch tt.want.(type) {
+			switch gotType := tt.want.(type) {
 			case string:
 				got, err := StrToType[string](tt.input)
 				if tt.wantErr {
 					assert.Error(t, err)
 				} else {
 					assert.NoError(t, err)
-					assert.Equal(t, tt.want.(string), got)
+					assert.Equal(t, gotType, got)
 				}
 			case int:
 				got, err := StrToType[int](tt.input)
@@ -54,7 +54,7 @@ func TestStrToType(t *testing.T) {
 					assert.Error(t, err)
 				} else {
 					assert.NoError(t, err)
-					assert.Equal(t, tt.want.(int), got)
+					assert.Equal(t, gotType, got)
 				}
 			case float64:
 				got, err := StrToType[float64](tt.input)
@@ -62,7 +62,7 @@ func TestStrToType(t *testing.T) {
 					assert.Error(t, err)
 				} else {
 					assert.NoError(t, err)
-					assert.Equal(t, tt.want.(float64), got)
+					assert.InDelta(t, gotType, got, 0.000001)
 				}
 			case bool:
 				got, err := StrToType[bool](tt.input)
@@ -70,7 +70,7 @@ func TestStrToType(t *testing.T) {
 					assert.Error(t, err)
 				} else {
 					assert.NoError(t, err)
-					assert.Equal(t, tt.want.(bool), got)
+					assert.Equal(t, gotType, got)
 				}
 			}
 		})

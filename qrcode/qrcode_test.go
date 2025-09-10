@@ -1,6 +1,7 @@
 package qrcode
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -33,7 +34,7 @@ func TestGenerateQRCode(t *testing.T) {
 func TestHandler(t *testing.T) {
 	// Test case 1: Successful generation
 	t.Run("Success", func(t *testing.T) {
-		req, err := http.NewRequest(http.MethodGet, "/qrcode", nil)
+		req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, "/qrcode", nil)
 		assert.NoError(t, err)
 
 		rr := httptest.NewRecorder()

@@ -2,6 +2,7 @@ package redisx
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -18,7 +19,11 @@ func CuckooFilterAdd(ctx context.Context, rdb *redis.Client, key, value string) 
 		return false, err
 	}
 
-	return res.(bool), nil
+	if val, ok := res.(bool); ok {
+		return val, nil
+	}
+
+	return false, fmt.Errorf("unexpected type for result: %T", res)
 }
 
 // CuckooFilterAddNX adds an item to the cuckoo filter if it does not exist.
@@ -28,7 +33,11 @@ func CuckooFilterAddNX(ctx context.Context, rdb *redis.Client, key, value string
 		return false, err
 	}
 
-	return res.(bool), nil
+	if val, ok := res.(bool); ok {
+		return val, nil
+	}
+
+	return false, fmt.Errorf("unexpected type for result: %T", res)
 }
 
 // CuckooFilterExists checks if an item exists in the cuckoo filter.
@@ -38,7 +47,11 @@ func CuckooFilterExists(ctx context.Context, rdb *redis.Client, key, value strin
 		return false, err
 	}
 
-	return res.(bool), nil
+	if val, ok := res.(bool); ok {
+		return val, nil
+	}
+
+	return false, fmt.Errorf("unexpected type for result: %T", res)
 }
 
 // CuckooFilterDel deletes an item from the cuckoo filter.
@@ -48,7 +61,11 @@ func CuckooFilterDel(ctx context.Context, rdb *redis.Client, key, value string) 
 		return false, err
 	}
 
-	return res.(bool), nil
+	if val, ok := res.(bool); ok {
+		return val, nil
+	}
+
+	return false, fmt.Errorf("unexpected type for result: %T", res)
 }
 
 // CuckooFilterCount returns the number of items in a cuckoo filter.
@@ -58,5 +75,9 @@ func CuckooFilterCount(ctx context.Context, rdb *redis.Client, key, value string
 		return 0, err
 	}
 
-	return res.(int64), nil
+	if val, ok := res.(int64); ok {
+		return val, nil
+	}
+
+	return 0, fmt.Errorf("unexpected type for result: %T", res)
 }

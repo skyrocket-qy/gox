@@ -3,6 +3,7 @@ package body
 import (
 	"bytes"
 	"compress/gzip"
+	"errors"
 	"io"
 
 	"google.golang.org/protobuf/proto"
@@ -38,7 +39,12 @@ func Decode[T proto.Message](data []byte) (T, error) {
 	if err != nil {
 		return out, err
 	}
-	defer gz.Close()
+
+	defer func() {
+		if cerr := gz.Close(); cerr != nil && err == nil {
+			err = cerr
+		}
+	}()
 
 	decompressed, err := io.ReadAll(gz)
 	if err != nil {
@@ -50,5 +56,9 @@ func Decode[T proto.Message](data []byte) (T, error) {
 		return out, err
 	}
 
-	return msg.(T), nil
+	if assertedMsg, ok := msg.(T); ok {
+		return assertedMsg, nil
+	}
+
+	return out, errors.New("failed to assert type of decoded message")
 }

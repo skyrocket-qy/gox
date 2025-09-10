@@ -1,7 +1,5 @@
 module github.com/skyrocket-qy/gox
 
-replace github.com/skyrocket-qy/gox => .
-
 go 1.25.0
 
 require (

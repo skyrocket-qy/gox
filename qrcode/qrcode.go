@@ -46,5 +46,9 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "image/png")
-	w.Write(png)
+
+	if _, err := w.Write(png); err != nil {
+		// Log the error, as we can't do much else
+		_ = err // Suppress the error if not logging
+	}
 }

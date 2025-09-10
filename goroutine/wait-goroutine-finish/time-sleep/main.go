@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"time"
 )
 
@@ -16,6 +16,6 @@ func main() {
 func say(s string) {
 	for range 5 {
 		time.Sleep(100 * time.Millisecond)
-		fmt.Println(s)
+		log.Println(s)
 	}
 }

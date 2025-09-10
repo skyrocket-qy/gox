@@ -9,7 +9,7 @@ import (
 func CreateOrReplaceFile(path, code string) error {
 	// Ensure the folder path exists
 	dir := filepath.Dir(path)
-	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return fmt.Errorf("failed to create directories: %w", err)
 	}
 
@@ -29,7 +29,12 @@ func CreateOrReplaceFile(path, code string) error {
 	if err != nil {
 		return fmt.Errorf("failed to create file: %w", err)
 	}
-	defer file.Close()
+
+	defer func() {
+		if cerr := file.Close(); cerr != nil && err == nil {
+			err = cerr
+		}
+	}()
 
 	// Write the code to the file
 	if _, err := file.WriteString(code); err != nil {

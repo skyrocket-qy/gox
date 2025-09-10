@@ -118,7 +118,11 @@ func tryJobExecution(
 
 	// --- Lock Acquired ---
 	// Use defer to guarantee the lock is released on all exit paths.
-	defer rdb.Del(context.Background(), lockKey).Err() // Use background context for cleanup.
+	defer func() {
+		if err := rdb.Del(ctx, lockKey).Err(); err != nil && attemptErr == nil {
+			attemptErr = fmt.Errorf("failed to release lock: %w", err)
+		}
+	}()
 
 	// Double-check job status after acquiring the lock.
 	// This handles the edge case where a worker completed the job but crashed before releasing the

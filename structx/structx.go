@@ -16,7 +16,7 @@ func InitFields(v any) {
 
 	val := reflect.ValueOf(v).Elem()
 
-	for i := 0; i < val.NumField(); i++ {
+	for i := range val.NumField() {
 		field := val.Field(i)
 
 		if field.Kind() == reflect.Pointer && field.IsNil() {
@@ -31,10 +31,10 @@ func InitFields(v any) {
 }
 
 func initStructFields(val reflect.Value) {
-	for i := 0; i < val.NumField(); i++ {
+	for i := range val.NumField() {
 		field := val.Field(i)
 
-		if field.Kind() == reflect.Ptr && field.IsNil() {
+		if field.Kind() == reflect.Pointer && field.IsNil() {
 			field.Set(reflect.New(field.Type().Elem()))
 
 			if field.Type().Elem().Kind() == reflect.Struct {

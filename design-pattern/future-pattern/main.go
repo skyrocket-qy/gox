@@ -1,13 +1,14 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"sync"
 )
 
 type Revenue struct {
-	Value uint
 	sync.Mutex
+
+	Value uint
 }
 
 func (r *Revenue) Add(value uint, wg *sync.WaitGroup) {
@@ -15,13 +16,13 @@ func (r *Revenue) Add(value uint, wg *sync.WaitGroup) {
 	defer r.Unlock()
 
 	r.Value += value
-	fmt.Printf("Add value: %d\n", value)
+	log.Printf("Add value: %d\n", value)
 	wg.Done()
 }
 
 func main() {
 	rv := Revenue{}
-	fmt.Printf("Revenue value: %d\n", rv.Value)
+	log.Printf("Revenue value: %d\n", rv.Value)
 
 	wg := sync.WaitGroup{}
 	wg.Add(4)
@@ -33,5 +34,5 @@ func main() {
 	// This cannot ensure all goroutines will finish.
 	wg.Wait()
 
-	fmt.Printf("Revenue value: %d\n", rv.Value)
+	log.Printf("Revenue value: %d\n", rv.Value)
 }

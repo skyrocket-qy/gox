@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"sync"
 	"time"
 )
@@ -24,5 +24,5 @@ func main() {
 
 	time.Sleep(time.Second)
 
-	fmt.Println(total.val)
+	log.Println(total.val)
 }

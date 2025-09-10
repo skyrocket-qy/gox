@@ -1,6 +1,7 @@
 package ginw
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
@@ -62,7 +63,7 @@ func TestThrottle(t *testing.T) {
 		mock.ExpectZCard(expectedKey).SetVal(1)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodGet, "/", nil)
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/", nil)
 		req.RemoteAddr = clientIP + ":1234"
 		r.ServeHTTP(w, req)
 		assert.Equal(t, http.StatusOK, w.Code)
@@ -80,7 +81,7 @@ func TestThrottle(t *testing.T) {
 		mock.ExpectZCard(expectedKey).SetVal(2)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodGet, "/", nil)
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/", nil)
 		req.RemoteAddr = clientIP + ":1234"
 		r.ServeHTTP(w, req)
 		assert.Equal(t, http.StatusOK, w.Code)
@@ -98,7 +99,7 @@ func TestThrottle(t *testing.T) {
 		mock.ExpectZCard(expectedKey).SetVal(3)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodGet, "/", nil)
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/", nil)
 		req.RemoteAddr = clientIP + ":1234"
 		r.ServeHTTP(w, req)
 		assert.Equal(t, http.StatusTooManyRequests, w.Code)
@@ -118,7 +119,7 @@ func TestThrottle(t *testing.T) {
 		mock.ExpectZCard(expectedKey).SetVal(1) // Back to 1 request in window
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodGet, "/", nil)
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/", nil)
 		req.RemoteAddr = clientIP + ":1234"
 		r.ServeHTTP(w, req)
 		assert.Equal(t, http.StatusOK, w.Code)

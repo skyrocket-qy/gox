@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"time"
 )
 
@@ -10,7 +10,7 @@ func main() {
 
 	for {
 		if res.Error() != "" {
-			fmt.Println(res.Error())
+			log.Println(res.Error())
 
 			break
 		}
@@ -19,23 +19,23 @@ func main() {
 	}
 
 	resCh := checkChannel()
-	fmt.Println(<-resCh)
+	log.Println(<-resCh)
 }
 
-type Result struct {
+type ResultError struct {
 	ErrorMessage string
 }
 
-func (r Result) Error() string {
+func (r ResultError) Error() string {
 	return r.ErrorMessage
 }
 
 // You can choose any return type, like struct, string, bool ...etc.
 func checkVariable() error {
-	fmt.Println("Variable method...")
+	log.Println("Variable method...")
 
-	err := Result{}
-	go func(err *Result) {
+	err := ResultError{}
+	go func(err *ResultError) {
 		time.Sleep(2 * time.Second)
 
 		err.ErrorMessage = "check variable error"
@@ -45,7 +45,7 @@ func checkVariable() error {
 }
 
 func checkChannel() chan string {
-	fmt.Println("channel method...")
+	log.Println("channel method...")
 
 	ch := make(chan string)
 

@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"log"
+)
 
 // Add is a simple function that will be exposed as a plugin.
 func Add(a, b int) int {
@@ -9,5 +11,5 @@ func Add(a, b int) int {
 
 // Greet prints a greeting message.
 func Greet(name string) {
-	fmt.Printf("Hello, %s!\n", name)
+	log.Printf("Hello, %s!\n", name)
 }

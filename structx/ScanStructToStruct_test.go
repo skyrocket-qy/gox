@@ -12,9 +12,10 @@ type NestedFrom struct {
 }
 
 type FromStruct struct {
+	EmbeddedFrom
+
 	ID     int
 	Nested *NestedFrom
-	EmbeddedFrom
 }
 
 type EmbeddedFrom struct {
@@ -30,9 +31,10 @@ type EmbeddedTo struct {
 }
 
 type ToStruct struct {
-	ID     int
-	Nested NestedTo
 	EmbeddedTo
+
+	ID             int
+	Nested         NestedTo
 	EmbeddedString string
 }
 

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 )
 
 func main() {
@@ -19,7 +19,7 @@ func main() {
 		if i, ok := <-ch; !ok {
 			break
 		} else {
-			fmt.Println(i)
+			log.Println(i)
 		}
 	}
 }

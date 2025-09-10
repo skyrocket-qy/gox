@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"time"
 )
 
@@ -18,5 +18,5 @@ func main() {
 	}
 
 	time.Sleep(time.Second)
-	fmt.Println(<-ch)
+	log.Println(<-ch)
 }

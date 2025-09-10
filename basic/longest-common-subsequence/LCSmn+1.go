@@ -10,11 +10,12 @@ func LongestCommonSubsequence2(text1, text2 string) int {
 
 	for i := 1; i <= m; i++ {
 		for j := 1; j <= n; j++ {
-			if text1[i-1] == text2[j-1] {
+			switch {
+			case text1[i-1] == text2[j-1]:
 				arr[i][j] = arr[i-1][j-1] + 1
-			} else if arr[i-1][j] >= arr[i][j-1] {
+			case arr[i-1][j] >= arr[i][j-1]:
 				arr[i][j] = arr[i-1][j]
-			} else {
+			default:
 				arr[i][j] = arr[i][j-1]
 			}
 		}

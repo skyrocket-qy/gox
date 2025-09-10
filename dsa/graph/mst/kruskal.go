@@ -37,11 +37,12 @@ func (g *Graph) union(parent, rank []int, x, y int) {
 	xroot := g.find(parent, x)
 	yroot := g.find(parent, y)
 
-	if rank[xroot] < rank[yroot] {
+	switch {
+	case rank[xroot] < rank[yroot]:
 		parent[xroot] = yroot
-	} else if rank[xroot] > rank[yroot] {
+	case rank[xroot] > rank[yroot]:
 		parent[yroot] = xroot
-	} else {
+	default:
 		parent[yroot] = xroot
 		rank[xroot]++
 	}

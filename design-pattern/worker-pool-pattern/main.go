@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"time"
 )
 
@@ -9,7 +9,7 @@ func NewWorker(jobs, results chan string) {
 	WorkeInit()
 
 	for job := range jobs {
-		fmt.Println("Processing job ", job)
+		log.Println("Processing job ", job)
 		time.Sleep(1 * time.Second)
 
 		results <- job
@@ -17,7 +17,7 @@ func NewWorker(jobs, results chan string) {
 }
 
 func WorkeInit() {
-	fmt.Println("initialize worker....")
+	log.Println("initialize worker....")
 	time.Sleep(3 * time.Second)
 }
 
@@ -41,7 +41,7 @@ func main() {
 		jobChan <- job
 	}
 
-	for range len(jobs) {
-		fmt.Println(<-resultsChan)
+	for range jobs {
+		log.Println(<-resultsChan)
 	}
 }

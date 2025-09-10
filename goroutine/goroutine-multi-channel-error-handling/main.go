@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"time"
 )
 
@@ -12,7 +12,7 @@ func main() {
 	go B(ch)
 	go C(ch)
 
-	fmt.Println(<-ch)
+	log.Println(<-ch)
 
 	// separate channel
 	aCh := make(chan string)
@@ -25,11 +25,11 @@ func main() {
 
 	select {
 	case a := <-aCh:
-		println(a)
+		log.Println(a)
 	case b := <-bCh:
-		println(b)
+		log.Println(b)
 	case c := <-cCh:
-		println(c)
+		log.Println(c)
 	default:
 		// time.Sleep(time.Second)
 	}
@@ -41,11 +41,11 @@ func main() {
 
 	select {
 	case d := <-dCh:
-		println(d)
+		log.Println(d)
 	case e := <-eCh:
-		println(e)
+		log.Println(e)
 	case f := <-fCh:
-		println(f)
+		log.Println(f)
 	default:
 		// time.Sleep(time.Second)
 	}

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"log"
@@ -10,11 +11,18 @@ import (
 
 // Start the peer server to handle file-sharing requests.
 func StartServer(port string) {
-	ln, err := net.Listen("tcp", "localhost:"+port)
+	lc := net.ListenConfig{}
+
+	ln, err := lc.Listen(context.Background(), "tcp", "localhost:"+port)
 	if err != nil {
 		log.Fatalf("Error starting server: %v", err)
 	}
-	defer ln.Close()
+
+	defer func() {
+		if cerr := ln.Close(); cerr != nil {
+			log.Printf("Error closing listener: %v", cerr)
+		}
+	}()
 
 	log.Printf("Server listening on port %s...\n", port)
 
@@ -32,7 +40,11 @@ func StartServer(port string) {
 
 // Handle incoming connection and file transfer request.
 func handleConnection(conn net.Conn) {
-	defer conn.Close()
+	defer func() {
+		if cerr := conn.Close(); cerr != nil {
+			log.Printf("Error closing connection: %v", cerr)
+		}
+	}()
 
 	// Receive the file request (name of the file)
 	var fileName string
@@ -47,7 +59,9 @@ func handleConnection(conn net.Conn) {
 	// Check if the requested file exists
 	if _, err := os.Stat(fileName); err != nil {
 		if os.IsNotExist(err) {
-			conn.Write([]byte("File not found"))
+			if _, err := conn.Write([]byte("File not found")); err != nil {
+				log.Printf("Error writing 'File not found' to connection: %v", err)
+			}
 
 			return
 		}
@@ -64,7 +78,12 @@ func handleConnection(conn net.Conn) {
 
 		return
 	}
-	defer file.Close()
+
+	defer func() {
+		if cerr := file.Close(); cerr != nil {
+			log.Printf("Error closing file: %v", cerr)
+		}
+	}()
 
 	// Send the file content to the client
 	_, err = io.Copy(conn, file)

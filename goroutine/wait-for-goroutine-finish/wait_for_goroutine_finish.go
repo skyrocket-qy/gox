@@ -32,7 +32,7 @@ func WaitForGoroutineFinishUseChannel(funcs ...func()) {
 		}()
 	}
 
-	for range len(funcs) {
+	for range funcs {
 		<-ch
 	}
 }

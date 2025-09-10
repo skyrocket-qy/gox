@@ -2,10 +2,12 @@
 TimeCheck waits for the condition defined by the `checkFunc` to be met within a specified timeout duration.
 It uses the `getCurrentStatus` function to get the current status for checking.
 The function sleeps for a fixed interval between checks.
-If the condition is met within the timeout, the function returns nil. If not, it returns an error with the message "timeout".
+If the condition is met within the timeout, the function returns nil.
+If not, it returns an error with the message "timeout".
 
 Parameters:
-  - getCurrentStatus: A function that retrieves the current status. It should return the current status and an error (if any).
+  - getCurrentStatus: A function that retrieves the current status. It should return
+    the current status and an error (if any).
   - targetStatus: The target status that the function is waiting for.
   - checkFunc: A function that checks if the current status meets the target status.
   - interval: The interval duration to wait between status checks.
@@ -178,7 +180,7 @@ func SelfAdaptiveTimeCheck(
 				preDiff, preInterval = diff, maxInterval // Update preInterval as well
 			} else {
 				unitInterval := preInterval / time.Duration(denominator)
-				interval := min(unitInterval*diff, maxInterval)
+				interval := min(time.Duration(int64(unitInterval)*int64(diff)), maxInterval)
 				time.Sleep(interval)
 				preDiff, preInterval = diff, interval
 			}

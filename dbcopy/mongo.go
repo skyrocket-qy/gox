@@ -11,13 +11,18 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func CopyMongoIndexes(ctx context.Context, srcCol, dstCol *mongo.Collection) error {
+func CopyMongoIndexes(ctx context.Context, srcCol, dstCol *mongo.Collection) (err error) {
 	// Get indexes from source
 	cursor, err := srcCol.Indexes().List(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to list indexes: %w", err)
 	}
-	defer cursor.Close(ctx)
+
+	defer func() {
+		if cerr := cursor.Close(ctx); cerr != nil && err == nil {
+			err = cerr
+		}
+	}()
 
 	for cursor.Next(ctx) {
 		var index bson.M
@@ -30,7 +35,13 @@ func CopyMongoIndexes(ctx context.Context, srcCol, dstCol *mongo.Collection) err
 			continue
 		}
 
-		keys := index["key"].(bson.M)
+		keys, ok := index["key"].(bson.M)
+		if !ok {
+			return fmt.Errorf(
+				"index 'key' is not of type bson.M or does not exist: %v",
+				index["key"],
+			)
+		}
 
 		opts := options.Index()
 		if name, ok := index["name"].(string); ok {
@@ -68,12 +79,17 @@ func CopyMongoData(
 	filter bson.D,
 	mode Mode,
 	backupColName string,
-) error {
+) (err error) {
 	cursor, err := src.Find(ctx, filter)
 	if err != nil {
 		return fmt.Errorf("failed to find source documents: %w", err)
 	}
-	defer cursor.Close(ctx)
+
+	defer func() {
+		if cerr := cursor.Close(ctx); cerr != nil && err == nil {
+			err = cerr
+		}
+	}()
 
 	var docs []any
 
@@ -107,10 +123,10 @@ func CopyMongoData(
 	}
 	defer sess.EndSession(ctx)
 
-	callback := func(sc mongo.SessionContext) (any, error) {
+	callback := func(ctx mongo.SessionContext) (any, error) {
 		switch mode {
 		case ModeBasic:
-			count, err := dst.CountDocuments(sc, filter)
+			count, err := dst.CountDocuments(ctx, filter)
 			if err != nil {
 				return nil, fmt.Errorf("failed to count destination documents: %w", err)
 			}
@@ -120,7 +136,7 @@ func CopyMongoData(
 			}
 
 		case ModeReplace:
-			if _, err := dst.DeleteMany(sc, filter); err != nil {
+			if _, err := dst.DeleteMany(ctx, filter); err != nil {
 				return nil, fmt.Errorf("failed to delete from destination: %w", err)
 			}
 
@@ -132,7 +148,7 @@ func CopyMongoData(
 		}
 
 		for batchDocs := range common.Batch(docs, BatchSize) {
-			if _, err := dst.InsertMany(sc, batchDocs); err != nil {
+			if _, err := dst.InsertMany(ctx, batchDocs); err != nil {
 				return nil, fmt.Errorf("insert batch failed: %w", err)
 			}
 		}
@@ -152,7 +168,7 @@ func BackupMongoData(
 	col *mongo.Collection,
 	filter bson.D,
 	backupColName string,
-) error {
+) (err error) {
 	backupCol := col.Database().Collection(backupColName)
 
 	count, err := backupCol.CountDocuments(ctx, bson.D{})
@@ -168,7 +184,12 @@ func BackupMongoData(
 	if err != nil {
 		return fmt.Errorf("failed to fetch documents for backup: %w", err)
 	}
-	defer cursor.Close(ctx)
+
+	defer func() {
+		if cerr := cursor.Close(ctx); cerr != nil && err == nil {
+			err = cerr
+		}
+	}()
 
 	var docs []any
 

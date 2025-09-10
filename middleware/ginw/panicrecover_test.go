@@ -1,6 +1,7 @@
 package ginw
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -30,7 +31,7 @@ func TestPanicRecover(t *testing.T) {
 		})
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodGet, "/panic", nil)
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/panic", nil)
 		r.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
@@ -44,7 +45,7 @@ func TestPanicRecover(t *testing.T) {
 		})
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodGet, "/normal", nil)
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/normal", nil)
 		r.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)

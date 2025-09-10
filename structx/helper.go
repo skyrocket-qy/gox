@@ -1,7 +1,7 @@
 package structx
 
 import (
-	"fmt"
+	"log"
 	"reflect"
 )
 
@@ -24,7 +24,7 @@ func PrintStructInfo(s any) {
 	}
 
 	if t.Kind() != reflect.Struct {
-		fmt.Println("Input is not a struct or a pointer of struct")
+		log.Println("Input is not a struct or a pointer of struct")
 
 		return
 	}
@@ -34,7 +34,7 @@ func PrintStructInfo(s any) {
 
 // printFields prints the fields of a struct.
 func printFields(t reflect.Type, v reflect.Value) {
-	for i := 0; i < t.NumField(); i++ {
+	for i := range t.NumField() {
 		field := t.Field(i)
 		value := v.Field(i)
 		fieldName := field.Name
@@ -45,10 +45,10 @@ func printFields(t reflect.Type, v reflect.Value) {
 			continue
 		}
 
-		fmt.Printf("Field Name: %s\n", fieldName)
-		fmt.Printf("Field Type: %s\n", field.Type)
-		fmt.Printf("Field Tag: %s\n", field.Tag)
-		fmt.Println()
+		log.Printf("Field Name: %s\n", fieldName)
+		log.Printf("Field Type: %s\n", field.Type)
+		log.Printf("Field Tag: %s\n", field.Tag)
+		log.Println()
 	}
 }
 

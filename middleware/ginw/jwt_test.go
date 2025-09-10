@@ -1,6 +1,7 @@
 package ginw
 
 import (
+	"context"
 	"encoding/base64"
 	"io"
 	"net/http"
@@ -58,7 +59,11 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 			return
 		}
 
-		c.String(http.StatusOK, "welcome "+userId.(string))
+		if userIdStr, ok := userId.(string); ok {
+			c.String(http.StatusOK, "welcome "+userIdStr)
+		} else {
+			c.Status(http.StatusInternalServerError) // Or log an error, this should not happen in a correct flow
+		}
 	})
 
 	t.Run("Valid token", func(t *testing.T) {
@@ -66,7 +71,12 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 		assert.NoError(t, err)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodGet, "/protected", nil)
+		req, _ := http.NewRequestWithContext(
+			context.Background(),
+			http.MethodGet,
+			"/protected",
+			nil,
+		)
 		req.Header.Set("Authorization", "Bearer "+token)
 		r.ServeHTTP(w, req)
 
@@ -83,7 +93,12 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 		assert.NoError(t, err)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodGet, "/protected", nil)
+		req, _ := http.NewRequestWithContext(
+			context.Background(),
+			http.MethodGet,
+			"/protected",
+			nil,
+		)
 		req.Header.Set("Authorization", "Bearer "+token)
 		r.ServeHTTP(w, req)
 
@@ -99,7 +114,12 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 		assert.NoError(t, err)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodGet, "/protected", nil)
+		req, _ := http.NewRequestWithContext(
+			context.Background(),
+			http.MethodGet,
+			"/protected",
+			nil,
+		)
 		req.Header.Set("Authorization", "Bearer "+token)
 		r.ServeHTTP(w, req)
 
@@ -108,7 +128,12 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 
 	t.Run("Missing Authorization header", func(t *testing.T) {
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodGet, "/protected", nil)
+		req, _ := http.NewRequestWithContext(
+			context.Background(),
+			http.MethodGet,
+			"/protected",
+			nil,
+		)
 		r.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
@@ -119,7 +144,12 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 		assert.NoError(t, err)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest(http.MethodGet, "/protected", nil)
+		req, _ := http.NewRequestWithContext(
+			context.Background(),
+			http.MethodGet,
+			"/protected",
+			nil,
+		)
 		// No "Bearer " prefix
 		req.Header.Set("Authorization", token)
 		r.ServeHTTP(w, req)

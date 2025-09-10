@@ -25,7 +25,7 @@ func SetBoolFieldsTrue(v any) error {
 // setBoolFieldsTrueHelper is a helper function to recursively set boolean fields to
 // true.
 func setBoolFieldsTrueHelper(val reflect.Value) {
-	for i := 0; i < val.NumField(); i++ {
+	for i := range val.NumField() {
 		field := val.Field(i)
 		switch field.Kind() {
 		case reflect.Bool:

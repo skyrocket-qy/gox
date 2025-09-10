@@ -2,7 +2,7 @@ package main
 
 import (
 	"errors"
-	"fmt"
+	"log"
 )
 
 // rw-rw-rw {file} owner group
@@ -41,7 +41,7 @@ var Example = map[string]Resource{
 	"f2": {
 		Cfg: Cfg{
 			Auth:  330,
-			Owner: "zelin",
+			Owner: "user",
 			Group: "admin",
 		},
 		Data: "data2",
@@ -49,8 +49,8 @@ var Example = map[string]Resource{
 }
 
 func main() {
-	fmt.Println(Read("root", "f1"))
-	fmt.Println(Write("user", "f2"))
+	log.Println(Read("root", "f1"))
+	log.Println(Write("user", "f2"))
 }
 
 func Read(user, file string) bool {
@@ -88,13 +88,18 @@ func CheckAccess(user, file, oper string) (bool, error) {
 	return false, nil
 }
 
+const (
+	OperRead  = "read"
+	OperWrite = "write"
+)
+
 func CheckOwner(auth uint16, oper string) bool {
 	switch oper {
-	case "read":
+	case OperRead:
 		if (auth & 32) != 0 {
 			return true
 		}
-	case "write":
+	case OperWrite:
 		if (auth & 16) != 0 {
 			return true
 		}
@@ -105,11 +110,11 @@ func CheckOwner(auth uint16, oper string) bool {
 
 func CheckGroup(auth uint16, oper string) bool {
 	switch oper {
-	case "read":
+	case OperRead:
 		if (auth & 8) != 0 {
 			return true
 		}
-	case "write":
+	case OperWrite:
 		if (auth & 4) != 0 {
 			return true
 		}
@@ -120,11 +125,11 @@ func CheckGroup(auth uint16, oper string) bool {
 
 func CheckOther(auth uint16, oper string) bool {
 	switch oper {
-	case "read":
+	case OperRead:
 		if (auth & 2) != 0 {
 			return true
 		}
-	case "write":
+	case OperWrite:
 		if (auth & 1) != 0 {
 			return true
 		}

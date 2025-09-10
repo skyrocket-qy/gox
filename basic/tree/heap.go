@@ -1,6 +1,6 @@
 package tree
 
-import "fmt"
+import "log"
 
 /*array.*/
 type MinHeap []int
@@ -58,9 +58,9 @@ func main() {
 		mh.Put(val)
 	}
 
-	fmt.Println(mh)
-	fmt.Println(mh.Get())
-	fmt.Println(mh)
-	fmt.Println(mh.Get())
-	fmt.Println(mh)
+	log.Println(mh)
+	log.Println(mh.Get())
+	log.Println(mh)
+	log.Println(mh.Get())
+	log.Println(mh)
 }

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"sync"
 	"time"
 )
@@ -21,6 +21,6 @@ func say(s string, wg *sync.WaitGroup) {
 
 	for range 5 {
 		time.Sleep(100 * time.Millisecond)
-		fmt.Println(s)
+		log.Println(s)
 	}
 }

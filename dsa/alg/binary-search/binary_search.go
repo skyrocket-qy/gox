@@ -24,11 +24,12 @@ func FindMinInRotatedArray(nums []int) int {
 
 	for i <= j {
 		mid := (i + j) >> 1
-		if nums[mid] > nums[j] {
+		switch {
+		case nums[mid] > nums[j]:
 			i = mid + 1
-		} else if nums[mid] < nums[j] {
+		case nums[mid] < nums[j]:
 			j = mid
-		} else if nums[mid] == nums[j] {
+		case nums[mid] == nums[j]:
 			j--
 		}
 	}

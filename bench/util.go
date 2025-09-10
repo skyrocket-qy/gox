@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"runtime"
 	"runtime/pprof"
@@ -64,11 +65,22 @@ func StartCPUProfile(path string) (func(), error) {
 		return nil, err
 	}
 
-	pprof.StartCPUProfile(f)
+	if err := pprof.StartCPUProfile(f); err != nil {
+		if cerr := f.Close(); cerr != nil {
+			log.Printf("Error closing file after failed CPU profile start: %v", cerr)
+		}
+
+		return nil, err
+	}
 
 	return func() {
 		pprof.StopCPUProfile()
-		f.Close()
+
+		if err := f.Close(); err != nil {
+			// Log the error, as we can't return it from a deferred function
+			// In a real application, you might use a proper logging library
+			log.Printf("Error closing CPU profile file: %v", err)
+		}
 	}, nil
 }
 

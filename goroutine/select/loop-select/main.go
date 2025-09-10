@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"time"
 )
 
@@ -19,11 +19,11 @@ LOOP:
 	for {
 		select {
 		case val := <-ch:
-			fmt.Println(val)
+			log.Println(val)
 
 			break LOOP
 		default:
-			fmt.Println("watching...")
+			log.Println("watching...")
 			time.Sleep(500 * time.Millisecond)
 		}
 	}

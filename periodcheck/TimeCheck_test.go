@@ -25,13 +25,22 @@ func captureOutput(f func()) string {
 	return buf.String()
 }
 
-func TestFixedTimeCheck(t *testing.T) {
-	// Test case 1: Condition met within timeout
+// Common test runner for TimeCheck functions with 5 parameters.
+func runCommonTimeCheckTests(
+	t *testing.T,
+	timeCheckFunc func(
+		getCurrentStatus func() (int, error),
+		target int,
+		checkFunc func(cur, target int) bool,
+		interval, timeout time.Duration,
+	) error,
+	expectedConditionMetCallCount int,
+) {
 	t.Run("ConditionMet", func(t *testing.T) {
 		callCount := 0
 		getCurrentStatus := func() (int, error) {
 			callCount++
-			if callCount == 2 {
+			if callCount == expectedConditionMetCallCount {
 				return 10, nil
 			}
 
@@ -41,7 +50,7 @@ func TestFixedTimeCheck(t *testing.T) {
 			return cur == target
 		}
 
-		err := FixedTimeCheck(
+		err := timeCheckFunc(
 			getCurrentStatus,
 			10,
 			checkFunc,
@@ -49,10 +58,9 @@ func TestFixedTimeCheck(t *testing.T) {
 			100*time.Millisecond,
 		)
 		assert.NoError(t, err)
-		assert.Equal(t, 2, callCount)
+		assert.Equal(t, expectedConditionMetCallCount, callCount)
 	})
 
-	// Test case 2: Timeout reached
 	t.Run("Timeout", func(t *testing.T) {
 		callCount := 0
 		getCurrentStatus := func() (int, error) {
@@ -64,7 +72,7 @@ func TestFixedTimeCheck(t *testing.T) {
 			return cur == target
 		}
 
-		err := FixedTimeCheck(
+		err := timeCheckFunc(
 			getCurrentStatus,
 			10,
 			checkFunc,
@@ -76,7 +84,6 @@ func TestFixedTimeCheck(t *testing.T) {
 		assert.GreaterOrEqual(t, callCount, 2)
 	})
 
-	// Test case 3: getCurrentStatus returns an error
 	t.Run("GetCurrentStatusError", func(t *testing.T) {
 		expectedErr := errors.New("failed to get status")
 		getCurrentStatus := func() (int, error) {
@@ -86,7 +93,7 @@ func TestFixedTimeCheck(t *testing.T) {
 			return cur == target
 		}
 
-		err := FixedTimeCheck(
+		err := timeCheckFunc(
 			getCurrentStatus,
 			10,
 			checkFunc,
@@ -96,231 +103,106 @@ func TestFixedTimeCheck(t *testing.T) {
 		assert.Error(t, err)
 		assert.Equal(t, expectedErr, err)
 	})
+}
+
+// Common test runner for TimeCheck functions with 6 parameters (DiffTimeCheck,
+// SelfAdaptiveTimeCheck).
+func runCommonTimeCheckTestsWithMaxInterval(
+	t *testing.T,
+	timeCheckFunc func(
+		getCurrentStatus func() (int, error),
+		target int,
+		checkFunc func(cur, target int) bool,
+		interval, minInterval, maxInterval time.Duration,
+	) error,
+	expectedConditionMetCallCount int,
+) {
+	t.Run("ConditionMet", func(t *testing.T) {
+		callCount := 0
+		getCurrentStatus := func() (int, error) {
+			callCount++
+			if callCount == expectedConditionMetCallCount {
+				return 10, nil
+			}
+
+			return 0, nil
+		}
+		checkFunc := func(cur, target int) bool {
+			return cur == target
+		}
+
+		err := timeCheckFunc(
+			getCurrentStatus,
+			10,
+			checkFunc,
+			1*time.Millisecond,
+			10*time.Millisecond,
+			100*time.Millisecond,
+		)
+		assert.NoError(t, err)
+		assert.Equal(t, expectedConditionMetCallCount, callCount)
+	})
+
+	t.Run("Timeout", func(t *testing.T) {
+		callCount := 0
+		getCurrentStatus := func() (int, error) {
+			callCount++
+
+			return 0, nil
+		}
+		checkFunc := func(cur, target int) bool {
+			return cur == target
+		}
+
+		err := timeCheckFunc(
+			getCurrentStatus,
+			10,
+			checkFunc,
+			1*time.Millisecond,
+			10*time.Millisecond,
+			10*time.Millisecond,
+		)
+		assert.Error(t, err)
+		assert.EqualError(t, err, "timeout")
+		assert.GreaterOrEqual(t, callCount, 2)
+	})
+
+	t.Run("GetCurrentStatusError", func(t *testing.T) {
+		expectedErr := errors.New("failed to get status")
+		getCurrentStatus := func() (int, error) {
+			return 0, expectedErr
+		}
+		checkFunc := func(cur, target int) bool {
+			return cur == target
+		}
+
+		err := timeCheckFunc(
+			getCurrentStatus,
+			10,
+			checkFunc,
+			1*time.Millisecond,
+			10*time.Millisecond,
+			100*time.Millisecond,
+		)
+		assert.Error(t, err)
+		assert.Equal(t, expectedErr, err)
+	})
+}
+
+func TestFixedTimeCheck(t *testing.T) {
+	runCommonTimeCheckTests(t, FixedTimeCheck, 2)
 }
 
 func TestExponentialTimeCheck(t *testing.T) {
-	// Test case 1: Condition met within timeout
-	t.Run("ConditionMet", func(t *testing.T) {
-		callCount := 0
-		getCurrentStatus := func() (int, error) {
-			callCount++
-			if callCount == 3 {
-				return 10, nil
-			}
-
-			return 0, nil
-		}
-		checkFunc := func(cur, target int) bool {
-			return cur == target
-		}
-
-		err := ExponentialTimeCheck(
-			getCurrentStatus,
-			10,
-			checkFunc,
-			1*time.Millisecond,
-			100*time.Millisecond,
-		)
-		assert.NoError(t, err)
-		assert.Equal(t, 3, callCount)
-	})
-
-	// Test case 2: Timeout reached
-	t.Run("Timeout", func(t *testing.T) {
-		callCount := 0
-		getCurrentStatus := func() (int, error) {
-			callCount++
-
-			return 0, nil
-		}
-		checkFunc := func(cur, target int) bool {
-			return cur == target
-		}
-
-		err := ExponentialTimeCheck(
-			getCurrentStatus,
-			10,
-			checkFunc,
-			1*time.Millisecond,
-			10*time.Millisecond,
-		)
-		assert.Error(t, err)
-		assert.EqualError(t, err, "timeout")
-		assert.GreaterOrEqual(t, callCount, 2)
-	})
-
-	// Test case 3: getCurrentStatus returns an error
-	t.Run("GetCurrentStatusError", func(t *testing.T) {
-		expectedErr := errors.New("failed to get status")
-		getCurrentStatus := func() (int, error) {
-			return 0, expectedErr
-		}
-		checkFunc := func(cur, target int) bool {
-			return cur == target
-		}
-
-		err := ExponentialTimeCheck(
-			getCurrentStatus,
-			10,
-			checkFunc,
-			1*time.Millisecond,
-			100*time.Millisecond,
-		)
-		assert.Error(t, err)
-		assert.Equal(t, expectedErr, err)
-	})
+	runCommonTimeCheckTests(t, ExponentialTimeCheck, 3)
 }
 
 func TestDiffTimeCheck(t *testing.T) {
-	// Test case 1: Condition met within timeout
-	t.Run("ConditionMet", func(t *testing.T) {
-		callCount := 0
-		getCurrentStatus := func() (int, error) {
-			callCount++
-			if callCount == 2 {
-				return 10, nil
-			}
-
-			return 0, nil
-		}
-		checkFunc := func(cur, target int) bool {
-			return cur == target
-		}
-
-		err := DiffTimeCheck(
-			getCurrentStatus,
-			10,
-			checkFunc,
-			1*time.Millisecond,
-			10*time.Millisecond,
-			100*time.Millisecond,
-		)
-		assert.NoError(t, err)
-		assert.Equal(t, 2, callCount)
-	})
-
-	// Test case 2: Timeout reached
-	t.Run("Timeout", func(t *testing.T) {
-		callCount := 0
-		getCurrentStatus := func() (int, error) {
-			callCount++
-
-			return 0, nil
-		}
-		checkFunc := func(cur, target int) bool {
-			return cur == target
-		}
-
-		err := DiffTimeCheck(
-			getCurrentStatus,
-			10,
-			checkFunc,
-			1*time.Millisecond,
-			10*time.Millisecond,
-			10*time.Millisecond,
-		)
-		assert.Error(t, err)
-		assert.EqualError(t, err, "timeout")
-		assert.GreaterOrEqual(t, callCount, 2)
-	})
-
-	// Test case 3: getCurrentStatus returns an error
-	t.Run("GetCurrentStatusError", func(t *testing.T) {
-		expectedErr := errors.New("failed to get status")
-		getCurrentStatus := func() (int, error) {
-			return 0, expectedErr
-		}
-		checkFunc := func(cur, target int) bool {
-			return cur == target
-		}
-
-		err := DiffTimeCheck(
-			getCurrentStatus,
-			10,
-			checkFunc,
-			1*time.Millisecond,
-			10*time.Millisecond,
-			100*time.Millisecond,
-		)
-		assert.Error(t, err)
-		assert.Equal(t, expectedErr, err)
-	})
+	runCommonTimeCheckTestsWithMaxInterval(t, DiffTimeCheck, 2)
 }
 
 func TestSelfAdaptiveTimeCheck(t *testing.T) {
-	// Test case 1: Condition met within timeout
-	t.Run("ConditionMet", func(t *testing.T) {
-		callCount := 0
-		getCurrentStatus := func() (int, error) {
-			callCount++
-			if callCount == 2 {
-				return 10, nil
-			}
-
-			return 0, nil
-		}
-		checkFunc := func(cur, target int) bool {
-			return cur == target
-		}
-
-		err := SelfAdaptiveTimeCheck(
-			getCurrentStatus,
-			10,
-			checkFunc,
-			1*time.Millisecond,
-			10*time.Millisecond,
-			100*time.Millisecond,
-		)
-		assert.NoError(t, err)
-		assert.Equal(t, 2, callCount)
-	})
-
-	// Test case 2: Timeout reached
-	t.Run("Timeout", func(t *testing.T) {
-		callCount := 0
-		getCurrentStatus := func() (int, error) {
-			callCount++
-
-			return 0, nil
-		}
-		checkFunc := func(cur, target int) bool {
-			return cur == target
-		}
-
-		err := SelfAdaptiveTimeCheck(
-			getCurrentStatus,
-			10,
-			checkFunc,
-			1*time.Millisecond,
-			10*time.Millisecond,
-			10*time.Millisecond,
-		)
-		assert.Error(t, err)
-		assert.EqualError(t, err, "timeout")
-		assert.GreaterOrEqual(t, callCount, 2)
-	})
-
-	// Test case 3: getCurrentStatus returns an error
-	t.Run("GetCurrentStatusError", func(t *testing.T) {
-		expectedErr := errors.New("failed to get status")
-		getCurrentStatus := func() (int, error) {
-			return 0, expectedErr
-		}
-		checkFunc := func(cur, target int) bool {
-			return cur == target
-		}
-
-		err := SelfAdaptiveTimeCheck(
-			getCurrentStatus,
-			10,
-			checkFunc,
-			1*time.Millisecond,
-			10*time.Millisecond,
-			100*time.Millisecond,
-		)
-		assert.Error(t, err)
-		assert.Equal(t, expectedErr, err)
-	})
+	runCommonTimeCheckTestsWithMaxInterval(t, SelfAdaptiveTimeCheck, 2)
 }
 
 func TestAbs(t *testing.T) {

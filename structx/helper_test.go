@@ -8,9 +8,10 @@ import (
 )
 
 type TestStruct struct {
+	Embedded
+
 	Field1 int
 	Field2 string `json:"f2"`
-	Embedded
 }
 
 type Embedded struct {

@@ -1,8 +1,7 @@
 package findbridge
 
 import (
-	"fmt"
-	"sort"
+	"log"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -17,10 +16,10 @@ func TestRemoveEdge(t *testing.T) {
 	g1.AddEdge(0, 3)
 	g1.AddEdge(3, 4)
 
-	fmt.Println("Bridges in first graph (Remove Edge Method):")
+	log.Println("Bridges in first graph (Remove Edge Method):")
 
 	bridges := g1.FindBridgesRemoveEdge()
-	fmt.Println(bridges)
+	log.Println(bridges)
 
 	expectedBridges := [][]int{{
 		0, 3,
@@ -29,25 +28,8 @@ func TestRemoveEdge(t *testing.T) {
 	}}
 
 	// Sort both actual and expected bridges for consistent comparison
-	sortBridgesRemoveEdge(bridges)
-	sortBridgesRemoveEdge(expectedBridges)
+	sortBridges(bridges)
+	sortBridges(expectedBridges)
 
 	assert.Equal(t, expectedBridges, bridges, "Bridges should match")
-}
-
-// Helper function to sort bridges for consistent comparison.
-func sortBridgesRemoveEdge(bridges [][]int) {
-	sort.Slice(bridges, func(i, j int) bool {
-		if bridges[i][0] != bridges[j][0] {
-			return bridges[i][0] < bridges[j][0]
-		}
-
-		return bridges[i][1] < bridges[j][1]
-	})
-
-	for i := range bridges {
-		if bridges[i][0] > bridges[i][1] {
-			bridges[i][0], bridges[i][1] = bridges[i][1], bridges[i][0]
-		}
-	}
 }

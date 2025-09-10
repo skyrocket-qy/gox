@@ -3,7 +3,7 @@ package randomizedset
 /* @tags: set,random */
 
 import (
-	"math/rand"
+	"math/rand/v2"
 )
 
 type RandomizedSet struct {
@@ -45,7 +45,7 @@ func (this *RandomizedSet) Remove(val int) bool {
 }
 
 func (this *RandomizedSet) GetRandom() int {
-	r := rand.Int() % len(this.sl)
+	r := rand.IntN(len(this.sl))
 
 	return this.sl[r]
 }

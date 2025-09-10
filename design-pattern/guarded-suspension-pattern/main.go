@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"strconv"
 	"time"
 )
@@ -31,7 +31,7 @@ func main() {
 
 	go func() {
 		for {
-			fmt.Println(mq.Pop())
+			log.Println(mq.Pop())
 		}
 	}()
 

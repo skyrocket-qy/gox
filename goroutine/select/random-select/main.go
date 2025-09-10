@@ -1,6 +1,6 @@
 package main
 
-import "fmt"
+import "log"
 
 func main() {
 	ch := make(chan bool)
@@ -15,9 +15,7 @@ func main() {
 	for n > 0 {
 		select {
 		case <-ch:
-			fmt.Println("select case 1")
-		case <-ch:
-			fmt.Println("select case 2")
+			log.Println("selected case")
 		}
 
 		n--

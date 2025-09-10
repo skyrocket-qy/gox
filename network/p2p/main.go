@@ -2,7 +2,7 @@ package main
 
 import (
 	"bufio"
-	"fmt"
+	"log"
 	"os"
 	"regexp"
 
@@ -30,7 +30,7 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
-		fmt.Print("Please enter the Action: ")
+		log.Print("Please enter the Action: ")
 		scanner.Scan()
 
 		action = scanner.Text()
@@ -38,13 +38,16 @@ func main() {
 			fileName := action[4:]
 
 			if fileName == "" {
-				fmt.Println("Filename cannot be empty")
+				log.Println("Filename cannot be empty")
 			} else {
-				fmt.Printf("Requested filename: %s\n", fileName)
-				client.RequestFile(peerAddr, fileName)
+				log.Printf("Requested filename: %s\n", fileName)
+
+				if err := client.RequestFile(peerAddr, fileName); err != nil {
+					log.Printf("Error requesting file: %v", err)
+				}
 			}
 		} else {
-			fmt.Println("Invalid action. Please enter a valid action like 'get <filename>'")
+			log.Println("Invalid action. Please enter a valid action like 'get <filename>'")
 		}
 	}
 }

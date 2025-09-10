@@ -1,6 +1,6 @@
 package main
 
-import "fmt"
+import "log"
 
 func main() {
 	c := make(chan int, 10)
@@ -14,6 +14,6 @@ func main() {
 	}()
 
 	for i := range c {
-		fmt.Println(i)
+		log.Println(i)
 	}
 }

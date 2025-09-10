@@ -1,14 +1,10 @@
 package random_generate_string
 
 import (
-	"math/rand"
-	"time"
-	"unsafe"
+	"math/rand/v2"
 )
 
 func RandStringBytesMaskImprSrcUnsafe(n int) string {
-	src := rand.NewSource(time.Now().UnixNano())
-
 	const (
 		letterIdxBits = 6                    // 6 bits to represent a letter index
 		letterIdxMask = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
@@ -18,9 +14,9 @@ func RandStringBytesMaskImprSrcUnsafe(n int) string {
 
 	b := make([]byte, n)
 	// A src.Int63() generates 63 random bits, enough for letterIdxMax characters!
-	for i, cache, remain := n-1, src.Int63(), letterIdxMax; i >= 0; {
+	for i, cache, remain := n-1, rand.Int64(), letterIdxMax; i >= 0; {
 		if remain == 0 {
-			cache, remain = src.Int63(), letterIdxMax
+			cache, remain = rand.Int64(), letterIdxMax
 		}
 
 		if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
@@ -32,5 +28,5 @@ func RandStringBytesMaskImprSrcUnsafe(n int) string {
 		remain--
 	}
 
-	return *(*string)(unsafe.Pointer(&b))
+	return string(b)
 }
