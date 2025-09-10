@@ -130,7 +130,7 @@ func TestErrBinder_Bind(t *testing.T) {
 		},
 		{
 			name: "CtxErr with known code",
-			err: erx.New(erx.ErrUnknown, "invalid input"),
+			err:  erx.New(erx.ErrUnknown, "invalid input"),
 			errToHTTP: map[erx.Code]int{
 				erx.ErrUnknown: http.StatusBadRequest,
 			},
@@ -140,7 +140,7 @@ func TestErrBinder_Bind(t *testing.T) {
 		},
 		{
 			name: "CtxErr with unknown code",
-			err: erx.New(erx.ErrUnknown, "unknown error"), // Using ErrUnknown as a placeholder for an unknown code
+			err:  erx.New(erx.ErrUnknown, "unknown error"), // Using ErrUnknown as a placeholder for an unknown code
 			errToHTTP: map[erx.Code]int{
 				erx.ErrUnknown: http.StatusBadRequest,
 			},
@@ -150,7 +150,7 @@ func TestErrBinder_Bind(t *testing.T) {
 		},
 		{
 			name: "CtxErr with empty message",
-			err: erx.New(erx.ErrUnknown, ""),
+			err:  erx.New(erx.ErrUnknown, ""),
 			errToHTTP: map[erx.Code]int{
 				erx.ErrUnknown: http.StatusBadRequest,
 			},

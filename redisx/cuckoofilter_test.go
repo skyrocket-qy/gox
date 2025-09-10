@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/skyrocket-qy/gox/redisx"
 	"github.com/go-redis/redismock/v9"
+	"github.com/skyrocket-qy/gox/redisx"
 )
 
 func TestCuckooFilter(t *testing.T) {
@@ -69,7 +69,7 @@ func TestCuckooFilter(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CuckooFilterCount failed: %v", err)
 	}
-	
+
 	if count != 1 {
 		t.Errorf("CuckooFilterCount should return 1, but got %d", count)
 	}

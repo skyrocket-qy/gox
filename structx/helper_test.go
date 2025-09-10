@@ -9,7 +9,7 @@ import (
 
 type TestStruct struct {
 	Field1 int
-	Field2 string	`json:"f2"`
+	Field2 string `json:"f2"`
 	Embedded
 }
 

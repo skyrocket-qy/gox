@@ -155,16 +155,16 @@ func SelfAdaptiveTimeCheck(
 			preDiff, preInterval = time.Duration(abs(curStatus-targetStatus)), startInterval
 		} else {
 			diff := time.Duration(abs(curStatus - targetStatus))
-							denominator := abs(int(diff - preDiff))
-				if denominator == 0 {
-					time.Sleep(maxInterval) // Or some other sensible default
-					preDiff, preInterval = diff, maxInterval // Update preInterval as well
-				} else {
-					unitInterval := preInterval / time.Duration(denominator)
-					interval := min(unitInterval*diff, maxInterval)
-					time.Sleep(interval)
-					preDiff, preInterval = diff, interval
-				}
+			denominator := abs(int(diff - preDiff))
+			if denominator == 0 {
+				time.Sleep(maxInterval)                  // Or some other sensible default
+				preDiff, preInterval = diff, maxInterval // Update preInterval as well
+			} else {
+				unitInterval := preInterval / time.Duration(denominator)
+				interval := min(unitInterval*diff, maxInterval)
+				time.Sleep(interval)
+				preDiff, preInterval = diff, interval
+			}
 		}
 	}
 

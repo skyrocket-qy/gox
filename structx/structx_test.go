@@ -12,8 +12,8 @@ type SimpleStruct struct {
 }
 
 type NestedPointerStruct struct {
-	FieldA string
-	Nested *SimpleStruct
+	FieldA  string
+	Nested  *SimpleStruct
 	Another *AnotherNestedStruct
 }
 
@@ -33,7 +33,7 @@ func TestDeepNew(t *testing.T) {
 	nestedPtr := DeepNew[NestedPointerStruct]()
 	assert.NotNil(t, nestedPtr)
 	assert.IsType(t, &NestedPointerStruct{}, nestedPtr)
-	assert.NotNil(t, nestedPtr.Nested) // Nested pointer should be initialized
+	assert.NotNil(t, nestedPtr.Nested)  // Nested pointer should be initialized
 	assert.NotNil(t, nestedPtr.Another) // Another nested pointer should be initialized
 	assert.IsType(t, &SimpleStruct{}, nestedPtr.Nested)
 	assert.IsType(t, &AnotherNestedStruct{}, nestedPtr.Another)

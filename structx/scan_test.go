@@ -77,8 +77,8 @@ func TestScan(t *testing.T) {
 	assert.Equal(t, from4.ParentString, to4.ParentString)
 
 	// Test case 5: Type conversion (int to string)
-	type ScanTestFromInt struct { Value int }
-	type ScanTestToString struct { Value string }
+	type ScanTestFromInt struct{ Value int }
+	type ScanTestToString struct{ Value string }
 	from5 := ScanTestFromInt{Value: 5}
 	to5 := ScanTestToString{}
 	err = Scan(&from5, &to5)
@@ -86,8 +86,8 @@ func TestScan(t *testing.T) {
 	assert.Equal(t, "5", to5.Value)
 
 	// Test case 6: Type conversion (bool to string)
-	type ScanTestFromBool struct { Value bool }
-	type ScanTestToStringBool struct { Value string }
+	type ScanTestFromBool struct{ Value bool }
+	type ScanTestToStringBool struct{ Value string }
 	from6 := ScanTestFromBool{Value: true}
 	to6 := ScanTestToStringBool{}
 	err = Scan(&from6, &to6)
@@ -126,8 +126,8 @@ func TestScan(t *testing.T) {
 	assert.EqualError(t, err, "to must be a non-nil pointer of struct, got type: struct")
 
 	// Test case 12: Unexported fields (should be skipped)
-	type ScanTestUnexportedFrom struct { unexported int }
-	type ScanTestUnexportedTo struct { unexported int }
+	type ScanTestUnexportedFrom struct{ unexported int }
+	type ScanTestUnexportedTo struct{ unexported int }
 	from12 := ScanTestUnexportedFrom{unexported: 10}
 	to12 := ScanTestUnexportedTo{}
 	err = Scan(&from12, &to12)
@@ -135,8 +135,8 @@ func TestScan(t *testing.T) {
 	assert.Equal(t, 0, to12.unexported) // Should remain zero
 
 	// Test case 13: Nested struct with pointer in 'from' and value in 'to'
-	type ScanTestFromNestedPtr struct { Nested *ScanTestSimpleFrom }
-	type ScanTestToNestedVal struct { Nested ScanTestSimpleTo }
+	type ScanTestFromNestedPtr struct{ Nested *ScanTestSimpleFrom }
+	type ScanTestToNestedVal struct{ Nested ScanTestSimpleTo }
 	from13 := ScanTestFromNestedPtr{Nested: &ScanTestSimpleFrom{IntField: 13}}
 	to13 := ScanTestToNestedVal{}
 	err = Scan(&from13, &to13)
@@ -144,8 +144,8 @@ func TestScan(t *testing.T) {
 	assert.Equal(t, 13, to13.Nested.IntField)
 
 	// Test case 14: Nested struct with value in 'from' and pointer in 'to'
-	type ScanTestFromNestedVal struct { Nested ScanTestSimpleFrom }
-	type ScanTestToNestedPtr struct { Nested *ScanTestSimpleTo }
+	type ScanTestFromNestedVal struct{ Nested ScanTestSimpleFrom }
+	type ScanTestToNestedPtr struct{ Nested *ScanTestSimpleTo }
 	from14 := ScanTestFromNestedVal{Nested: ScanTestSimpleFrom{IntField: 14}}
 	to14 := ScanTestToNestedPtr{Nested: &ScanTestSimpleTo{}}
 	err = Scan(&from14, &to14)
@@ -153,8 +153,8 @@ func TestScan(t *testing.T) {
 	assert.Equal(t, 14, to14.Nested.IntField)
 
 	// Test case 15: Nested struct with nil pointer in 'from'
-	type ScanTestFromNestedNilPtr struct { Nested *ScanTestSimpleFrom }
-	type ScanTestToNestedValNil struct { Nested ScanTestSimpleTo }
+	type ScanTestFromNestedNilPtr struct{ Nested *ScanTestSimpleFrom }
+	type ScanTestToNestedValNil struct{ Nested ScanTestSimpleTo }
 	from15 := ScanTestFromNestedNilPtr{Nested: nil}
 	to15 := ScanTestToNestedValNil{}
 	err = Scan(&from15, &to15)

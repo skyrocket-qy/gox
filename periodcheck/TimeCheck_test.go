@@ -36,7 +36,7 @@ func TestFixedTimeCheck(t *testing.T) {
 		checkFunc := func(cur, target int) bool {
 			return cur == target
 		}
-	
+
 		err := FixedTimeCheck(getCurrentStatus, 10, checkFunc, 1*time.Millisecond, 100*time.Millisecond)
 		assert.NoError(t, err)
 		assert.Equal(t, 2, callCount)
