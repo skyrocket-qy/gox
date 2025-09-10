@@ -1,6 +1,6 @@
 package main
 
-func LongestCommonSubsequence(text1 string, text2 string) int {
+func LongestCommonSubsequence3(text1 string, text2 string) int {
 	//makesure text2 is smaller than text1
 	if len(text2) > len(text1) {
 		text1, text2 = text2, text1

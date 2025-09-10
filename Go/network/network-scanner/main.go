@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"networkscanner/utils"
+	"github.com/skyrocket-qy/gox/Go/network/network-scanner/utils"
 )
 
 func main() {

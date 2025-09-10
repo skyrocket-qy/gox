@@ -1,7 +1,6 @@
-package advanced_data_structure
+package tree
 
 import "fmt"
-
 
 /*array*/
 type MinHeap []int

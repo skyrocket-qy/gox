@@ -1,4 +1,4 @@
-package binaryIndexTree
+package tree
 
 type bIT []int
 

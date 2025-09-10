@@ -1,7 +1,6 @@
-package segment_tree
+package tree
 
-import "src/stack"
-
+import "github.com/skyrocket-qy/gox/Go/basic/stack"
 
 /*Linked list*/
 type Node struct {
@@ -9,7 +8,7 @@ type Node struct {
 	left, right *Node
 }
 
-func Build(array []int) *Node {
+func NewNode(array []int) *Node {
 	var i int
 	array, i = replenish(array)
 

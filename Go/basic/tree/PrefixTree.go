@@ -1,4 +1,4 @@
-package trie
+package tree
 
 type Trie struct {
 	count    int

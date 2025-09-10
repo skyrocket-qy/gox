@@ -1,4 +1,4 @@
-package stack
+package tree
 
 type Stack struct {
 	list []interface{}
