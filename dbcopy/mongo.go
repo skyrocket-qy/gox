@@ -1,4 +1,4 @@
-package envmigrate
+package dbcopy
 
 import (
 	"context"
