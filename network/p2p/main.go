@@ -6,8 +6,8 @@ import (
 	"os"
 	"regexp"
 
-	"github.com/skyrocket-qy/gox/Go/network/p2p/client"
-	"github.com/skyrocket-qy/gox/Go/network/p2p/server"
+	"github.com/skyrocket-qy/gox/network/p2p/client"
+	"github.com/skyrocket-qy/gox/network/p2p/server"
 )
 
 // Struct to represent a peer.
