@@ -48,14 +48,14 @@ func (a *InterAuthMid) CheckAuth(jwtSecret []byte) gin.HandlerFunc {
 func ParseJWT(tokenString string, secret []byte) (*jwt.RegisteredClaims, error) {
 	claims := &jwt.RegisteredClaims{}
 
-	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (any, error) {
 		// Check that the signing method is HMAC
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("unexpected signing method")
 		}
+
 		return secret, nil
 	})
-
 	if err != nil {
 		return nil, err
 	}

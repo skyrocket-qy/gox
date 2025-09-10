@@ -35,31 +35,37 @@ func NewThrottle(redisClient *redis.Client, limit int64, window time.Duration, k
 // UnaryInterceptor returns a connect.UnaryInterceptorFunc that applies rate limiting.
 func (t *Throttle) UnaryInterceptor() connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
-		return connect.UnaryFunc(func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
-			key := t.keyPrefix + ":" + t.KeyExtractor(ctx)
+		return connect.UnaryFunc(
+			func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
+				key := t.keyPrefix + ":" + t.KeyExtractor(ctx)
 
-			now := time.Now().UnixNano()
-			minScore := now - t.window.Nanoseconds()
+				now := time.Now().UnixNano()
+				minScore := now - t.window.Nanoseconds()
 
-			pipe := t.redisClient.Pipeline()
-			pipe.ZRemRangeByScore(ctx, key, "0", strconv.FormatInt(minScore, 10))
-			pipe.ZAdd(ctx, key, redis.Z{Score: float64(now), Member: now})
-			pipe.Expire(ctx, key, t.window) // Set expiration for the key
-			_, err := pipe.Exec(ctx)
-			if err != nil {
-				return nil, connect.NewError(connect.CodeInternal, err)
-			}
+				pipe := t.redisClient.Pipeline()
+				pipe.ZRemRangeByScore(ctx, key, "0", strconv.FormatInt(minScore, 10))
+				pipe.ZAdd(ctx, key, redis.Z{Score: float64(now), Member: now})
+				pipe.Expire(ctx, key, t.window) // Set expiration for the key
 
-			count, err := t.redisClient.ZCard(ctx, key).Result()
-			if err != nil {
-				return nil, connect.NewError(connect.CodeInternal, err)
-			}
+				_, err := pipe.Exec(ctx)
+				if err != nil {
+					return nil, connect.NewError(connect.CodeInternal, err)
+				}
 
-			if count > t.limit {
-				return nil, connect.NewError(connect.CodeResourceExhausted, errors.New("too many requests"))
-			}
+				count, err := t.redisClient.ZCard(ctx, key).Result()
+				if err != nil {
+					return nil, connect.NewError(connect.CodeInternal, err)
+				}
 
-			return next(ctx, req)
-		})
+				if count > t.limit {
+					return nil, connect.NewError(
+						connect.CodeResourceExhausted,
+						errors.New("too many requests"),
+					)
+				}
+
+				return next(ctx, req)
+			},
+		)
 	}
 }
