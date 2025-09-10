@@ -15,7 +15,6 @@ require (
 	github.com/rs/zerolog v1.34.0
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/skyrocket-qy/erx v0.3.28
-	github.com/skyrocket-qy/protos v0.1.54
 	go.mongodb.org/mongo-driver v1.17.4
 	go.opentelemetry.io/otel/trace v1.37.0
 	golang.org/x/crypto v0.41.0
