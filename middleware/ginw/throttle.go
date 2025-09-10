@@ -9,6 +9,18 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+// Clock is an interface for getting the current time.
+type Clock interface {
+	Now() time.Time
+}
+
+// realClock implements the Clock interface using the real time.
+type realClock struct{}
+
+func (realClock) Now() time.Time {
+	return time.Now()
+}
+
 // Throttle represents a sliding window rate limiter.
 type Throttle struct {
 	redisClient  *redis.Client
@@ -16,6 +28,7 @@ type Throttle struct {
 	window       time.Duration
 	keyPrefix    string
 	KeyExtractor func(c *gin.Context) string
+	clock        Clock
 }
 
 // NewThrottle creates a new Throttle middleware.
@@ -28,6 +41,7 @@ func NewThrottle(redisClient *redis.Client, limit int64, window time.Duration, k
 		window:       window,
 		keyPrefix:    keyPrefix,
 		KeyExtractor: keyExtractor,
+		clock:        realClock{},
 	}
 }
 
@@ -37,7 +51,7 @@ func (t *Throttle) Middleware() gin.HandlerFunc {
 		ctx := c.Request.Context()
 		key := t.keyPrefix + ":" + t.KeyExtractor(c)
 
-		now := time.Now().UnixNano()
+		now := t.clock.Now().UnixNano()
 		minScore := now - t.window.Nanoseconds()
 
 		// Remove old requests and add current request in a single transaction
