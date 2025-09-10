@@ -20,6 +20,8 @@ func NewAuthInterceptor() *AuthInterceptor {
 	return &AuthInterceptor{}
 }
 
+type contextKey string
+
 func (a *AuthInterceptor) WrapAuth(jwtSecret []byte) connect.Interceptor {
 	return connect.UnaryInterceptorFunc(func(next connect.UnaryFunc) connect.UnaryFunc {
 		return connect.UnaryFunc(
@@ -45,8 +47,6 @@ func (a *AuthInterceptor) WrapAuth(jwtSecret []byte) connect.Interceptor {
 				}
 
 				// Store userId in context
-				type contextKey string
-
 				ctx = context.WithValue(ctx, contextKey("userId"), calm.Issuer)
 
 				return next(ctx, req)
@@ -75,4 +75,10 @@ func ParseJWT(tokenString string, secret []byte) (*jwt.RegisteredClaims, error) 
 	}
 
 	return claims, nil
+}
+
+// UserIDFromContext retrieves the user ID from the context.
+func UserIDFromContext(ctx context.Context) (string, bool) {
+	userID, ok := ctx.Value(contextKey("userId")).(string)
+	return userID, ok
 }

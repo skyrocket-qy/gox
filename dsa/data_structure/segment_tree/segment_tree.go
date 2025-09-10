@@ -1,0 +1,3 @@
+package segmenttree
+
+/* @tags: tree */
