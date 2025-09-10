@@ -25,8 +25,11 @@ func ExecuteExactlyOnce(
 	job func() error,
 ) error {
 	jobRetryDelay := 1 * time.Second
-	const maxJobRetryDelay = 30 * time.Second
-	const lockPollInterval = 3 * time.Second
+
+	const (
+		maxJobRetryDelay = 30 * time.Second
+		lockPollInterval = 3 * time.Second
+	)
 
 	for {
 		// Always check for context cancellation at the start of each attempt.
@@ -72,6 +75,7 @@ func ExecuteExactlyOnce(
 			if jobRetryDelay > maxJobRetryDelay {
 				jobRetryDelay = maxJobRetryDelay
 			}
+
 			continue
 		}
 
@@ -97,15 +101,16 @@ func tryJobExecution(
 	baseKey string,
 	lockTTL time.Duration,
 	job func() error,
-) (isFinished bool, jobErr error, attemptErr error) {
-	statusKey := fmt.Sprintf("job:status:%s", baseKey)
-	lockKey := fmt.Sprintf("job:lock:%s", baseKey)
+) (isFinished bool, jobErr, attemptErr error) {
+	statusKey := "job:status:" + baseKey
+	lockKey := "job:lock:" + baseKey
 
 	// Attempt to acquire the lock.
 	wasLockSet, err := rdb.SetNX(ctx, lockKey, 1, lockTTL).Result()
 	if err != nil {
 		return false, nil, fmt.Errorf("failed to acquire lock: %w", err)
 	}
+
 	if !wasLockSet {
 		// Lock is held by another worker. This is not an error.
 		return false, nil, nil
@@ -116,11 +121,13 @@ func tryJobExecution(
 	defer rdb.Del(context.Background(), lockKey).Err() // Use background context for cleanup.
 
 	// Double-check job status after acquiring the lock.
-	// This handles the edge case where a worker completed the job but crashed before releasing the lock.
+	// This handles the edge case where a worker completed the job but crashed before releasing the
+	// lock.
 	status, err := rdb.Get(ctx, statusKey).Result()
 	if err != nil && !errors.Is(err, redis.Nil) {
 		return false, nil, fmt.Errorf("failed to check job status: %w", err)
 	}
+
 	if status == JobStatusCompleted {
 		return true, nil, nil // Job already done.
 	}
@@ -129,6 +136,7 @@ func tryJobExecution(
 	// This prevents the lock from expiring during a long-running job.
 	renewalCtx, cancelRenewal := context.WithCancel(ctx)
 	defer cancelRenewal()
+
 	go renewLock(renewalCtx, rdb, lockKey, lockTTL)
 
 	// Execute the actual job.

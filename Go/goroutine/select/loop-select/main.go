@@ -11,6 +11,7 @@ func main() {
 
 	go func() {
 		time.Sleep(time.Second * 2)
+
 		ch <- 1
 	}()
 
@@ -19,6 +20,7 @@ LOOP:
 		select {
 		case val := <-ch:
 			fmt.Println(val)
+
 			break LOOP
 		default:
 			fmt.Println("watching...")

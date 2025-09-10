@@ -1,15 +1,15 @@
 package main
 
-func LongestCommonSubsequence(text1 string, text2 string) int {
+func LongestCommonSubsequence(text1, text2 string) int {
 	m, n := len(text1), len(text2)
-	//2-d array
+	// 2-d array
 	arr := make([][]int, m)
-	for i, _ := range arr {
+	for i := range arr {
 		arr[i] = make([]int, n)
 	}
 
-	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
+	for i := range m {
+		for j := range n {
 			if text1[i] == text2[j] {
 				if i > 0 && j > 0 {
 					arr[i][j] = arr[i-1][j-1] + 1
@@ -31,5 +31,6 @@ func LongestCommonSubsequence(text1 string, text2 string) int {
 			}
 		}
 	}
+
 	return arr[m-1][n-1]
 }

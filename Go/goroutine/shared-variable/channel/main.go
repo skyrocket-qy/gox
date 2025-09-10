@@ -7,13 +7,16 @@ import (
 
 func main() {
 	total := 0
+
 	ch := make(chan int, 1)
 	ch <- total
-	for i := 0; i < 1000; i++ {
+
+	for range 1000 {
 		go func() {
 			ch <- <-ch + 1
 		}()
 	}
+
 	time.Sleep(time.Second)
 	fmt.Println(<-ch)
 }

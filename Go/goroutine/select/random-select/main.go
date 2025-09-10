@@ -4,8 +4,9 @@ import "fmt"
 
 func main() {
 	ch := make(chan bool)
+
 	n := 6
-	for i := 0; i < n; i++ {
+	for range n {
 		go func() {
 			ch <- true
 		}()
@@ -18,6 +19,7 @@ func main() {
 		case <-ch:
 			fmt.Println("select case 2")
 		}
+
 		n--
 	}
 }

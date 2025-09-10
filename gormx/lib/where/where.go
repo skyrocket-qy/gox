@@ -6,18 +6,20 @@ import (
 	ope "github.com/skyrocket-qy/gox/gormx/lib/operator"
 )
 
-func B(field string, oper string) string {
+func B(field, oper string) string {
 	if oper == ope.Bt || oper == ope.NBt {
 		return fmt.Sprintf("%s %s ? AND ?", field, oper)
 	}
+
 	return fmt.Sprintf("%s %s ?", field, oper)
 }
 
-// used for subquery
-func BSub(field string, oper string) string {
+// used for subquery.
+func BSub(field, oper string) string {
 	if oper == ope.Bt || oper == ope.NBt {
 		return fmt.Sprintf("%s %s (?) AND (?)", field, oper)
 	}
+
 	return fmt.Sprintf("%s %s (?)", field, oper)
 }
 

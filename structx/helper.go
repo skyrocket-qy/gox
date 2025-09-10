@@ -10,10 +10,11 @@ func getElem(v any) reflect.Value {
 	if val.Kind() == reflect.Ptr {
 		return val.Elem()
 	}
+
 	return val
 }
 
-func PrintStructInfo(s interface{}) {
+func PrintStructInfo(s any) {
 	v := reflect.ValueOf(s)
 	t := reflect.TypeOf(s)
 
@@ -21,15 +22,17 @@ func PrintStructInfo(s interface{}) {
 		v = v.Elem()
 		t = t.Elem()
 	}
+
 	if t.Kind() != reflect.Struct {
 		fmt.Println("Input is not a struct or a pointer of struct")
+
 		return
 	}
 
 	printFields(t, v)
 }
 
-// printFields prints the fields of a struct
+// printFields prints the fields of a struct.
 func printFields(t reflect.Type, v reflect.Value) {
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
@@ -38,6 +41,7 @@ func printFields(t reflect.Type, v reflect.Value) {
 
 		if isEmbedded(field) {
 			printFields(field.Type, value)
+
 			continue
 		}
 
@@ -57,8 +61,10 @@ func isNonNilPointerOfStruct(v any) bool {
 	if val.Kind() != reflect.Ptr {
 		return false
 	}
+
 	if !val.IsValid() || val.IsNil() {
 		return false
 	}
+
 	return val.Elem().Kind() == reflect.Struct
 }

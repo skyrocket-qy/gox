@@ -24,7 +24,7 @@ func main() {
 	}
 
 	go func() {
-		for i := 0; i < 5; i++ {
+		for i := range 5 {
 			mq.Put(strconv.Itoa(i))
 		}
 	}()

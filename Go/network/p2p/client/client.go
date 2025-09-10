@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-// Connect to a peer and request a file
+// Connect to a peer and request a file.
 func RequestFile(peerAddr, fileName string) error {
 	conn, err := net.Dial("tcp", peerAddr)
 	if err != nil {
@@ -31,5 +31,6 @@ func RequestFile(peerAddr, fileName string) error {
 	}
 
 	log.Printf("File downloaded: %s\n", fileName)
+
 	return nil
 }

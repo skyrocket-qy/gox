@@ -13,12 +13,13 @@ type (
 	}
 )
 
-// Initial the sequence of the transaction order to avoid deadlock
+// Initial the sequence of the transaction order to avoid deadlock.
 func NewInstance(seq []DB) *Instance {
 	seqMap := make(map[DB]int, len(seq))
 	for i, db := range seq {
 		seqMap[db] = i
 	}
+
 	return &Instance{
 		seqMap: seqMap,
 	}

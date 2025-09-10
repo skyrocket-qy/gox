@@ -12,15 +12,18 @@ func SetBoolFieldsTrue(v any) error {
 	if v == nil {
 		return errors.New("v must not be nil")
 	}
+
 	if !isNonNilPointerOfStruct(v) {
 		return errors.New("v must be pointer of struct")
 	}
+
 	setBoolFieldsTrueHelper(reflect.ValueOf(v).Elem())
+
 	return nil
 }
 
 // setBoolFieldsTrueHelper is a helper function to recursively set boolean fields to
-// true
+// true.
 func setBoolFieldsTrueHelper(val reflect.Value) {
 	for i := 0; i < val.NumField(); i++ {
 		field := val.Field(i)

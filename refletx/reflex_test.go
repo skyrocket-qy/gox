@@ -11,7 +11,7 @@ import (
 
 func TestIsNil(t *testing.T) {
 	// Test with nil interface
-	var nilInterface interface{}
+	var nilInterface any
 	assert.True(t, IsNil(reflect.ValueOf(nilInterface)))
 
 	// Test with nil pointer
@@ -94,6 +94,7 @@ func TestValueOf(t *testing.T) {
 
 	// Test with nil pointer
 	var nilPtr *testStruct
+
 	v = ValueOf(nilPtr, false)
 	assert.Equal(t, reflect.Invalid, v.Kind()) // Should be invalid for nil pointer
 
@@ -153,7 +154,7 @@ func TestCallField(t *testing.T) {
 	// Test calling a method with arguments and no return value
 	out, err = CallField(&s, "SetName", []reflect.Value{reflect.ValueOf("new name")})
 	assert.NoError(t, err)
-	assert.Len(t, out, 0) // SetName has no return values
+	assert.Empty(t, out) // SetName has no return values
 	assert.Equal(t, "new name", s.Name)
 
 	// Test calling a method with arguments and a return value
@@ -168,12 +169,17 @@ func TestCallField(t *testing.T) {
 	assert.Contains(t, err.Error(), "method is not exist")
 
 	// Test calling a method with wrong number of arguments
-	_, err = CallField(&s, "SetName", []reflect.Value{reflect.ValueOf("one"), reflect.ValueOf("two")})
+	_, err = CallField(
+		&s,
+		"SetName",
+		[]reflect.Value{reflect.ValueOf("one"), reflect.ValueOf("two")},
+	)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "the method arguments is out of index")
 
-	// Test calling a method with wrong argument type (reflect.Call will panic, so we expect an error from our wrapper)
-	// This case is handled by reflect.Call panicking if types don't match, which is then recovered by our IsNil.
+	// Test calling a method with wrong argument type (reflect.Call will panic, so we expect an
+	// error from our wrapper) This case is handled by reflect.Call panicking if types don't match,
+	// which is then recovered by our IsNil.
 	// For CallField, the error comes from NumIn() check.
 	_, err = CallField(&s, "SetName", []reflect.Value{reflect.ValueOf(123)})
 	assert.Error(t, err)
@@ -195,7 +201,7 @@ func TestGetMap(t *testing.T) {
 
 	// Test with a simple struct
 	s1 := OuterStruct{Field1: "value1", Field2: 10}
-	m1, err := GetMap[interface{}](&s1)
+	m1, err := GetMap[any](&s1)
 	assert.NoError(t, err)
 	assert.Equal(t, "value1", m1["Field1"])
 	assert.Equal(t, 10, m1["Field2"])
@@ -205,7 +211,7 @@ func TestGetMap(t *testing.T) {
 		Field1: "value1",
 		Field3: InnerStruct{ID: 1, Name: "inner"},
 	}
-	m2, err := GetMap[interface{}](&s2)
+	m2, err := GetMap[any](&s2)
 	assert.NoError(t, err)
 	assert.Equal(t, "value1", m2["Field1"])
 	assert.Equal(t, InnerStruct{ID: 1, Name: "inner"}, m2["Field3"])
@@ -215,7 +221,7 @@ func TestGetMap(t *testing.T) {
 		Field1: "value1",
 		Field4: &InnerStruct{ID: 2, Name: "inner_ptr"},
 	}
-	m3, err := GetMap[interface{}](&s3)
+	m3, err := GetMap[any](&s3)
 	assert.NoError(t, err)
 	assert.Equal(t, "value1", m3["Field1"])
 	assert.Equal(t, &InnerStruct{ID: 2, Name: "inner_ptr"}, m3["Field4"])
@@ -224,6 +230,7 @@ func TestGetMap(t *testing.T) {
 	type AnotherType struct {
 		X int
 	}
+
 	s4 := struct {
 		FieldA string
 		FieldB AnotherType
@@ -237,7 +244,8 @@ func TestGetMap(t *testing.T) {
 
 	// Test with nil input
 	var nilStruct *OuterStruct
-	_, err = GetMap[interface{}](nilStruct)
+
+	_, err = GetMap[any](nilStruct)
 	assert.Error(t, err) // reflections.ItemsDeep returns error for nil input
 }
 

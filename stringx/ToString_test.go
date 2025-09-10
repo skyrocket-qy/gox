@@ -10,9 +10,10 @@ func TestToString(t *testing.T) {
 	type testStruct struct {
 		s string
 	}
+
 	tests := []struct {
 		name  string
-		input interface{}
+		input any
 		want  string
 	}{
 		{"string", "hello", "hello"},

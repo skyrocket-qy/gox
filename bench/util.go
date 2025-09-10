@@ -25,21 +25,25 @@ func ProfileFunc(
 	var result ProfileResult
 
 	// CPU profile
-	var stopCPU func()
-	var err error
+	var (
+		stopCPU func()
+		err     error
+	)
+
 	if enableCPU {
 		stopCPU, err = StartCPUProfile(cpuProfilePath)
 		if err != nil {
 			return nil, err
 		}
 		defer stopCPU()
+
 		result.CPUProfileFile = cpuProfilePath
 	}
 
 	memStart := SnapshotMemStats()
 
 	elapsed := MeasureTime(func() {
-		for i := 0; i < repeat; i++ {
+		for range repeat {
 			fn()
 		}
 	})
@@ -59,7 +63,9 @@ func StartCPUProfile(path string) (func(), error) {
 	if err != nil {
 		return nil, err
 	}
+
 	pprof.StartCPUProfile(f)
+
 	return func() {
 		pprof.StopCPUProfile()
 		f.Close()
@@ -74,11 +80,14 @@ type MemStatsSnapshot struct {
 func SnapshotMemStats() MemStatsSnapshot {
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
+
 	return MemStatsSnapshot{Alloc: m.Alloc, NumGC: m.NumGC}
 }
 
 func MeasureTime(fn func()) int64 {
 	start := time.Now()
+
 	fn()
+
 	return time.Since(start).Nanoseconds()
 }

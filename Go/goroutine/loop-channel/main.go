@@ -8,9 +8,10 @@ func main() {
 	ch := make(chan int)
 
 	go func() {
-		for i := 0; i < 10; i++ {
+		for i := range 10 {
 			ch <- i
 		}
+
 		close(ch)
 	}()
 

@@ -7,6 +7,7 @@ func BfsRecursive(graph map[int][]int, root int) []int {
 	visitSequence := []int{}
 
 	var bfs func(vertices []int, visited map[int]bool, visitSequence *[]int, graph map[int][]int)
+
 	bfs = func(vertices []int, visited map[int]bool, visitSequence *[]int, graph map[int][]int) {
 		*visitSequence = append(*visitSequence, vertices...)
 		next := []int{}
@@ -26,6 +27,7 @@ func BfsRecursive(graph map[int][]int, root int) []int {
 	}
 
 	bfs([]int{root}, visited, &visitSequence, graph)
+
 	return visitSequence
 }
 
@@ -37,6 +39,7 @@ func BfsIterative(graph map[int][]int, root int) []int {
 	for len(queue) > 0 {
 		u := queue[0]
 		queue = queue[1:]
+
 		visited[u] = true
 		for _, v := range graph[u] {
 			if _, ok := visited[v]; !ok {

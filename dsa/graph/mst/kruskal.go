@@ -27,11 +27,13 @@ func (g *Graph) find(parent []int, i int) int {
 	if parent[i] == i {
 		return i
 	}
+
 	parent[i] = g.find(parent, parent[i]) // Path compression
+
 	return parent[i]
 }
 
-func (g *Graph) union(parent []int, rank []int, x, y int) {
+func (g *Graph) union(parent, rank []int, x, y int) {
 	xroot := g.find(parent, x)
 	yroot := g.find(parent, y)
 
@@ -57,7 +59,7 @@ func (g *Graph) Kruskal() []Edge {
 	parent := make([]int, g.V)
 	rank := make([]int, g.V)
 
-	for node := 0; node < g.V; node++ {
+	for node := range g.V {
 		parent[node] = node
 		rank[node] = 0
 	}
@@ -72,12 +74,12 @@ func (g *Graph) Kruskal() []Edge {
 
 		if x != y {
 			e++
+
 			result = append(result, Edge{U: u, V: v, Weight: w})
+
 			g.union(parent, rank, x, y)
 		}
 	}
 
 	return result
 }
-
-

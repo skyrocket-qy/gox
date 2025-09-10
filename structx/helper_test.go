@@ -59,6 +59,6 @@ func TestIsNonNilPointerOfStruct(t *testing.T) {
 	assert.False(t, isNonNilPointerOfStruct(intPtr))
 
 	// Test with nil interface
-	var nilInterface interface{}
+	var nilInterface any
 	assert.False(t, isNonNilPointerOfStruct(nilInterface))
 }

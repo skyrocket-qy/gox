@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 func main() {
 	parent()
@@ -22,12 +25,13 @@ func parent() {
 
 func child(i int) {
 	if i > 3 {
-		panicNum := fmt.Sprintf("%v", i)
+		panicNum := strconv.Itoa(i)
 		fmt.Println("Panicking!", panicNum)
 		panic(panicNum)
 	}
 
 	defer fmt.Println("Defer in child", i)
+
 	fmt.Println("Printing in child", i)
 	child(i + 1)
 }

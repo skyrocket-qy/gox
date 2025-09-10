@@ -9,12 +9,13 @@ import (
 	"github.com/go-echarts/go-echarts/v2/types"
 )
 
-// generate random data for line chart
+// generate random data for line chart.
 func generateLineItems() []opts.LineData {
 	items := make([]opts.LineData, 0)
-	for i := 0; i < 7; i++ {
+	for range 7 {
 		items = append(items, opts.LineData{Value: rand.Intn(300)})
 	}
+
 	return items
 }
 
@@ -38,6 +39,7 @@ func WriteChartToFile(filename string, x []string, datas ...LineData) error {
 	for _, data := range datas {
 		line.AddSeries(data.Name, data.Data)
 	}
+
 	f, err := os.Create(filename)
 	if err != nil {
 		return err

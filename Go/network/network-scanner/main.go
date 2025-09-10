@@ -8,8 +8,10 @@ import (
 )
 
 func main() {
-	var hostname, protocol string
-	var startPort, endPort int
+	var (
+		hostname, protocol string
+		startPort, endPort int
+	)
 
 	fmt.Print("Enter hostname or IP: ")
 	fmt.Scanln(&hostname)
@@ -20,7 +22,13 @@ func main() {
 	fmt.Print("Enter end port: ")
 	fmt.Scanln(&endPort)
 
-	fmt.Printf("Scanning %s (%s) for open ports (%d-%d)...\n", hostname, protocol, startPort, endPort)
+	fmt.Printf(
+		"Scanning %s (%s) for open ports (%d-%d)...\n",
+		hostname,
+		protocol,
+		startPort,
+		endPort,
+	)
 
 	var wg sync.WaitGroup
 

@@ -11,8 +11,10 @@ type AppConfig struct {
 	// ... 其他設定欄位
 }
 
-var instance *AppConfig
-var once sync.Once
+var (
+	instance *AppConfig
+	once     sync.Once
+)
 
 func GetConfig() *AppConfig {
 	once.Do(func() {
@@ -22,5 +24,6 @@ func GetConfig() *AppConfig {
 			// ... 加載其他設定
 		}
 	})
+
 	return instance
 }

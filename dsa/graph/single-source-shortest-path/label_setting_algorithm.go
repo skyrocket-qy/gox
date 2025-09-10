@@ -6,10 +6,12 @@ import "math"
 
 func LabelSettingAlgorithm(graph [][]int, start, end int) int {
 	n := len(graph)
+
 	dis := make([]int, n)
-	for i := 0; i < n; i++ {
+	for i := range n {
 		dis[i] = math.MaxInt
 	}
+
 	parent := make([]int, n)
 	visited := make([]bool, n)
 
@@ -19,13 +21,13 @@ func LabelSettingAlgorithm(graph [][]int, start, end int) int {
 	visited[start] = true
 
 	// Add all vertices
-	for i := 0; i < n-1; i++ {
+	for range n - 1 {
 		a, b := -1, -1
 		min := math.MaxInt
 
-		for j := 0; j < n; j++ {
+		for j := range n {
 			if visited[j] {
-				for k := 0; k < n; k++ {
+				for k := range n {
 					if !visited[k] && graph[j][k] != -1 {
 						if dis[j]+graph[j][k] < min {
 							a, b = j, k

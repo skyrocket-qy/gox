@@ -55,10 +55,11 @@ func TestToExcel1D(t *testing.T) {
 			keyName, valName, data, err := ToExcel1D[string, int](tc.table)
 
 			if !tc.IsErr {
-				assert.Nil(t, err)
+				assert.NoError(t, err)
 			} else {
-				assert.NotNil(t, err)
+				assert.Error(t, err)
 			}
+
 			assert.Equal(t, tc.wantKey, keyName)
 			assert.Equal(t, tc.wantVal, valName)
 			assert.Equal(t, tc.wantData, data)
@@ -188,6 +189,7 @@ func TestToExcelGroup(t *testing.T) {
 
 			if tc.wantErr {
 				assert.Error(t, err)
+
 				return
 			}
 
@@ -268,6 +270,7 @@ func TestToExcel2D(t *testing.T) {
 
 			if tc.wantErr {
 				assert.Error(t, err)
+
 				return
 			}
 

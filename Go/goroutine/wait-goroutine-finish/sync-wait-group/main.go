@@ -19,7 +19,7 @@ func main() {
 func say(s string, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	for i := 0; i < 5; i++ {
+	for range 5 {
 		time.Sleep(100 * time.Millisecond)
 		fmt.Println(s)
 	}

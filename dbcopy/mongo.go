@@ -2,6 +2,7 @@ package dbcopy
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/skyrocket-qy/gox/common"
@@ -35,12 +36,15 @@ func CopyMongoIndexes(ctx context.Context, srcCol, dstCol *mongo.Collection) err
 		if name, ok := index["name"].(string); ok {
 			opts.SetName(name)
 		}
+
 		if unique, ok := index["unique"].(bool); ok {
 			opts.SetUnique(unique)
 		}
+
 		if sparse, ok := index["sparse"].(bool); ok {
 			opts.SetSparse(sparse)
 		}
+
 		if expireAfterSeconds, ok := index["expireAfterSeconds"].(int32); ok {
 			opts.SetExpireAfterSeconds(expireAfterSeconds)
 		}
@@ -72,19 +76,23 @@ func CopyMongoData(
 	defer cursor.Close(ctx)
 
 	var docs []any
+
 	for cursor.Next(ctx) {
 		var doc bson.M
 		if err := cursor.Decode(&doc); err != nil {
 			return fmt.Errorf("failed to decode document: %w", err)
 		}
+
 		delete(doc, "_id")
 		docs = append(docs, doc)
 	}
+
 	if err := cursor.Err(); err != nil {
 		return fmt.Errorf("cursor error: %w", err)
 	}
+
 	if len(docs) == 0 {
-		return fmt.Errorf("no documents to copy")
+		return errors.New("no documents to copy")
 	}
 
 	if backupColName != "" {
@@ -106,8 +114,9 @@ func CopyMongoData(
 			if err != nil {
 				return nil, fmt.Errorf("failed to count destination documents: %w", err)
 			}
+
 			if count > 0 {
-				return nil, fmt.Errorf("destination already has data")
+				return nil, errors.New("destination already has data")
 			}
 
 		case ModeReplace:
@@ -150,6 +159,7 @@ func BackupMongoData(
 	if err != nil {
 		return fmt.Errorf("failed to check existing backup: %w", err)
 	}
+
 	if count > 0 {
 		return fmt.Errorf("backup collection %s already has data", backupColName)
 	}
@@ -161,16 +171,20 @@ func BackupMongoData(
 	defer cursor.Close(ctx)
 
 	var docs []any
+
 	for cursor.Next(ctx) {
 		var doc bson.M
 		if err := cursor.Decode(&doc); err != nil {
 			return fmt.Errorf("failed to decode document: %w", err)
 		}
+
 		docs = append(docs, doc)
 	}
+
 	if err := cursor.Err(); err != nil {
 		return fmt.Errorf("cursor error during backup: %w", err)
 	}
+
 	if len(docs) == 0 {
 		return nil
 	}

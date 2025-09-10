@@ -15,13 +15,15 @@ func NewTrie() *Trie {
 
 func (t *Trie) Insert(s string) {
 	var c byte
-	for i := 0; i < len(s); i++ {
+	for i := range len(s) {
 		c = s[i]
 		if _, ok := t.children[c]; !ok {
 			t.children[c] = NewTrie()
 		}
+
 		t = t.children[c]
 	}
+
 	t.isWord = true
 }
 
@@ -35,8 +37,9 @@ func (t *Trie) Remove(s string) {
 	// if find in leaf, delete node and back to delete leaf
 
 	path := []*Trie{t}
+
 	var c byte
-	for i := 0; i < len(s); i++ {
+	for i := range len(s) {
 		c = s[i]
 		if child, ok := t.children[c]; ok {
 			path = append(path, child)
@@ -48,12 +51,14 @@ func (t *Trie) Remove(s string) {
 
 	if len(t.children) != 0 {
 		t.isWord = false
+
 		return
 	}
 
 	i, j := len(s)-1, len(path)-2
 	for {
 		delete(path[j].children, s[i])
+
 		if len(path[j].children) == 0 && !path[j].isWord {
 			i--
 			j--
@@ -64,7 +69,7 @@ func (t *Trie) Remove(s string) {
 }
 
 func (t *Trie) Search(s string) bool {
-	for i := 0; i < len(s); i++ {
+	for i := range len(s) {
 		if child, ok := t.children[s[i]]; ok {
 			t = child
 		} else {

@@ -5,11 +5,13 @@ import (
 	"time"
 )
 
-func NewWorker(jobs chan string, results chan string) {
+func NewWorker(jobs, results chan string) {
 	WorkeInit()
+
 	for job := range jobs {
 		fmt.Println("Processing job ", job)
 		time.Sleep(1 * time.Second)
+
 		results <- job
 	}
 }
@@ -31,7 +33,7 @@ func main() {
 	jobChan := make(chan string, len(jobs))
 	resultsChan := make(chan string, len(jobs))
 
-	for i := 0; i < 3; i++ {
+	for range 3 {
 		go NewWorker(jobChan, resultsChan)
 	}
 
@@ -39,7 +41,7 @@ func main() {
 		jobChan <- job
 	}
 
-	for i := 0; i < len(jobs); i++ {
+	for range len(jobs) {
 		fmt.Println(<-resultsChan)
 	}
 }

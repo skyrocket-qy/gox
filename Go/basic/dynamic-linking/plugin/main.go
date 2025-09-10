@@ -10,6 +10,7 @@ func main() {
 	p, err := plugin.Open("lib/lib.so")
 	if err != nil {
 		fmt.Println("Error loading plugin:", err)
+
 		return
 	}
 
@@ -17,6 +18,7 @@ func main() {
 	addSymbol, err := p.Lookup("Add")
 	if err != nil {
 		fmt.Println("Error looking up Add:", err)
+
 		return
 	}
 
@@ -24,6 +26,7 @@ func main() {
 	addFunc, ok := addSymbol.(func(int, int) int)
 	if !ok {
 		fmt.Println("Invalid function signature for Add")
+
 		return
 	}
 
@@ -35,6 +38,7 @@ func main() {
 	greetSymbol, err := p.Lookup("Greet")
 	if err != nil {
 		fmt.Println("Error looking up Greet:", err)
+
 		return
 	}
 
@@ -42,6 +46,7 @@ func main() {
 	greetFunc, ok := greetSymbol.(func(string))
 	if !ok {
 		fmt.Println("Invalid function signature for Greet")
+
 		return
 	}
 

@@ -1,9 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 // rw-rw-rw {file} owner group
-// don't consider leverage
+// don't consider leverage.
 type Cfg struct {
 	Auth  uint16 // 333
 	Owner string
@@ -17,8 +20,10 @@ type Resource struct {
 	Data
 }
 
-type GroupName string
-type UserName string
+type (
+	GroupName string
+	UserName  string
+)
 
 var UserResource = map[UserName]GroupName{
 	"user1": "admin",
@@ -63,7 +68,7 @@ func CheckAccess(user, file, oper string) (bool, error) {
 
 	fileResource, ok := Example[file]
 	if !ok {
-		return false, fmt.Errorf("no such file")
+		return false, errors.New("no such file")
 	}
 
 	if user == fileResource.Owner {
@@ -84,40 +89,46 @@ func CheckAccess(user, file, oper string) (bool, error) {
 }
 
 func CheckOwner(auth uint16, oper string) bool {
-	if oper == "read" {
+	switch oper {
+	case "read":
 		if (auth & 32) != 0 {
 			return true
 		}
-	} else if oper == "write" {
+	case "write":
 		if (auth & 16) != 0 {
 			return true
 		}
 	}
+
 	return false
 }
 
 func CheckGroup(auth uint16, oper string) bool {
-	if oper == "read" {
+	switch oper {
+	case "read":
 		if (auth & 8) != 0 {
 			return true
 		}
-	} else if oper == "write" {
+	case "write":
 		if (auth & 4) != 0 {
 			return true
 		}
 	}
+
 	return false
 }
 
 func CheckOther(auth uint16, oper string) bool {
-	if oper == "read" {
+	switch oper {
+	case "read":
 		if (auth & 2) != 0 {
 			return true
 		}
-	} else if oper == "write" {
+	case "write":
 		if (auth & 1) != 0 {
 			return true
 		}
 	}
+
 	return false
 }

@@ -9,6 +9,7 @@ func WaitForGoroutineFinishUseWaitGroup(funcs ...func()) {
 
 	for _, f := range funcs {
 		fc := f
+
 		go func() {
 			fc()
 			wg.Done()
@@ -23,13 +24,15 @@ func WaitForGoroutineFinishUseChannel(funcs ...func()) {
 
 	for _, f := range funcs {
 		fc := f
+
 		go func() {
 			fc()
+
 			ch <- true
 		}()
 	}
 
-	for i := 0; i < len(funcs); i++ {
+	for range len(funcs) {
 		<-ch
 	}
 }

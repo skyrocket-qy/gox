@@ -2,7 +2,7 @@ package tree
 
 import "fmt"
 
-/*array*/
+/*array.*/
 type MinHeap []int
 
 func (mh *MinHeap) Build() { *mh = append(*mh, 0) }
@@ -17,6 +17,7 @@ func (mh *MinHeap) Get() int {
 	change(&(*mh)[1], &(*mh)[len(*mh)-1])
 	*mh = (*mh)[:len(*mh)-1]
 	mh.goDown(1)
+
 	return re
 }
 
@@ -33,6 +34,7 @@ func (mh *MinHeap) goDown(k int) {
 		if j < len(*mh)-1 && compare((*mh)[j], (*mh)[j+1]) {
 			j++
 		}
+
 		if compare((*mh)[k], (*mh)[j]) {
 			change(&(*mh)[k], &(*mh)[j])
 			k = j
@@ -51,13 +53,14 @@ func main() {
 
 	mh := MinHeap{}
 	mh.Build()
+
 	for _, val := range list {
 		mh.Put(val)
 	}
-	fmt.Println(mh)
-	fmt.Println(mh.Get())
-	fmt.Println(mh)
-	fmt.Println(mh.Get())
-	fmt.Println(mh)
 
+	fmt.Println(mh)
+	fmt.Println(mh.Get())
+	fmt.Println(mh)
+	fmt.Println(mh.Get())
+	fmt.Println(mh)
 }

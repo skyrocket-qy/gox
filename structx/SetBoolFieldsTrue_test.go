@@ -18,8 +18,8 @@ type Nested struct {
 func Test_SetBoolFieldsTrue(t *testing.T) {
 	tests := []struct {
 		name     string
-		input    interface{}
-		expected interface{}
+		input    any
+		expected any
 	}{
 		{
 			name: "Set boolean fields to true",
@@ -46,6 +46,7 @@ func Test_SetBoolFieldsTrue(t *testing.T) {
 			err := SetBoolFieldsTrue(tt.input)
 			if err != nil {
 				t.Errorf("SetBoolFieldsTrue() error = %v", err)
+
 				return
 			}
 

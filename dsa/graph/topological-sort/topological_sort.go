@@ -10,12 +10,13 @@ The representation of graph: map[node][]edge
 */
 
 // T: O(V + E)
-// S: O(V)
+// S: O(V).
 func TopoSortRemoveVertix(graph map[int][]int) (seq []int) {
 	// initialize indegree
 
 	// T: O(E)
 	inDeg := map[int]int{}
+
 	for _, edges := range graph {
 		for _, edge := range edges {
 			if _, ok := inDeg[edge]; !ok {
@@ -47,11 +48,12 @@ func TopoSortRemoveVertix(graph map[int][]int) (seq []int) {
 		return nil
 	}
 
-	return
+	return seq
 }
 
 func TopoSortDfs(graph map[int][]int) []int {
 	isntRootNodes := map[int]bool{}
+
 	for _, edges := range graph {
 		for _, edge := range edges {
 			isntRootNodes[edge] = true
@@ -59,6 +61,7 @@ func TopoSortDfs(graph map[int][]int) []int {
 	}
 
 	rootNodes := []int{}
+
 	for node := range graph {
 		if _, ok := isntRootNodes[node]; !ok {
 			rootNodes = append(rootNodes, node)
@@ -67,14 +70,18 @@ func TopoSortDfs(graph map[int][]int) []int {
 
 	visited := map[int]bool{}
 	reverseSeq := []int{}
+
 	var dfs func(graph map[int][]int, root int, visited map[int]bool, seq *[]int)
+
 	dfs = func(graph map[int][]int, root int, visited map[int]bool, seq *[]int) {
 		if _, ok := visited[root]; ok {
 			return
 		}
+
 		for _, v := range graph[root] {
 			dfs(graph, v, visited, seq)
 		}
+
 		*seq = append(*seq, root)
 	}
 	for _, node := range rootNodes {

@@ -19,13 +19,21 @@ func TestCors(t *testing.T) {
 		})
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("GET", "/", nil)
+		req, _ := http.NewRequest(http.MethodGet, "/", nil)
 		r.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
 		assert.Equal(t, "*", w.Header().Get("Access-Control-Allow-Origin"))
-		assert.Equal(t, "GET, POST, PUT, DELETE, OPTIONS", w.Header().Get("Access-Control-Allow-Methods"))
-		assert.Equal(t, "Origin, Content-Type, Authorization", w.Header().Get("Access-Control-Allow-Headers"))
+		assert.Equal(
+			t,
+			"GET, POST, PUT, DELETE, OPTIONS",
+			w.Header().Get("Access-Control-Allow-Methods"),
+		)
+		assert.Equal(
+			t,
+			"Origin, Content-Type, Authorization",
+			w.Header().Get("Access-Control-Allow-Headers"),
+		)
 		assert.Equal(t, "true", w.Header().Get("Access-Control-Allow-Credentials"))
 	})
 
@@ -38,13 +46,21 @@ func TestCors(t *testing.T) {
 		})
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("OPTIONS", "/", nil)
+		req, _ := http.NewRequest(http.MethodOptions, "/", nil)
 		r.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
 		assert.Equal(t, "*", w.Header().Get("Access-Control-Allow-Origin"))
-		assert.Equal(t, "GET, POST, PUT, DELETE, OPTIONS", w.Header().Get("Access-control-Allow-Methods"))
-		assert.Equal(t, "Origin, Content-Type, Authorization", w.Header().Get("Access-Control-Allow-Headers"))
+		assert.Equal(
+			t,
+			"GET, POST, PUT, DELETE, OPTIONS",
+			w.Header().Get("Access-Control-Allow-Methods"),
+		)
+		assert.Equal(
+			t,
+			"Origin, Content-Type, Authorization",
+			w.Header().Get("Access-Control-Allow-Headers"),
+		)
 		assert.Equal(t, "true", w.Header().Get("Access-Control-Allow-Credentials"))
 	})
 }

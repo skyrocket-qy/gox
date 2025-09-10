@@ -7,11 +7,13 @@ import (
 
 func main() {
 	total := 0
-	for i := 0; i < 1000; i++ {
+
+	for range 1000 {
 		go func() {
 			total++
 		}()
 	}
+
 	time.Sleep(time.Second)
 	fmt.Println(total)
 }

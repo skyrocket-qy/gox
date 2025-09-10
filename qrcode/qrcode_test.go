@@ -21,7 +21,7 @@ func TestGenerateQRCode(t *testing.T) {
 	png, err := GenerateQRCode(uri)
 	assert.NoError(t, err)
 	assert.NotNil(t, png)
-	assert.Greater(t, len(png), 0)
+	assert.NotEmpty(t, png)
 
 	// Test with an empty URI (should return an error from qrcode.Encode)
 	png, err = GenerateQRCode("")
@@ -33,7 +33,7 @@ func TestGenerateQRCode(t *testing.T) {
 func TestHandler(t *testing.T) {
 	// Test case 1: Successful generation
 	t.Run("Success", func(t *testing.T) {
-		req, err := http.NewRequest("GET", "/qrcode", nil)
+		req, err := http.NewRequest(http.MethodGet, "/qrcode", nil)
 		assert.NoError(t, err)
 
 		rr := httptest.NewRecorder()
@@ -43,7 +43,7 @@ func TestHandler(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, rr.Code)
 		assert.Equal(t, "image/png", rr.Header().Get("Content-Type"))
-		assert.Greater(t, rr.Body.Len(), 0)
+		assert.Positive(t, rr.Body.Len())
 	})
 
 	// Test case 2: GenerateOTPURI fails (mocking is hard here, so we'll rely on internal errors)

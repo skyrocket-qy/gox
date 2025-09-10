@@ -5,6 +5,7 @@ import "reflect"
 func DeepNew[V any]() *V {
 	out := new(V)
 	InitFields(out)
+
 	return out
 }
 
@@ -12,6 +13,7 @@ func InitFields(v any) {
 	if !isNonNilPointerOfStruct(v) {
 		return
 	}
+
 	val := reflect.ValueOf(v).Elem()
 
 	for i := 0; i < val.NumField(); i++ {

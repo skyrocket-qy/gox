@@ -4,27 +4,28 @@ import (
 	"math"
 )
 
-// Graph represents an undirected graph using adjacency list representation
+// Graph represents an undirected graph using adjacency list representation.
 type Graph struct {
-	V       int           // No. of vertices
-	Adj     [][]int       // Adjacency list
-	Time    int           // Global time variable for discovery times
-	Bridges [][]int       // Stores the found bridges
+	V       int     // No. of vertices
+	Adj     [][]int // Adjacency list
+	Time    int     // Global time variable for discovery times
+	Bridges [][]int // Stores the found bridges
 }
 
-// NewGraph creates a new Graph instance
+// NewGraph creates a new Graph instance.
 func NewGraph(vertices int) *Graph {
 	adj := make([][]int, vertices)
 	for i := range adj {
 		adj[i] = []int{}
 	}
+
 	return &Graph{
 		V:   vertices,
 		Adj: adj,
 	}
 }
 
-// AddEdge adds an edge to the graph
+// AddEdge adds an edge to the graph.
 func (g *Graph) AddEdge(u, v int) {
 	g.Adj[u] = append(g.Adj[u], v)
 	g.Adj[v] = append(g.Adj[v], u)
@@ -36,9 +37,8 @@ func (g *Graph) AddEdge(u, v int) {
 // visited[] --> keeps track of visited vertices
 // disc[] --> Stores discovery times of visited vertices
 // parent[] --> Stores parent vertices in DFS tree
-// low[] --> Stores the lowest discovery time reachable from subtree rooted with current vertex
-func (g *Graph) bridgeUtil(u int, visited []bool, parent []int, low []int, disc []int) {
-
+// low[] --> Stores the lowest discovery time reachable from subtree rooted with current vertex.
+func (g *Graph) bridgeUtil(u int, visited []bool, parent, low, disc []int) {
 	// Mark the current node as visited
 	visited[u] = true
 
@@ -80,7 +80,7 @@ func (g *Graph) FindBridges() [][]int {
 	low := make([]int, g.V)
 	parent := make([]int, g.V)
 
-	for i := 0; i < g.V; i++ {
+	for i := range g.V {
 		disc[i] = math.MaxInt32
 		low[i] = math.MaxInt32
 		parent[i] = -1
@@ -88,7 +88,7 @@ func (g *Graph) FindBridges() [][]int {
 
 	// Call the recursive helper function to find bridges
 	// in DFS tree rooted with vertex 'i'
-	for i := 0; i < g.V; i++ {
+	for i := range g.V {
 		if !visited[i] {
 			g.bridgeUtil(i, visited, parent, low, disc)
 		}

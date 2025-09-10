@@ -25,10 +25,12 @@ func IsNil(it reflect.Value) (ok bool) {
 
 	if !it.IsValid() {
 		ok = true
+
 		return
 	}
 
 	ok = it.IsNil()
+
 	return
 }
 
@@ -50,14 +52,14 @@ func ValueOf[Self any](it Self, deep bool) (out reflect.Value) {
 	return
 }
 
-func GetField[Out any, Self any](it *Self, name string) (out *Out, throw error) {
+func GetField[Out, Self any](it *Self, name string) (out *Out, throw error) {
 	value, throw := reflections.GetField(it, name)
 	if nil != throw {
 		return
 	}
 
 	item, ok := value.(Out)
-	if false == ok {
+	if !ok {
 		throw = gerror.NewCodef(
 			gcode.CodeInvalidParameter,
 			"assert field type fail: %s",
@@ -66,6 +68,7 @@ func GetField[Out any, Self any](it *Self, name string) (out *Out, throw error) 
 	}
 
 	out = &item
+
 	return
 }
 
@@ -80,7 +83,8 @@ func CallField[Self any](
 	method := value.MethodByName(name)
 	if !method.IsValid() {
 		throw = gerror.NewCodef(gcode.CodeInvalidParameter, "method is not exist: %s", name)
-		return
+
+		return out, throw
 	}
 
 	count := len(arguments)
@@ -90,20 +94,27 @@ func CallField[Self any](
 			"the method arguments is out of index: %s",
 			method.String(),
 		)
-		return
+
+		return out, throw
 	}
 
 	defer func() {
 		if r := recover(); r != nil {
-			throw = gerror.NewCodef(gcode.CodeInvalidParameter, "failed to call method %s: %v", name, r)
+			throw = gerror.NewCodef(
+				gcode.CodeInvalidParameter,
+				"failed to call method %s: %v",
+				name,
+				r,
+			)
 		}
 	}()
 
 	out = method.Call(arguments)
-	return
+
+	return out, throw
 }
 
-func GetMap[Out any, In any](it *In) (out map[string]Out, throw error) {
+func GetMap[Out, In any](it *In) (out map[string]Out, throw error) {
 	// Add a check for nil input
 	if reflect.ValueOf(it).IsNil() {
 		return nil, gerror.NewCode(gcode.CodeInvalidParameter, "input cannot be nil")
@@ -117,12 +128,13 @@ func GetMap[Out any, In any](it *In) (out map[string]Out, throw error) {
 	data := make(map[string]Out)
 	for key, value := range anyOut {
 		item, ok := value.(Out)
-		if false == ok {
+		if !ok {
 			throw = gerror.NewCodef(
 				gcode.CodeInvalidParameter,
 				"assert field type fail: %s",
 				key,
 			)
+
 			return
 		}
 
@@ -130,6 +142,7 @@ func GetMap[Out any, In any](it *In) (out map[string]Out, throw error) {
 	}
 
 	out = data
+
 	return
 }
 
@@ -143,13 +156,15 @@ func GetFunctionName[Self any](data Self, shortName bool) (out string) {
 	}
 
 	out = name
+
 	return
 }
 
 func GetCallerName(skip int, shortName bool) (out string) {
 	out = ""
+
 	pointer, _, _, ok := runtime.Caller(skip)
-	if false == ok {
+	if !ok {
 		return
 	}
 
@@ -161,15 +176,18 @@ func GetCallerName(skip int, shortName bool) (out string) {
 	}
 
 	out = name
+
 	return
 }
 
 func GetCurrentCallerShortName() (out string) {
 	out = GetCallerName(CurrentCaller+1, true)
+
 	return
 }
 
 func GetCurrentCallerFullName() (out string) {
 	out = GetCallerName(CurrentCaller+1, false)
+
 	return
 }

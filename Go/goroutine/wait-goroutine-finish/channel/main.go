@@ -16,9 +16,10 @@ func main() {
 }
 
 func say(s string, ch chan string) {
-	for i := 0; i < 5; i++ {
+	for range 5 {
 		time.Sleep(100 * time.Millisecond)
 		fmt.Println(s)
 	}
+
 	ch <- "finish"
 }

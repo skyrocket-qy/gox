@@ -12,7 +12,7 @@ import (
 The table format is as follows:
 | keyName | valName |
 | key1    | val1    |
-| key2    | val2    |
+| key2    | val2    |.
 */
 func ToExcel1D[K comparable, V any](
 	table [][]string,
@@ -32,6 +32,7 @@ func ToExcel1D[K comparable, V any](
 	keyName = table[0][0]
 	valName = table[0][1]
 	data = make(map[K]V)
+
 	for _, row := range table[1:] {
 		if len(row) != 2 {
 			return "", "", nil, errors.New("table format error")
@@ -41,10 +42,12 @@ func ToExcel1D[K comparable, V any](
 		if err != nil {
 			return "", "", nil, err
 		}
+
 		v, err := StrToType[V](row[1])
 		if err != nil {
 			return "", "", nil, err
 		}
+
 		data[k] = v
 	}
 
@@ -53,6 +56,7 @@ func ToExcel1D[K comparable, V any](
 
 func StrToType[T any](s string) (T, error) {
 	var zero T
+
 	t := reflect.TypeOf(zero)
 
 	switch t.Kind() {
@@ -63,18 +67,21 @@ func StrToType[T any](s string) (T, error) {
 		if err != nil {
 			return zero, err
 		}
+
 		return any(int(i)).(T), nil // careful, might truncate for smaller ints
 	case reflect.Float32, reflect.Float64:
 		f, err := strconv.ParseFloat(s, 64)
 		if err != nil {
 			return zero, err
 		}
+
 		return any(f).(T), nil
 	case reflect.Bool:
 		b, err := strconv.ParseBool(s)
 		if err != nil {
 			return zero, err
 		}
+
 		return any(b).(T), nil
 	default:
 		return zero, fmt.Errorf("unsupported type %v", t)
@@ -85,7 +92,7 @@ func StrToType[T any](s string) (T, error) {
 The table format is as follows:
 |  			 | colKey1 | colKey2 |
 | rowKey1    | val1    | val3    |
-| rowKey2    | val2    | val4    |
+| rowKey2    | val2    | val4    |.
 */
 func ToExcel2D[RowKey, ColKey comparable, V any](table [][]string) (
 	rowKeys []RowKey, colKeys []ColKey, data map[RowKey]map[ColKey]V, err error,
@@ -111,6 +118,7 @@ func ToExcel2D[RowKey, ColKey comparable, V any](table [][]string) (
 		if err != nil {
 			return nil, nil, nil, err
 		}
+
 		colKeys = append(colKeys, k)
 	}
 
@@ -123,9 +131,11 @@ func ToExcel2D[RowKey, ColKey comparable, V any](table [][]string) (
 		if err != nil {
 			return nil, nil, nil, err
 		}
+
 		rowKeys = append(rowKeys, rowKey)
 
 		colToVal := make(map[ColKey]V)
+
 		for i, val := range row[1:] {
 			colKey := colKeys[i]
 
@@ -133,8 +143,10 @@ func ToExcel2D[RowKey, ColKey comparable, V any](table [][]string) (
 			if err != nil {
 				return nil, nil, nil, err
 			}
+
 			colToVal[colKey] = v
 		}
+
 		data[rowKey] = colToVal
 	}
 
@@ -145,7 +157,7 @@ func ToExcel2D[RowKey, ColKey comparable, V any](table [][]string) (
 The table format is as follows:
 | gorup1 |         | colKey1 | colKey2 | group2 |		  | colKey1 |
 |        | rowKey1 | val1    | val3    |        | rowKey1 | val1    |
-|        | rowKey2 | val2    | val4    |        | rowKey2 | val2    |
+|        | rowKey2 | val2    | val4    |        | rowKey2 | val2    |.
 */
 func ToExcelGroup[GroupKey comparable](
 	table [][]string, groupKeyPattern string,
@@ -162,6 +174,7 @@ func ToExcelGroup[GroupKey comparable](
 	if err != nil {
 		return nil, nil, err
 	}
+
 	_, err = regexp.MatchString(groupKeyPattern, table[0][len(table[0])-1])
 	if err != nil {
 		return nil, nil, err
@@ -169,12 +182,15 @@ func ToExcelGroup[GroupKey comparable](
 
 	left := 0
 	data = map[GroupKey][][]string{}
+
 	var preGroupKey GroupKey
+
 	for i, col := range table[0] {
 		matched, err := regexp.MatchString(groupKeyPattern, col)
 		if err != nil {
 			return nil, nil, err
 		}
+
 		if matched {
 			groupKey, err := StrToType[GroupKey](table[0][i])
 			if err != nil {
@@ -185,6 +201,7 @@ func ToExcelGroup[GroupKey comparable](
 				// means add to group
 				data[preGroupKey] = GetGroup(table, left, i-1)
 			}
+
 			preGroupKey = groupKey
 			groupKeys = append(groupKeys, groupKey)
 			left = i + 1
@@ -207,10 +224,13 @@ func GetGroup(table [][]string, left, right int) [][]string {
 	for i, row := range table {
 		if len(row) < right+1 {
 			result[i] = row[left:]
+
 			continue
 		}
+
 		result[i] = row[left : right+1]
 	}
+
 	return result
 }
 
@@ -220,7 +240,7 @@ The table format is as follows:
 | val1    | val1    |
 | val2    | val2    |
 |         | val3    |
-each col len separately
+each col len separately.
 */
 func ToColsList[K comparable, V any](table [][]string) (data map[K][]V, err error) {
 	if len(table) == 0 {
@@ -235,10 +255,12 @@ func ToColsList[K comparable, V any](table [][]string) (data map[K][]V, err erro
 		}
 
 		vals := []V{}
+
 		for i := 1; i < len(table); i++ {
 			if len(table[i]) < j+1 {
 				break
 			}
+
 			if table[i][j] == "" {
 				break
 			}
@@ -247,6 +269,7 @@ func ToColsList[K comparable, V any](table [][]string) (data map[K][]V, err erro
 			if err != nil {
 				return nil, err
 			}
+
 			vals = append(vals, val)
 		}
 

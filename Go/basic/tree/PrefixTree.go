@@ -18,6 +18,7 @@ func (t *Trie) Insert(word string) {
 			t = t.children[char]
 		}
 	}
+
 	t.count++
 }
 
@@ -29,6 +30,7 @@ func (t *Trie) Search(word string) bool {
 			return false
 		}
 	}
+
 	return t.count > 0
 }
 
@@ -40,6 +42,7 @@ func (t *Trie) StartsWith(prefix string) bool {
 			return false
 		}
 	}
+
 	return true
 }
 
@@ -51,13 +54,15 @@ func (t *Trie) Remove(word string) {
 			return
 		}
 	}
-	//delete node or decrease count
+	// delete node or decrease count
 	if node, ok := t.children[rune(word[len(word)-1])]; ok {
 		if node.count == 1 {
 			if len(node.children) == 0 {
 				delete(t.children, rune(word[len(word)-1]))
+
 				return
 			}
+
 			node.count >>= 1
 		} else if node.count > 1 {
 			node.count--

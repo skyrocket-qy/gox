@@ -13,6 +13,7 @@ type DiffArr []int
 func NewDifferenceArray(in []int) DiffArr {
 	// D[i] = in[i] - in[i-1]
 	diffArr := make([]int, len(in))
+
 	diffArr[0] = in[0]
 	for i := 1; i < len(diffArr); i++ {
 		diffArr[i] = in[i] - in[i-1]
@@ -26,6 +27,7 @@ func (a DiffArr) IntervalUpdate(l, r, val int) {
 	if r == len(a)-1 {
 		return
 	}
+
 	a[r+1] -= val
 }
 

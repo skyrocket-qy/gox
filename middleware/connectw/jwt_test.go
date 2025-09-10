@@ -2,6 +2,7 @@ package connectw_test
 
 import (
 	"context"
+	"errors"
 	"testing"
 	"time"
 
@@ -18,9 +19,11 @@ func TestAuthInterceptor_WrapAuth(t *testing.T) {
 	authInterceptor := connectw.NewAuthInterceptor()
 
 	// Create a dummy next function for the interceptor chain
-	next := connect.UnaryFunc(func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
-		return connect.NewResponse(&struct{}{}), nil
-	})
+	next := connect.UnaryFunc(
+		func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
+			return connect.NewResponse(&struct{}{}), nil
+		},
+	)
 
 	// Get the interceptor
 	interceptor := authInterceptor.WrapAuth(secret)
@@ -29,8 +32,9 @@ func TestAuthInterceptor_WrapAuth(t *testing.T) {
 	t.Run("Missing Authorization Header", func(t *testing.T) {
 		req := connect.NewRequest(&struct{}{})
 		_, err := interceptor.WrapUnary(next)(context.Background(), req)
-		assert.NotNil(t, err)
-		connectErr, ok := err.(*connect.Error)
+		assert.Error(t, err)
+		connectErr := &connect.Error{}
+		ok := errors.As(err, &connectErr)
 		assert.True(t, ok)
 		assert.Equal(t, connect.CodeUnauthenticated, connectErr.Code())
 		assert.Contains(t, connectErr.Message(), "401.0002")
@@ -41,8 +45,9 @@ func TestAuthInterceptor_WrapAuth(t *testing.T) {
 		req := connect.NewRequest(&struct{}{})
 		req.Header().Set("Authorization", "Bearer invalid_token")
 		_, err := interceptor.WrapUnary(next)(context.Background(), req)
-		assert.NotNil(t, err)
-		connectErr, ok := err.(*connect.Error)
+		assert.Error(t, err)
+		connectErr := &connect.Error{}
+		ok := errors.As(err, &connectErr)
 		assert.True(t, ok)
 		assert.Equal(t, connect.CodeUnauthenticated, connectErr.Code())
 		assert.Contains(t, connectErr.Message(), "401.0000")
@@ -62,15 +67,18 @@ func TestAuthInterceptor_WrapAuth(t *testing.T) {
 		req.Header().Set("Authorization", "Bearer "+tokenString)
 
 		// Custom next function to check context value
-		customNext := connect.UnaryFunc(func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
-			userID, ok := connectw.UserIDFromContext(ctx)
-			assert.True(t, ok)
-			assert.Equal(t, "test_user_id", userID)
-			return connect.NewResponse(&struct{}{}), nil
-		})
+		customNext := connect.UnaryFunc(
+			func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
+				userID, ok := connectw.UserIDFromContext(ctx)
+				assert.True(t, ok)
+				assert.Equal(t, "test_user_id", userID)
+
+				return connect.NewResponse(&struct{}{}), nil
+			},
+		)
 
 		_, err := interceptor.WrapUnary(customNext)(context.Background(), req)
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 	})
 
 	// Test Case 4: Expired JWT token
@@ -87,8 +95,9 @@ func TestAuthInterceptor_WrapAuth(t *testing.T) {
 		req.Header().Set("Authorization", "Bearer "+tokenString)
 
 		_, err := interceptor.WrapUnary(next)(context.Background(), req)
-		assert.NotNil(t, err)
-		connectErr, ok := err.(*connect.Error)
+		assert.Error(t, err)
+		connectErr := &connect.Error{}
+		ok := errors.As(err, &connectErr)
 		assert.True(t, ok)
 		assert.Equal(t, connect.CodeUnauthenticated, connectErr.Code())
 		assert.Contains(t, connectErr.Message(), "401.0000")
@@ -107,8 +116,9 @@ func TestAuthInterceptor_WrapAuth(t *testing.T) {
 		req.Header().Set("Authorization", "Bearer "+tokenString)
 
 		_, err := interceptor.WrapUnary(next)(context.Background(), req)
-		assert.NotNil(t, err)
-		connectErr, ok := err.(*connect.Error)
+		assert.Error(t, err)
+		connectErr := &connect.Error{}
+		ok := errors.As(err, &connectErr)
 		assert.True(t, ok)
 		assert.Equal(t, connect.CodeUnauthenticated, connectErr.Code())
 		assert.Contains(t, connectErr.Message(), "401.0000")
@@ -127,8 +137,9 @@ func TestAuthInterceptor_WrapAuth(t *testing.T) {
 		req.Header().Set("Authorization", "Bearer "+tokenString)
 
 		_, err := interceptor.WrapUnary(next)(context.Background(), req)
-		assert.NotNil(t, err)
-		connectErr, ok := err.(*connect.Error)
+		assert.Error(t, err)
+		connectErr := &connect.Error{}
+		ok := errors.As(err, &connectErr)
 		assert.True(t, ok)
 		assert.Equal(t, connect.CodeUnauthenticated, connectErr.Code())
 		assert.Contains(t, connectErr.Message(), "401.0000")
@@ -148,14 +159,14 @@ func TestParseJWT(t *testing.T) {
 		tokenString, _ := token.SignedString(secret)
 
 		parsedClaims, err := connectw.ParseJWT(tokenString, secret)
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 		assert.Equal(t, "test_user", parsedClaims.Issuer)
 	})
 
 	// Test Case 2: Invalid token string
 	t.Run("Invalid Token String", func(t *testing.T) {
 		_, err := connectw.ParseJWT("invalid_token_string", secret)
-		assert.NotNil(t, err)
+		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "token is malformed")
 	})
 
@@ -169,7 +180,7 @@ func TestParseJWT(t *testing.T) {
 		tokenString, _ := token.SignedString(secret)
 
 		_, err := connectw.ParseJWT(tokenString, secret)
-		assert.NotNil(t, err)
+		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "token is expired")
 	})
 
@@ -183,7 +194,7 @@ func TestParseJWT(t *testing.T) {
 		tokenString, _ := token.SignedString([]byte("wrong_secret"))
 
 		_, err := connectw.ParseJWT(tokenString, secret)
-		assert.NotNil(t, err)
+		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "signature is invalid")
 	})
 
@@ -197,7 +208,7 @@ func TestParseJWT(t *testing.T) {
 		tokenString, _ := token.SignedString(jwt.UnsafeAllowNoneSignatureType)
 
 		_, err := connectw.ParseJWT(tokenString, secret)
-		assert.NotNil(t, err)
+		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "unexpected signing method")
 	})
 }

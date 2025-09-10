@@ -5,14 +5,16 @@ package getallsubsequence
 func GetSubsequences(nums []int, k int) [][]int {
 	result := [][]int{}
 	GenerateSubsequences(nums, k, 0, []int{}, &result)
+
 	return result
 }
 
-func GenerateSubsequences(nums []int, k int, start int, current []int, result *[][]int) {
+func GenerateSubsequences(nums []int, k, start int, current []int, result *[][]int) {
 	if len(current) == k {
 		temp := make([]int, len(current))
 		copy(temp, current)
 		*result = append(*result, temp)
+
 		return
 	}
 
@@ -26,14 +28,16 @@ func GenerateSubsequences(nums []int, k int, start int, current []int, result *[
 func GetSubsequencesIndex(n, k int) [][]int {
 	result := [][]int{}
 	GenerateSubsequencesIndex(n, k, 0, []int{}, &result)
+
 	return result
 }
 
-func GenerateSubsequencesIndex(n int, k int, start int, current []int, result *[][]int) {
+func GenerateSubsequencesIndex(n, k, start int, current []int, result *[][]int) {
 	if len(current) == k {
 		temp := make([]int, len(current))
 		copy(temp, current)
 		*result = append(*result, temp)
+
 		return
 	}
 

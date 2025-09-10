@@ -26,6 +26,7 @@ func AnalyzeInts[T ~int | ~int64 | ~int32 | ~uint | ~uint64 | ~uint32](data []T)
 
 	// Convert to []int64 for ease of processing
 	values := make([]int64, n)
+
 	var sum int64
 	for i, v := range data {
 		values[i] = int64(v)
@@ -47,6 +48,7 @@ func AnalyzeInts[T ~int | ~int64 | ~int32 | ~uint | ~uint64 | ~uint32](data []T)
 			d := float64(v) - avg
 			sqsum += d * d
 		}
+
 		return math.Sqrt(sqsum / float64(n))
 	}()
 
@@ -68,12 +70,16 @@ func percentile(sorted []int64, p float64) float64 {
 	if len(sorted) == 0 {
 		return 0
 	}
+
 	rank := p / 100 * float64(len(sorted)-1)
 	lower := int(math.Floor(rank))
+
 	upper := int(math.Ceil(rank))
 	if lower == upper {
 		return float64(sorted[lower])
 	}
+
 	weight := rank - float64(lower)
+
 	return float64(sorted[lower])*(1-weight) + float64(sorted[upper])*weight
 }

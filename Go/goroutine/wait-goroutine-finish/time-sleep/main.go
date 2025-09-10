@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// This method not ensure the finish
+// This method not ensure the finish.
 func main() {
 	go say("world")
 	go say("hello")
@@ -14,7 +14,7 @@ func main() {
 }
 
 func say(s string) {
-	for i := 0; i < 5; i++ {
+	for range 5 {
 		time.Sleep(100 * time.Millisecond)
 		fmt.Println(s)
 	}

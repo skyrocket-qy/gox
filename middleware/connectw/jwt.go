@@ -80,5 +80,6 @@ func ParseJWT(tokenString string, secret []byte) (*jwt.RegisteredClaims, error) 
 // UserIDFromContext retrieves the user ID from the context.
 func UserIDFromContext(ctx context.Context) (string, bool) {
 	userID, ok := ctx.Value(contextKey("userId")).(string)
+
 	return userID, ok
 }

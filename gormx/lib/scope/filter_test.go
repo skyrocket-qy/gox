@@ -45,36 +45,39 @@ func TestApplyFilter(t *testing.T) {
 
 	t.Run("exact match", func(t *testing.T) {
 		var users []User
+
 		filters := []Filter{
 			{Field: "name", Fuzzy: false, Value: "Alice"},
 		}
 		err := db.Scopes(ApplyFilter(db, filters)).Find(&users).Error
 		assert.NoError(t, err)
-		assert.Equal(t, 1, len(users))
+		assert.Len(t, users, 1)
 		assert.Equal(t, "Alice", users[0].Name)
 	})
 
 	t.Run("fuzzy match", func(t *testing.T) {
 		var users []User
+
 		filters := []Filter{
 			{Field: "name", Fuzzy: true, Value: "li"},
 		}
 		err := db.Scopes(ApplyFilter(db, filters)).Find(&users).Error
 		assert.NoError(t, err)
-		assert.Equal(t, 2, len(users))
+		assert.Len(t, users, 2)
 		assert.Contains(t, []string{users[0].Name, users[1].Name}, "Alice")
 		assert.Contains(t, []string{users[0].Name, users[1].Name}, "Charlie")
 	})
 
 	t.Run("multiple filters", func(t *testing.T) {
 		var users []User
+
 		filters := []Filter{
 			{Field: "name", Fuzzy: true, Value: "li"},
 			{Field: "age", Fuzzy: false, Value: "20"},
 		}
 		err := db.Scopes(ApplyFilter(db, filters)).Find(&users).Error
 		assert.NoError(t, err)
-		assert.Equal(t, 1, len(users))
+		assert.Len(t, users, 1)
 		assert.Equal(t, "Alice", users[0].Name)
 	})
 }

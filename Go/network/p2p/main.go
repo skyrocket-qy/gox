@@ -10,7 +10,7 @@ import (
 	"github.com/skyrocket-qy/gox/Go/network/p2p/server"
 )
 
-// Struct to represent a peer
+// Struct to represent a peer.
 type Peer struct {
 	Addr string
 	Port string
@@ -24,12 +24,15 @@ func main() {
 	go server.StartServer(serverPort)
 
 	exp := regexp.MustCompile("^get .+")
+
 	var action string
+
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
 		fmt.Print("Please enter the Action: ")
 		scanner.Scan()
+
 		action = scanner.Text()
 		if exp.MatchString(action) {
 			fileName := action[4:]
@@ -43,6 +46,5 @@ func main() {
 		} else {
 			fmt.Println("Invalid action. Please enter a valid action like 'get <filename>'")
 		}
-
 	}
 }

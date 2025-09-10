@@ -55,12 +55,15 @@ func FixedTimeCheck(
 		if err != nil {
 			return err
 		}
+
 		if checkFunc(curStatus, targetStatus) {
 			break
 		}
+
 		if time.Since(startTime) >= timeout {
 			return errors.New("timeout")
 		}
+
 		log.Printf("Current status is %d, waiting to %d\n", curStatus, targetStatus)
 		time.Sleep(interval)
 	}
@@ -77,17 +80,21 @@ func ExponentialTimeCheck(
 ) error {
 	startTime := time.Now()
 	interval := startInterval
+
 	for {
 		curStatus, err := getCurrentStatus()
 		if err != nil {
 			return err
 		}
+
 		if checkFunc(curStatus, targetStatus) {
 			break
 		}
+
 		if time.Since(startTime) >= timeout {
 			return errors.New("timeout")
 		}
+
 		log.Printf("Current status is %d, waiting for %d\n", curStatus, targetStatus)
 		time.Sleep(interval)
 		interval *= 2
@@ -110,12 +117,15 @@ func DiffTimeCheck(
 		if err != nil {
 			return err
 		}
+
 		if checkFunc(curStatus, targetStatus) {
 			break
 		}
+
 		if time.Since(startTime) >= timeout {
 			return errors.New("timeout")
 		}
+
 		log.Printf("Current status is %d, waiting for %d\n", curStatus, targetStatus)
 		time.Sleep(
 			min(
@@ -137,24 +147,31 @@ func SelfAdaptiveTimeCheck(
 ) error {
 	startTime := time.Now()
 	startInterval = min(startInterval, maxInterval)
+
 	var preDiff, preInterval time.Duration
+
 	for {
 		curStatus, err := getCurrentStatus()
 		if err != nil {
 			return err
 		}
+
 		if checkFunc(curStatus, targetStatus) {
 			break
 		}
+
 		if time.Since(startTime) >= timeout {
 			return errors.New("timeout")
 		}
+
 		log.Printf("Current status is %d, waiting for %d\n", curStatus, targetStatus)
+
 		if preDiff == 0 {
 			time.Sleep(startInterval)
 			preDiff, preInterval = time.Duration(abs(curStatus-targetStatus)), startInterval
 		} else {
 			diff := time.Duration(abs(curStatus - targetStatus))
+
 			denominator := abs(int(diff - preDiff))
 			if denominator == 0 {
 				time.Sleep(maxInterval)                  // Or some other sensible default
@@ -175,5 +192,6 @@ func abs(x int) int {
 	if x < 0 {
 		return -x
 	}
+
 	return x
 }

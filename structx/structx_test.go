@@ -27,7 +27,7 @@ func TestDeepNew(t *testing.T) {
 	assert.NotNil(t, ptr)
 	assert.IsType(t, &SimpleStruct{}, ptr)
 	assert.Equal(t, 0, ptr.Field1)
-	assert.Equal(t, "", ptr.Field2)
+	assert.Empty(t, ptr.Field2)
 
 	// Test with a struct containing nested pointers
 	nestedPtr := DeepNew[NestedPointerStruct]()
@@ -38,8 +38,8 @@ func TestDeepNew(t *testing.T) {
 	assert.IsType(t, &SimpleStruct{}, nestedPtr.Nested)
 	assert.IsType(t, &AnotherNestedStruct{}, nestedPtr.Another)
 	assert.Equal(t, 0, nestedPtr.Nested.Field1)
-	assert.Equal(t, "", nestedPtr.Nested.Field2)
-	assert.Equal(t, false, nestedPtr.Another.Value)
+	assert.Empty(t, nestedPtr.Nested.Field2)
+	assert.False(t, nestedPtr.Another.Value)
 }
 
 func TestInitFields(t *testing.T) {
@@ -64,13 +64,14 @@ func TestInitFields(t *testing.T) {
 	}
 	InitFields(&initializedNested)
 	assert.Equal(t, 100, initializedNested.Nested.Field1)
-	assert.Equal(t, true, initializedNested.Another.Value)
+	assert.True(t, initializedNested.Another.Value)
 
 	// Test with a struct containing nested struct (not pointer)
 	type StructWithNested struct {
 		ID     int
 		Nested SimpleStruct
 	}
+
 	withNested := StructWithNested{}
 	InitFields(&withNested)
 	assert.Equal(t, 0, withNested.Nested.Field1)

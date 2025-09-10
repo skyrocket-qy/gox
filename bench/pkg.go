@@ -9,22 +9,28 @@ func CollectTimings(fn func(), repeat int) []int64 {
 	timings := make([]int64, 0, repeat)
 	for range repeat {
 		start := time.Now()
+
 		fn()
+
 		elapsed := time.Since(start).Nanoseconds()
 		timings = append(timings, elapsed)
 	}
+
 	return timings
 }
 
 // Measuring per-run heap usage
-// Seeing how much memory is retained after a function
+// Seeing how much memory is retained after a function.
 func CollectMems(fn func(), repeat int) []uint64 {
 	allocs := make([]uint64, 0, repeat)
 	for range repeat {
 		allocStart := SnapshotMemStats().Alloc
+
 		fn()
+
 		allocs = append(allocs, SnapshotMemStats().Alloc-allocStart)
 	}
+
 	return allocs
 }
 
@@ -32,16 +38,20 @@ func CollectNumGCs(fn func(), repeat int) []uint32 {
 	numGCs := make([]uint32, 0, repeat)
 	for range repeat {
 		st := SnapshotMemStats().NumGC
+
 		fn()
+
 		numGCs = append(numGCs, SnapshotMemStats().NumGC-st)
 	}
+
 	return numGCs
 }
 
 // How much memory was allocated during a benchmark
-// GC pressure or allocation rate over time
+// GC pressure or allocation rate over time.
 func CollectAllocs(fn func(), repeat int) []uint64 {
 	allocs := make([]uint64, 0, repeat)
+
 	var start, end runtime.MemStats
 	for range repeat {
 		runtime.ReadMemStats(&start)
@@ -49,11 +59,13 @@ func CollectAllocs(fn func(), repeat int) []uint64 {
 		runtime.ReadMemStats(&end)
 		allocs = append(allocs, end.TotalAlloc-start.TotalAlloc)
 	}
+
 	return allocs
 }
 
 func CollectPauseNs(fn func(), repeat int) []uint64 {
 	pauses := make([]uint64, 0, repeat)
+
 	var start, end runtime.MemStats
 
 	for range repeat {
@@ -68,6 +80,7 @@ func CollectPauseNs(fn func(), repeat int) []uint64 {
 			pauses = append(pauses, 0)
 		}
 	}
+
 	return pauses
 }
 
@@ -75,9 +88,12 @@ func CollectGoroutines(fn func(), repeat int) []int {
 	counts := make([]int, 0, repeat)
 	for range repeat {
 		before := runtime.NumGoroutine()
+
 		fn()
+
 		after := runtime.NumGoroutine()
 		counts = append(counts, after-before)
 	}
+
 	return counts
 }

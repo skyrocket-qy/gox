@@ -2,7 +2,6 @@ package connectw
 
 import (
 	"context"
-	"errors"
 	"strconv"
 	"testing"
 	"time"
@@ -45,16 +44,19 @@ func TestThrottle_UnaryInterceptor(t *testing.T) {
 
 	interceptor := throttle.UnaryInterceptor()
 
-	mockHandler := connect.UnaryFunc(func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
-		return connect.NewResponse(&struct{}{}), nil
-	})
+	mockHandler := connect.UnaryFunc(
+		func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
+			return connect.NewResponse(&struct{}{}), nil
+		},
+	)
 
 	// First request - should be allowed
 	t.Run("allows request within limit", func(t *testing.T) {
 		now := mockClock.Now().UnixNano()
 		minScore := now - window.Nanoseconds()
 
-		mock.ExpectZRemRangeByScore(expectedRedisKey, "0", strconv.FormatInt(minScore, 10)).SetVal(0)
+		mock.ExpectZRemRangeByScore(expectedRedisKey, "0", strconv.FormatInt(minScore, 10)).
+			SetVal(0)
 		mock.ExpectZAdd(expectedRedisKey, redis.Z{Score: float64(now), Member: now}).SetVal(1)
 		mock.ExpectExpire(expectedRedisKey, window).SetVal(true)
 		mock.ExpectZCard(expectedRedisKey).SetVal(1)
@@ -69,7 +71,8 @@ func TestThrottle_UnaryInterceptor(t *testing.T) {
 		now := mockClock.Now().UnixNano()
 		minScore := now - window.Nanoseconds()
 
-		mock.ExpectZRemRangeByScore(expectedRedisKey, "0", strconv.FormatInt(minScore, 10)).SetVal(0)
+		mock.ExpectZRemRangeByScore(expectedRedisKey, "0", strconv.FormatInt(minScore, 10)).
+			SetVal(0)
 		mock.ExpectZAdd(expectedRedisKey, redis.Z{Score: float64(now), Member: now}).SetVal(1)
 		mock.ExpectExpire(expectedRedisKey, window).SetVal(true)
 		mock.ExpectZCard(expectedRedisKey).SetVal(2)
@@ -77,7 +80,7 @@ func TestThrottle_UnaryInterceptor(t *testing.T) {
 		_, err := interceptor(mockHandler)(context.Background(), connect.NewRequest(&struct{}{}))
 		assert.Error(t, err)
 		connectErr := &connect.Error{}
-		assert.True(t, errors.As(err, &connectErr))
+		assert.ErrorAs(t, err, &connectErr)
 		assert.Equal(t, connect.CodeResourceExhausted, connectErr.Code())
 	})
 
@@ -87,7 +90,8 @@ func TestThrottle_UnaryInterceptor(t *testing.T) {
 		now := mockClock.Now().UnixNano()
 		minScore := now - window.Nanoseconds()
 
-		mock.ExpectZRemRangeByScore(expectedRedisKey, "0", strconv.FormatInt(minScore, 10)).SetVal(1)
+		mock.ExpectZRemRangeByScore(expectedRedisKey, "0", strconv.FormatInt(minScore, 10)).
+			SetVal(1)
 		mock.ExpectZAdd(expectedRedisKey, redis.Z{Score: float64(now), Member: now}).SetVal(1)
 		mock.ExpectExpire(expectedRedisKey, window).SetVal(true)
 		mock.ExpectZCard(expectedRedisKey).SetVal(1)

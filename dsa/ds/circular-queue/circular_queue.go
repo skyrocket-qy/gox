@@ -20,9 +20,11 @@ func (q *MyCircularQueue) EnQueue(value int) bool {
 	if q.IsFull() {
 		return false
 	}
+
 	q.vals[q.tail] = value
 	q.tail = q.normIdx(q.tail - 1)
 	q.elems = true
+
 	return true
 }
 
@@ -30,10 +32,12 @@ func (q *MyCircularQueue) DeQueue() bool {
 	if q.IsEmpty() {
 		return false
 	}
+
 	q.head = q.normIdx(q.head - 1)
 	if q.head == q.tail {
 		q.elems = false
 	}
+
 	return true
 }
 
@@ -65,8 +69,10 @@ func (q *MyCircularQueue) normIdx(i int) int {
 	if i < 0 {
 		i += q.cap
 	}
+
 	if i >= q.cap {
 		i -= q.cap
 	}
+
 	return i
 }

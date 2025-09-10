@@ -14,6 +14,7 @@ type Revenue struct {
 func (r *Revenue) Add(value uint) {
 	r.Lock()
 	defer r.Unlock()
+
 	r.Value += value
 	fmt.Printf("Add value: %d\n", value)
 }

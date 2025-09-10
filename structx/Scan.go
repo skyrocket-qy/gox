@@ -7,11 +7,12 @@ import (
 )
 
 // Recursively assign value with same key including embedded fields on same layer
-// It will try to convert the from type if to type not match
-func Scan(from any, to any) error {
+// It will try to convert the from type if to type not match.
+func Scan(from, to any) error {
 	if from == nil {
 		return errors.New("from is nil")
 	}
+
 	if to == nil {
 		return errors.New("to is nil")
 	}
@@ -21,6 +22,7 @@ func Scan(from any, to any) error {
 		if fromVal.IsNil() {
 			return errors.New("from is a nil pointer")
 		}
+
 		fromVal = fromVal.Elem()
 		if fromVal.Kind() != reflect.Struct {
 			return fmt.Errorf(
@@ -34,6 +36,7 @@ func Scan(from any, to any) error {
 			fromVal.Kind().String(),
 		)
 	}
+
 	if !isNonNilPointerOfStruct(to) {
 		return fmt.Errorf(
 			"to must be a non-nil pointer of struct, got type: %s",
@@ -42,6 +45,7 @@ func Scan(from any, to any) error {
 	}
 
 	scanHelper(fromVal, reflect.ValueOf(to).Elem())
+
 	return nil
 }
 
@@ -52,10 +56,12 @@ func scanHelper(from, to reflect.Value) {
 
 	for i := 0; i < to.NumField(); i++ {
 		toFieldType := to.Type().Field(i)
+
 		toField := to.Field(i)
 		if isEmbedded(toFieldType) {
 			scanHelper(from, toField)
 		}
+
 		if !toField.CanSet() {
 			continue
 		}
@@ -70,9 +76,11 @@ func scanHelper(from, to reflect.Value) {
 			toField = toField.Elem()
 			toKind = toField.Kind()
 		}
+
 		if !toField.CanSet() {
 			continue
 		}
+
 		switch toKind {
 		case reflect.Struct:
 			if fromField.Type().Kind() == reflect.Ptr {
@@ -80,6 +88,7 @@ func scanHelper(from, to reflect.Value) {
 					scanHelper(fromField.Elem(), toField)
 				}
 			}
+
 			if fromField.Type().Kind() == reflect.Struct {
 				scanHelper(fromField, toField)
 			}

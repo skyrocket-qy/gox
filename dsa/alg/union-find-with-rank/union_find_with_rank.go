@@ -2,11 +2,13 @@ package unionfindwithrank
 
 /* @tags: union find,group */
 
-var parents map[int]int
-var ranks map[int]int
+var (
+	parents map[int]int
+	ranks   map[int]int
+)
 
-func initRanks(eles []int) {
-	for _, ele := range eles {
+func initRanks(eels []int) {
+	for _, ele := range eels {
 		ranks[ele] = 0
 	}
 }
@@ -19,6 +21,7 @@ func find(x int) int {
 	if x != parents[x] {
 		parents[x] = find(parents[x])
 	}
+
 	return parents[x]
 }
 

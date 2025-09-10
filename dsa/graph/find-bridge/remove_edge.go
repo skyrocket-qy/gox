@@ -5,25 +5,26 @@ import (
 	"sort"
 )
 
-// Graph represents an undirected graph using adjacency list representation
+// Graph represents an undirected graph using adjacency list representation.
 type GraphRemoveEdge struct {
-	V     int                 // No. of vertices
-	Adj   map[int]map[int]bool // Adjacency list
+	V   int                  // No. of vertices
+	Adj map[int]map[int]bool // Adjacency list
 }
 
-// NewGraphRemoveEdge creates a new GraphRemoveEdge instance
+// NewGraphRemoveEdge creates a new GraphRemoveEdge instance.
 func NewGraphRemoveEdge(vertices int) *GraphRemoveEdge {
 	adj := make(map[int]map[int]bool)
-	for i := 0; i < vertices; i++ {
+	for i := range vertices {
 		adj[i] = make(map[int]bool)
 	}
+
 	return &GraphRemoveEdge{
 		V:   vertices,
 		Adj: adj,
 	}
 }
 
-// AddEdge adds an edge to the graph
+// AddEdge adds an edge to the graph.
 func (g *GraphRemoveEdge) AddEdge(u, v int) {
 	g.Adj[u][v] = true
 	g.Adj[v][u] = true
@@ -41,29 +42,37 @@ func (g *GraphRemoveEdge) dfs(u int, visited []bool) {
 func (g *GraphRemoveEdge) ComputeGroup() int {
 	visited := make([]bool, g.V)
 	group := 0
-	for i := 0; i < g.V; i++ {
+
+	for i := range g.V {
 		if !visited[i] {
 			group++
+
 			g.dfs(i, visited)
 		}
 	}
+
 	return group
 }
 
 func (g *GraphRemoveEdge) GetEdges() [][]int {
 	edges := make(map[string]bool)
+
 	var result [][]int
-	for u := 0; u < g.V; u++ {
+
+	for u := range g.V {
 		for v := range g.Adj[u] {
 			edge := []int{u, v}
 			sort.Ints(edge)
+
 			edgeStr := fmt.Sprintf("%d-%d", edge[0], edge[1])
 			if !edges[edgeStr] {
 				edges[edgeStr] = true
+
 				result = append(result, []int{u, v})
 			}
 		}
 	}
+
 	return result
 }
 

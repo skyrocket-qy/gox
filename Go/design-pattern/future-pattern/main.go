@@ -13,6 +13,7 @@ type Revenue struct {
 func (r *Revenue) Add(value uint, wg *sync.WaitGroup) {
 	r.Lock()
 	defer r.Unlock()
+
 	r.Value += value
 	fmt.Printf("Add value: %d\n", value)
 	wg.Done()
@@ -24,6 +25,7 @@ func main() {
 
 	wg := sync.WaitGroup{}
 	wg.Add(4)
+
 	for _, v := range []uint{3, 5, 7, 8} {
 		go rv.Add(v, &wg)
 	}

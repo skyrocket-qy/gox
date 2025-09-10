@@ -4,14 +4,17 @@ type bIT []int
 
 func Build(array []int) bIT {
 	n := len(array)
+
 	b := make(bIT, len(array), len(array))
 	for i, val := range array {
 		b[i] = val
+
 		j := i + 1 + lowbit(i+1)
 		if j <= n {
 			array[j-1] += array[i]
 		}
 	}
+
 	return b
 }
 
@@ -31,6 +34,7 @@ func (bit bIT) query(r int) int {
 	for r++; r > 0; r -= lowbit(r) {
 		sum += bit[r-1]
 	}
+
 	return sum
 }
 

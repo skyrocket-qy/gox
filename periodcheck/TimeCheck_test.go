@@ -11,14 +11,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// Helper to capture log output
+// Helper to capture log output.
 func captureOutput(f func()) string {
 	var buf strings.Builder
 	log.SetOutput(&buf)
+
 	defer func() {
 		log.SetOutput(os.Stderr)
 	}()
+
 	f()
+
 	return buf.String()
 }
 
@@ -31,13 +34,20 @@ func TestFixedTimeCheck(t *testing.T) {
 			if callCount == 2 {
 				return 10, nil
 			}
+
 			return 0, nil
 		}
 		checkFunc := func(cur, target int) bool {
 			return cur == target
 		}
 
-		err := FixedTimeCheck(getCurrentStatus, 10, checkFunc, 1*time.Millisecond, 100*time.Millisecond)
+		err := FixedTimeCheck(
+			getCurrentStatus,
+			10,
+			checkFunc,
+			1*time.Millisecond,
+			100*time.Millisecond,
+		)
 		assert.NoError(t, err)
 		assert.Equal(t, 2, callCount)
 	})
@@ -47,13 +57,20 @@ func TestFixedTimeCheck(t *testing.T) {
 		callCount := 0
 		getCurrentStatus := func() (int, error) {
 			callCount++
+
 			return 0, nil
 		}
 		checkFunc := func(cur, target int) bool {
 			return cur == target
 		}
 
-		err := FixedTimeCheck(getCurrentStatus, 10, checkFunc, 1*time.Millisecond, 10*time.Millisecond)
+		err := FixedTimeCheck(
+			getCurrentStatus,
+			10,
+			checkFunc,
+			1*time.Millisecond,
+			10*time.Millisecond,
+		)
 		assert.Error(t, err)
 		assert.EqualError(t, err, "timeout")
 		assert.GreaterOrEqual(t, callCount, 2)
@@ -69,7 +86,13 @@ func TestFixedTimeCheck(t *testing.T) {
 			return cur == target
 		}
 
-		err := FixedTimeCheck(getCurrentStatus, 10, checkFunc, 1*time.Millisecond, 100*time.Millisecond)
+		err := FixedTimeCheck(
+			getCurrentStatus,
+			10,
+			checkFunc,
+			1*time.Millisecond,
+			100*time.Millisecond,
+		)
 		assert.Error(t, err)
 		assert.Equal(t, expectedErr, err)
 	})
@@ -84,13 +107,20 @@ func TestExponentialTimeCheck(t *testing.T) {
 			if callCount == 3 {
 				return 10, nil
 			}
+
 			return 0, nil
 		}
 		checkFunc := func(cur, target int) bool {
 			return cur == target
 		}
 
-		err := ExponentialTimeCheck(getCurrentStatus, 10, checkFunc, 1*time.Millisecond, 100*time.Millisecond)
+		err := ExponentialTimeCheck(
+			getCurrentStatus,
+			10,
+			checkFunc,
+			1*time.Millisecond,
+			100*time.Millisecond,
+		)
 		assert.NoError(t, err)
 		assert.Equal(t, 3, callCount)
 	})
@@ -100,13 +130,20 @@ func TestExponentialTimeCheck(t *testing.T) {
 		callCount := 0
 		getCurrentStatus := func() (int, error) {
 			callCount++
+
 			return 0, nil
 		}
 		checkFunc := func(cur, target int) bool {
 			return cur == target
 		}
 
-		err := ExponentialTimeCheck(getCurrentStatus, 10, checkFunc, 1*time.Millisecond, 10*time.Millisecond)
+		err := ExponentialTimeCheck(
+			getCurrentStatus,
+			10,
+			checkFunc,
+			1*time.Millisecond,
+			10*time.Millisecond,
+		)
 		assert.Error(t, err)
 		assert.EqualError(t, err, "timeout")
 		assert.GreaterOrEqual(t, callCount, 2)
@@ -122,7 +159,13 @@ func TestExponentialTimeCheck(t *testing.T) {
 			return cur == target
 		}
 
-		err := ExponentialTimeCheck(getCurrentStatus, 10, checkFunc, 1*time.Millisecond, 100*time.Millisecond)
+		err := ExponentialTimeCheck(
+			getCurrentStatus,
+			10,
+			checkFunc,
+			1*time.Millisecond,
+			100*time.Millisecond,
+		)
 		assert.Error(t, err)
 		assert.Equal(t, expectedErr, err)
 	})
@@ -137,13 +180,21 @@ func TestDiffTimeCheck(t *testing.T) {
 			if callCount == 2 {
 				return 10, nil
 			}
+
 			return 0, nil
 		}
 		checkFunc := func(cur, target int) bool {
 			return cur == target
 		}
 
-		err := DiffTimeCheck(getCurrentStatus, 10, checkFunc, 1*time.Millisecond, 10*time.Millisecond, 100*time.Millisecond)
+		err := DiffTimeCheck(
+			getCurrentStatus,
+			10,
+			checkFunc,
+			1*time.Millisecond,
+			10*time.Millisecond,
+			100*time.Millisecond,
+		)
 		assert.NoError(t, err)
 		assert.Equal(t, 2, callCount)
 	})
@@ -153,13 +204,21 @@ func TestDiffTimeCheck(t *testing.T) {
 		callCount := 0
 		getCurrentStatus := func() (int, error) {
 			callCount++
+
 			return 0, nil
 		}
 		checkFunc := func(cur, target int) bool {
 			return cur == target
 		}
 
-		err := DiffTimeCheck(getCurrentStatus, 10, checkFunc, 1*time.Millisecond, 10*time.Millisecond, 10*time.Millisecond)
+		err := DiffTimeCheck(
+			getCurrentStatus,
+			10,
+			checkFunc,
+			1*time.Millisecond,
+			10*time.Millisecond,
+			10*time.Millisecond,
+		)
 		assert.Error(t, err)
 		assert.EqualError(t, err, "timeout")
 		assert.GreaterOrEqual(t, callCount, 2)
@@ -175,7 +234,14 @@ func TestDiffTimeCheck(t *testing.T) {
 			return cur == target
 		}
 
-		err := DiffTimeCheck(getCurrentStatus, 10, checkFunc, 1*time.Millisecond, 10*time.Millisecond, 100*time.Millisecond)
+		err := DiffTimeCheck(
+			getCurrentStatus,
+			10,
+			checkFunc,
+			1*time.Millisecond,
+			10*time.Millisecond,
+			100*time.Millisecond,
+		)
 		assert.Error(t, err)
 		assert.Equal(t, expectedErr, err)
 	})
@@ -190,13 +256,21 @@ func TestSelfAdaptiveTimeCheck(t *testing.T) {
 			if callCount == 2 {
 				return 10, nil
 			}
+
 			return 0, nil
 		}
 		checkFunc := func(cur, target int) bool {
 			return cur == target
 		}
 
-		err := SelfAdaptiveTimeCheck(getCurrentStatus, 10, checkFunc, 1*time.Millisecond, 10*time.Millisecond, 100*time.Millisecond)
+		err := SelfAdaptiveTimeCheck(
+			getCurrentStatus,
+			10,
+			checkFunc,
+			1*time.Millisecond,
+			10*time.Millisecond,
+			100*time.Millisecond,
+		)
 		assert.NoError(t, err)
 		assert.Equal(t, 2, callCount)
 	})
@@ -206,13 +280,21 @@ func TestSelfAdaptiveTimeCheck(t *testing.T) {
 		callCount := 0
 		getCurrentStatus := func() (int, error) {
 			callCount++
+
 			return 0, nil
 		}
 		checkFunc := func(cur, target int) bool {
 			return cur == target
 		}
 
-		err := SelfAdaptiveTimeCheck(getCurrentStatus, 10, checkFunc, 1*time.Millisecond, 10*time.Millisecond, 10*time.Millisecond)
+		err := SelfAdaptiveTimeCheck(
+			getCurrentStatus,
+			10,
+			checkFunc,
+			1*time.Millisecond,
+			10*time.Millisecond,
+			10*time.Millisecond,
+		)
 		assert.Error(t, err)
 		assert.EqualError(t, err, "timeout")
 		assert.GreaterOrEqual(t, callCount, 2)
@@ -228,7 +310,14 @@ func TestSelfAdaptiveTimeCheck(t *testing.T) {
 			return cur == target
 		}
 
-		err := SelfAdaptiveTimeCheck(getCurrentStatus, 10, checkFunc, 1*time.Millisecond, 10*time.Millisecond, 100*time.Millisecond)
+		err := SelfAdaptiveTimeCheck(
+			getCurrentStatus,
+			10,
+			checkFunc,
+			1*time.Millisecond,
+			10*time.Millisecond,
+			100*time.Millisecond,
+		)
 		assert.Error(t, err)
 		assert.Equal(t, expectedErr, err)
 	})

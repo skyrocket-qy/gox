@@ -4,8 +4,9 @@ package longestcommonsubsequence
 
 func longestCommonSubsequence(word1, word2 string) int {
 	m, n := len(word1), len(word2)
+
 	dp := make([][]int, m)
-	for i := 0; i < m; i++ {
+	for i := range m {
 		dp[i] = make([]int, n)
 	}
 
@@ -42,5 +43,6 @@ func max(a, b int) int {
 	if a > b {
 		return a
 	}
+
 	return b
 }

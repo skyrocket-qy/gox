@@ -10,7 +10,7 @@ func TestStrToType(t *testing.T) {
 	tests := []struct {
 		name    string
 		input   string
-		want    interface{}
+		want    any
 		wantErr bool
 	}{
 		// String conversions

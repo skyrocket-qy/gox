@@ -2,8 +2,7 @@ package doublylinkedlist
 
 /* @tags: linked_list,doubly_linked_list */
 
-type doubly_linked_list struct {
-}
+type doubly_linked_list struct{}
 
 func (l *doubly_linked_list) Len() int {
 	return 0

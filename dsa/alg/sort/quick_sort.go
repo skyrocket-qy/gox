@@ -4,7 +4,7 @@ package sort
 
 // pivot select
 // in / out memory
-// recursive / iterative
+// recursive / iterative.
 func qSortOutMem(nums []int) []int {
 	if len(nums) == 0 {
 		return []int{}
@@ -23,6 +23,7 @@ func qSortOutMem(nums []int) []int {
 
 	l = qSortOutMem(l)
 	l = append(l, pivot)
+
 	return append(l, qSortOutMem(r)...)
 }
 
@@ -36,12 +37,15 @@ func qSortInMem(nums []int, l, r int) {
 		for nums[i] < pivot && i < r {
 			i++
 		}
+
 		for nums[j] > pivot && j > l {
 			j--
 		}
+
 		if i < j {
 			nums[i], nums[j] = nums[j], nums[i]
 		}
+
 		i++
 		j--
 	}
@@ -66,8 +70,10 @@ func qSortInPartition(nums []int, l, r int) {
 				nums[i], nums[j] = nums[j], nums[i]
 			}
 		}
+
 		i++
 		nums[i], nums[r] = nums[r], nums[i]
+
 		return i
 	}
 

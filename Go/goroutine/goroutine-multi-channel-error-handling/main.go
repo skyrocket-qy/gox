@@ -14,10 +14,11 @@ func main() {
 
 	fmt.Println(<-ch)
 
-	// seperate channel
+	// separate channel
 	aCh := make(chan string)
 	bCh := make(chan string)
 	cCh := make(chan string)
+
 	go A(aCh)
 	go B(bCh)
 	go C(cCh)
@@ -48,21 +49,23 @@ func main() {
 	default:
 		// time.Sleep(time.Second)
 	}
-
 }
 
 func A(ch chan string) {
 	time.Sleep(2 * time.Second)
+
 	ch <- "A error"
 }
 
 func B(ch chan string) {
 	time.Sleep(2 * time.Second)
+
 	ch <- "B error"
 }
 
 func C(ch chan string) {
 	time.Sleep(2 * time.Second)
+
 	ch <- "C error"
 }
 
@@ -70,8 +73,10 @@ func D() chan string {
 	ch := make(chan string)
 	go func(ch chan string) {
 		time.Sleep(2 * time.Second)
+
 		ch <- "D error"
 	}(ch)
+
 	return ch
 }
 
@@ -79,15 +84,20 @@ func E() chan string {
 	ch := make(chan string)
 	go func(ch chan string) {
 		time.Sleep(2 * time.Second)
+
 		ch <- "E error"
 	}(ch)
+
 	return ch
 }
+
 func F() chan string {
 	ch := make(chan string)
 	go func(ch chan string) {
 		time.Sleep(2 * time.Second)
+
 		ch <- "F error"
 	}(ch)
+
 	return ch
 }

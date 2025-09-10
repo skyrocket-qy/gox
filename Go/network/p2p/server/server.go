@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-// Start the peer server to handle file-sharing requests
+// Start the peer server to handle file-sharing requests.
 func StartServer(port string) {
 	ln, err := net.Listen("tcp", "localhost:"+port)
 	if err != nil {
@@ -22,6 +22,7 @@ func StartServer(port string) {
 		conn, err := ln.Accept()
 		if err != nil {
 			log.Println("Error accepting connection:", err)
+
 			continue
 		}
 
@@ -29,15 +30,17 @@ func StartServer(port string) {
 	}
 }
 
-// Handle incoming connection and file transfer request
+// Handle incoming connection and file transfer request.
 func handleConnection(conn net.Conn) {
 	defer conn.Close()
 
 	// Receive the file request (name of the file)
 	var fileName string
+
 	_, err := fmt.Fscan(conn, &fileName)
 	if err != nil {
 		log.Println("Error reading file name:", err)
+
 		return
 	}
 
@@ -45,9 +48,12 @@ func handleConnection(conn net.Conn) {
 	if _, err := os.Stat(fileName); err != nil {
 		if os.IsNotExist(err) {
 			conn.Write([]byte("File not found"))
+
 			return
 		}
+
 		log.Println("Error checking file:", err)
+
 		return
 	}
 
@@ -55,6 +61,7 @@ func handleConnection(conn net.Conn) {
 	file, err := os.Open(fileName)
 	if err != nil {
 		log.Println("Error opening file:", err)
+
 		return
 	}
 	defer file.Close()
@@ -64,5 +71,6 @@ func handleConnection(conn net.Conn) {
 	if err != nil {
 		log.Println("Error sending file:", err)
 	}
+
 	log.Printf("Sent file: %s\n", fileName)
 }

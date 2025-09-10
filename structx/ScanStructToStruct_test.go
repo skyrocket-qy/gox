@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-// Test Struct Definitions
+// Test Struct Definitions.
 type NestedFrom struct {
 	InnerID int
 }
@@ -134,7 +134,7 @@ func TestScanStructToStruct(t *testing.T) {
 			},
 		},
 		{
-			name: "from embedded to to",
+			name: "from embedded to",
 			from: &FromStruct{
 				EmbeddedFrom: EmbeddedFrom{EmbeddedString: "embstr"},
 			},
@@ -145,7 +145,7 @@ func TestScanStructToStruct(t *testing.T) {
 			},
 		},
 		{
-			name: "from embedded to to embedded",
+			name: "from embedded to embedded",
 			from: &FromStruct{
 				EmbeddedFrom: EmbeddedFrom{EmbeddedID: 3},
 			},
@@ -154,7 +154,7 @@ func TestScanStructToStruct(t *testing.T) {
 			expectedTo:  &ToStruct{EmbeddedTo: EmbeddedTo{EmbeddedID: 3}},
 		},
 		{
-			name: "from to to embedded",
+			name: "from to embedded",
 			from: &ToStruct{
 				EmbeddedString: "embstr",
 			},

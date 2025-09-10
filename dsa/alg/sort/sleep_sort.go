@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// hack method, just representing
+// hack method, just representing.
 func SleepSort(nums []int) []int {
 	res := make([]int, len(nums))
 	i := 0
@@ -21,5 +21,6 @@ func SleepSort(nums []int) []int {
 	}
 
 	time.Sleep(10 * time.Second)
+
 	return res
 }

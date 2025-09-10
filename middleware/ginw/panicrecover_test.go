@@ -15,6 +15,7 @@ func TestPanicRecover(t *testing.T) {
 	// Suppress logging for this test
 	originalLogger := log.Logger
 	log.Logger = log.Output(io.Discard)
+
 	defer func() {
 		log.Logger = originalLogger
 	}()
@@ -29,7 +30,7 @@ func TestPanicRecover(t *testing.T) {
 		})
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("GET", "/panic", nil)
+		req, _ := http.NewRequest(http.MethodGet, "/panic", nil)
 		r.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
@@ -43,7 +44,7 @@ func TestPanicRecover(t *testing.T) {
 		})
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("GET", "/normal", nil)
+		req, _ := http.NewRequest(http.MethodGet, "/normal", nil)
 		r.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)

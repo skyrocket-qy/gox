@@ -2,7 +2,7 @@ package queue
 
 /* @tags: queue,array,linked list,circular list */
 
-// array
+// array.
 type Queue[T any] struct {
 	slice []T
 }
@@ -21,8 +21,10 @@ func (q *Queue[T]) Pop() (T, bool) {
 	var x T
 	if len(q.slice) > 0 {
 		x, q.slice = q.slice[0], q.slice[1:]
+
 		return x, true
 	}
+
 	return x, false
 }
 

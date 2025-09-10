@@ -20,6 +20,7 @@ func Init(strs []string) *radixTree {
 
 func (t *radixTree) Insert(s string) {
 	root := t
+
 	preI := 0
 	for i := 1; i <= len(s); i++ {
 		curS := s[preI:i]
@@ -32,6 +33,7 @@ func (t *radixTree) Insert(s string) {
 	if preI == len(s) {
 		return
 	}
+
 	root.children[s[preI:]] = &radixTree{
 		children: make(map[string]*radixTree),
 	}
@@ -39,6 +41,7 @@ func (t *radixTree) Insert(s string) {
 
 func (t *radixTree) Remove(s string) {
 	root := t
+
 	preI := 0
 	for i := 1; i <= len(s); i++ {
 		curS := s[preI:i]
@@ -48,7 +51,7 @@ func (t *radixTree) Remove(s string) {
 		}
 	}
 }
-func (t *radixTree) Search(s string) bool {
 
+func (t *radixTree) Search(s string) bool {
 	return true
 }

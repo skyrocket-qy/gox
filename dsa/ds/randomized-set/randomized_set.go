@@ -25,6 +25,7 @@ func (this *RandomizedSet) Insert(val int) bool {
 
 	this.sl = append(this.sl, val)
 	this.mp[val] = len(this.sl) - 1
+
 	return true
 }
 
@@ -33,18 +34,19 @@ func (this *RandomizedSet) Remove(val int) bool {
 		return false
 	}
 
-	this.sl[this.mp[val]], this.sl[len(this.sl)-1] =
-		this.sl[len(this.sl)-1], this.sl[this.mp[val]]
+	this.sl[this.mp[val]], this.sl[len(this.sl)-1] = this.sl[len(this.sl)-1], this.sl[this.mp[val]]
 
 	this.mp[this.sl[this.mp[val]]] = this.mp[val]
 
 	delete(this.mp, val)
 	this.sl = this.sl[:len(this.sl)-1]
+
 	return true
 }
 
 func (this *RandomizedSet) GetRandom() int {
 	r := rand.Int() % len(this.sl)
+
 	return this.sl[r]
 }
 

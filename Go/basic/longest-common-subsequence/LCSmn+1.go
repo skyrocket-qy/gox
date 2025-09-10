@@ -1,10 +1,10 @@
 package main
 
-func LongestCommonSubsequence2(text1 string, text2 string) int {
+func LongestCommonSubsequence2(text1, text2 string) int {
 	m, n := len(text1), len(text2)
-	//2-d array
+	// 2-d array
 	arr := make([][]int, m+1)
-	for i, _ := range arr {
+	for i := range arr {
 		arr[i] = make([]int, n+1)
 	}
 

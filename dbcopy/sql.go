@@ -1,6 +1,7 @@
 package dbcopy
 
 import (
+	"errors"
 	"fmt"
 
 	"gorm.io/gorm"
@@ -18,7 +19,7 @@ func CopySqlData[model any](
 	}
 
 	if len(src) == 0 {
-		return fmt.Errorf("no data to copy")
+		return errors.New("no data to copy")
 	}
 
 	if backupTableName != "" {
@@ -34,8 +35,9 @@ func CopySqlData[model any](
 			if err := tx.Scopes(filter).Find(&dst).Error; err != nil {
 				return fmt.Errorf("read destination failed: %w", err)
 			}
+
 			if len(dst) > 0 {
-				return fmt.Errorf("destination already has data")
+				return errors.New("destination already has data")
 			}
 
 		case ModeReplace:
@@ -68,6 +70,7 @@ func BackupSqlData[model any](
 	if err := db.Scopes(filter).Find(&records).Error; err != nil {
 		return fmt.Errorf("failed to fetch records for backup: %w", err)
 	}
+
 	if len(records) == 0 {
 		return nil
 	}
@@ -80,7 +83,7 @@ func BackupSqlData[model any](
 			return fmt.Errorf("failed to create backup table: %w", err)
 		}
 	} else {
-		return fmt.Errorf("backup table already exists")
+		return errors.New("backup table already exists")
 	}
 
 	if err := backupDB.CreateInBatches(&records, 500).Error; err != nil {

@@ -39,6 +39,7 @@ func ToString(v any) string {
 		if v == nil {
 			return "<nil>"
 		}
+
 		return fmt.Sprintf("%v", v)
 	}
 }

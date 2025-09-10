@@ -26,6 +26,7 @@ func generateTestJWT(issuer string, secret []byte, expiresAt time.Time) (string,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
 	return token.SignedString(secret)
 }
 
@@ -33,11 +34,13 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 	// Suppress logging for this test
 	originalLogger := log.Logger
 	log.Logger = log.Output(io.Discard)
+
 	defer func() {
 		log.Logger = originalLogger
 	}()
 
 	gin.SetMode(gin.TestMode)
+
 	authMid := NewInterAuthMid()
 	authMid.errBinder = httpx.NewErrBinder(map[erx.Code]int{
 		errcode.ErrUnauthorized:               http.StatusUnauthorized,
@@ -51,8 +54,10 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 		userId, exists := c.Get("userId")
 		if !exists {
 			c.Status(http.StatusUnauthorized)
+
 			return
 		}
+
 		c.String(http.StatusOK, "welcome "+userId.(string))
 	})
 
@@ -61,7 +66,7 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 		assert.NoError(t, err)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("GET", "/protected", nil)
+		req, _ := http.NewRequest(http.MethodGet, "/protected", nil)
 		req.Header.Set("Authorization", "Bearer "+token)
 		r.ServeHTTP(w, req)
 
@@ -70,11 +75,15 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 	})
 
 	t.Run("Invalid token - bad signature", func(t *testing.T) {
-		token, err := generateTestJWT("test-user", []byte("wrong-secret"), time.Now().Add(time.Hour))
+		token, err := generateTestJWT(
+			"test-user",
+			[]byte("wrong-secret"),
+			time.Now().Add(time.Hour),
+		)
 		assert.NoError(t, err)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("GET", "/protected", nil)
+		req, _ := http.NewRequest(http.MethodGet, "/protected", nil)
 		req.Header.Set("Authorization", "Bearer "+token)
 		r.ServeHTTP(w, req)
 
@@ -82,11 +91,15 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 	})
 
 	t.Run("Expired token", func(t *testing.T) {
-		token, err := generateTestJWT("test-user", []byte(testJWTSecret), time.Now().Add(-time.Hour))
+		token, err := generateTestJWT(
+			"test-user",
+			[]byte(testJWTSecret),
+			time.Now().Add(-time.Hour),
+		)
 		assert.NoError(t, err)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("GET", "/protected", nil)
+		req, _ := http.NewRequest(http.MethodGet, "/protected", nil)
 		req.Header.Set("Authorization", "Bearer "+token)
 		r.ServeHTTP(w, req)
 
@@ -95,7 +108,7 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 
 	t.Run("Missing Authorization header", func(t *testing.T) {
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("GET", "/protected", nil)
+		req, _ := http.NewRequest(http.MethodGet, "/protected", nil)
 		r.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
@@ -106,7 +119,7 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 		assert.NoError(t, err)
 
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("GET", "/protected", nil)
+		req, _ := http.NewRequest(http.MethodGet, "/protected", nil)
 		// No "Bearer " prefix
 		req.Header.Set("Authorization", token)
 		r.ServeHTTP(w, req)

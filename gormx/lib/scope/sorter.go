@@ -19,10 +19,12 @@ func ApplySorter(seqSorters []Sorter, dfSort ...Sorter) func(db *gorm.DB) *gorm.
 			}
 
 			df := dfSort[0]
+
 			expr := df.Field
 			if !df.Asc {
 				expr += " DESC"
 			}
+
 			return db.Order(expr)
 		}
 
@@ -31,8 +33,10 @@ func ApplySorter(seqSorters []Sorter, dfSort ...Sorter) func(db *gorm.DB) *gorm.
 			if !sorter.Asc {
 				expr += " DESC"
 			}
+
 			db = db.Order(expr)
 		}
+
 		return db
 	}
 }

@@ -140,7 +140,10 @@ func TestErrBinder_Bind(t *testing.T) {
 		},
 		{
 			name: "CtxErr with unknown code",
-			err:  erx.New(erx.ErrUnknown, "unknown error"), // Using ErrUnknown as a placeholder for an unknown code
+			err: erx.New(
+				erx.ErrUnknown,
+				"unknown error",
+			), // Using ErrUnknown as a placeholder for an unknown code
 			errToHTTP: map[erx.Code]int{
 				erx.ErrUnknown: http.StatusBadRequest,
 			},
@@ -174,6 +177,7 @@ func TestErrBinder_Bind(t *testing.T) {
 			assert.Equal(t, tt.expectedStatus, recorder.Code)
 
 			var resp ErrResp
+
 			err := json.Unmarshal(recorder.Body.Bytes(), &resp)
 			assert.NoError(t, err)
 			assert.Equal(t, tt.reqID, resp.ReqId)
@@ -215,7 +219,9 @@ func TestFilterCallerInfos(t *testing.T) {
 			infos: []erx.CallerInfo{
 				{File: cwd + "/file1.go"},
 				{File: "/usr/local/go/src/runtime/proc.go"},
-				{File: cwd + "/file2.go"}, // This should not be included as it's after a non-project file
+				{
+					File: cwd + "/file2.go",
+				}, // This should not be included as it's after a non-project file
 			},
 			expected: []erx.CallerInfo{
 				{File: cwd + "/file1.go"},
@@ -246,18 +252,22 @@ func TestFilterCallerInfos(t *testing.T) {
 
 func TestGetCallStack(t *testing.T) {
 	// This test is a bit tricky as the call stack depends on the test runner and environment.
-	// We'll just assert that it returns at least one frame and that the file path contains "http_test.go".
+	// We'll just assert that it returns at least one frame and that the file path contains
+	// "http_test.go".
 	callerInfos := getCallStack()
 	assert.NotEmpty(t, callerInfos)
 
 	// Check if at least one frame points to this test file
 	found := false
+
 	for _, info := range callerInfos {
 		if strings.Contains(info.File, "http_test.go") {
 			found = true
+
 			break
 		}
 	}
+
 	assert.True(t, found, "Expected to find http_test.go in call stack")
 
 	// Test with callerSkip

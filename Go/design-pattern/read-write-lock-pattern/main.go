@@ -14,6 +14,7 @@ type Revenue struct {
 func (r *Revenue) Add(value uint) {
 	r.Lock()
 	defer r.Unlock()
+
 	r.Value += value
 	fmt.Printf("Add value: %d\n", value)
 }
@@ -21,6 +22,7 @@ func (r *Revenue) Add(value uint) {
 func (r *Revenue) Read() {
 	r.RLock()
 	defer r.RUnlock()
+
 	fmt.Printf("Read value: %d\n", r.Value)
 }
 
@@ -32,7 +34,7 @@ func main() {
 		go rv.Add(v)
 	}
 
-	for i := 0; i < 4; i++ {
+	for range 4 {
 		go rv.Read()
 	}
 

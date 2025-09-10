@@ -15,11 +15,13 @@ func Encode(in proto.Message) ([]byte, error) {
 	}
 
 	var buf bytes.Buffer
+
 	gz := gzip.NewWriter(&buf)
 
 	if _, err := gz.Write(raw); err != nil {
 		return nil, err
 	}
+
 	if err := gz.Close(); err != nil {
 		return nil, err
 	}
@@ -31,6 +33,7 @@ func Decode[T proto.Message](data []byte) (T, error) {
 	var out T
 
 	buf := bytes.NewReader(data)
+
 	gz, err := gzip.NewReader(buf)
 	if err != nil {
 		return out, err
