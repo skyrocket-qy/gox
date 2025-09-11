@@ -5,6 +5,7 @@ import (
 	"strconv"
 )
 
+// convert anything to string
 func ToString(v any) string {
 	switch val := v.(type) {
 	case string:
@@ -37,7 +38,7 @@ func ToString(v any) string {
 		return strconv.FormatFloat(val, 'f', -1, 64)
 	default:
 		if v == nil {
-			return "<nil>"
+			return ""
 		}
 
 		return fmt.Sprintf("%v", v)
