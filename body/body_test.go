@@ -65,3 +65,44 @@ func TestEncode_GzipWriteError(t *testing.T) {
 	err := EncodeWithWriter(original, &errorWriter{})
 	assert.Error(t, err)
 }
+
+func TestDecode_CorruptedGzipError(t *testing.T) {
+	// Create a valid compressed stream
+	var buf bytes.Buffer
+	gz := gzip.NewWriter(&buf)
+	_, err := gz.Write([]byte("some data"))
+	assert.NoError(t, err)
+	err = gz.Close()
+	assert.NoError(t, err)
+	validData := buf.Bytes()
+
+	// Corrupt it by truncating it
+	corruptedData := validData[:len(validData)-5]
+
+	_, err = Decode[*TestMessage](corruptedData)
+	assert.Error(t, err)
+}
+
+// failingCloser is a writer that fails on the second write,
+// which is useful for testing the error path of gzip.Close().
+type failingCloser struct {
+	callCount int
+}
+
+func (fc *failingCloser) Write(p []byte) (n int, err error) {
+	fc.callCount++
+	if fc.callCount > 1 {
+		return 0, errors.New("write error on close")
+	}
+	return len(p), nil
+}
+
+func TestEncode_GzipCloseError(t *testing.T) {
+	original := &TestMessage{
+		Id:    "test-id",
+		Value: 12345,
+	}
+
+	err := EncodeWithWriter(original, &failingCloser{})
+	assert.Error(t, err)
+}
