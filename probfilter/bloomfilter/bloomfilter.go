@@ -1,4 +1,4 @@
-package redisx
+package bloomfilter
 
 import (
 	"context"
@@ -7,13 +7,12 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-// BloomFilterAdd adds an item to the bloom filter.
-func BloomFilterAdd(ctx context.Context, rdb *redis.Client, key, value string) error {
+func Add(ctx context.Context, rdb *redis.Client, key, value string) error {
 	return rdb.Do(ctx, "BF.ADD", key, value).Err()
 }
 
 // BloomFilterExists checks if an item exists in the bloom filter.
-func BloomFilterExists(ctx context.Context, rdb *redis.Client, key, value string) (bool, error) {
+func Exists(ctx context.Context, rdb *redis.Client, key, value string) (bool, error) {
 	res, err := rdb.Do(ctx, "BF.EXISTS", key, value).Result()
 	if err != nil {
 		return false, err
@@ -31,7 +30,7 @@ func BloomFilterExists(ctx context.Context, rdb *redis.Client, key, value string
 // fewer false positives, but requires more memory. The capacity is the expected
 // number of items that will be added to the filter.
 // Choose the limit of the data capacity.
-func BloomFilterReserve(
+func Reserve(
 	ctx context.Context,
 	rdb *redis.Client,
 	key string,

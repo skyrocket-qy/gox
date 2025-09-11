@@ -19,7 +19,7 @@ func TestCuckooFilter(t *testing.T) {
 	// 1. Reserve the filter
 	mock.ExpectDo("CF.RESERVE", key, int64(1000)).SetVal("OK")
 
-	err := cuckoofilter.CuckooFilterReserve(ctx, rdb, key, 1000)
+	err := cuckoofilter.Reserve(ctx, rdb, key, 1000)
 	if err != nil {
 		t.Fatalf("CuckooFilterReserve failed: %v", err)
 	}
@@ -27,7 +27,7 @@ func TestCuckooFilter(t *testing.T) {
 	// 2. Add a value to the filter
 	mock.ExpectDo("CF.ADD", key, value).SetVal(true)
 
-	added, err := cuckoofilter.CuckooFilterAdd(ctx, rdb, key, value)
+	added, err := cuckoofilter.Add(ctx, rdb, key, value)
 	if err != nil {
 		t.Fatalf("CuckooFilterAdd failed: %v", err)
 	}
@@ -39,7 +39,7 @@ func TestCuckooFilter(t *testing.T) {
 	// 3. Check if the value exists
 	mock.ExpectDo("CF.EXISTS", key, value).SetVal(true)
 
-	exists, err := cuckoofilter.CuckooFilterExists(ctx, rdb, key, value)
+	exists, err := cuckoofilter.Exists(ctx, rdb, key, value)
 	if err != nil {
 		t.Fatalf("CuckooFilterExists failed: %v", err)
 	}
@@ -51,7 +51,7 @@ func TestCuckooFilter(t *testing.T) {
 	// 4. Check for a non-existent value
 	mock.ExpectDo("CF.EXISTS", key, "non_existent_value").SetVal(false)
 
-	exists, err = cuckoofilter.CuckooFilterExists(ctx, rdb, key, "non_existent_value")
+	exists, err = cuckoofilter.Exists(ctx, rdb, key, "non_existent_value")
 	if err != nil {
 		t.Fatalf("CuckooFilterExists failed for non-existent value: %v", err)
 	}
@@ -63,7 +63,7 @@ func TestCuckooFilter(t *testing.T) {
 	// 5. Add a value that already exists
 	mock.ExpectDo("CF.ADD", key, value).SetVal(false)
 
-	added, err = cuckoofilter.CuckooFilterAdd(ctx, rdb, key, value)
+	added, err = cuckoofilter.Add(ctx, rdb, key, value)
 	if err != nil {
 		t.Fatalf("CuckooFilterAdd failed for existing value: %v", err)
 	}
@@ -75,7 +75,7 @@ func TestCuckooFilter(t *testing.T) {
 	// 6. Count the items
 	mock.ExpectDo("CF.COUNT", key, value).SetVal(int64(1))
 
-	count, err := cuckoofilter.CuckooFilterCount(ctx, rdb, key, value)
+	count, err := cuckoofilter.Count(ctx, rdb, key, value)
 	if err != nil {
 		t.Fatalf("CuckooFilterCount failed: %v", err)
 	}
@@ -87,7 +87,7 @@ func TestCuckooFilter(t *testing.T) {
 	// 7. Add a new value with AddNX
 	mock.ExpectDo("CF.ADDNX", key, value2).SetVal(true)
 
-	added, err = cuckoofilter.CuckooFilterAddNX(ctx, rdb, key, value2)
+	added, err = cuckoofilter.AddNX(ctx, rdb, key, value2)
 	if err != nil {
 		t.Fatalf("CuckooFilterAddNX failed: %v", err)
 	}
@@ -99,7 +99,7 @@ func TestCuckooFilter(t *testing.T) {
 	// 8. Add an existing value with AddNX
 	mock.ExpectDo("CF.ADDNX", key, value2).SetVal(false)
 
-	added, err = cuckoofilter.CuckooFilterAddNX(ctx, rdb, key, value2)
+	added, err = cuckoofilter.AddNX(ctx, rdb, key, value2)
 	if err != nil {
 		t.Fatalf("CuckooFilterAddNX failed for existing value: %v", err)
 	}
@@ -111,7 +111,7 @@ func TestCuckooFilter(t *testing.T) {
 	// 9. Delete a value
 	mock.ExpectDo("CF.DEL", key, value).SetVal(true)
 
-	deleted, err := cuckoofilter.CuckooFilterDel(ctx, rdb, key, value)
+	deleted, err := cuckoofilter.Del(ctx, rdb, key, value)
 	if err != nil {
 		t.Fatalf("CuckooFilterDel failed: %v", err)
 	}
@@ -123,7 +123,7 @@ func TestCuckooFilter(t *testing.T) {
 	// 10. Check if the deleted value exists
 	mock.ExpectDo("CF.EXISTS", key, value).SetVal(false)
 
-	exists, err = cuckoofilter.CuckooFilterExists(ctx, rdb, key, value)
+	exists, err = cuckoofilter.Exists(ctx, rdb, key, value)
 	if err != nil {
 		t.Fatalf("CuckooFilterExists failed for deleted value: %v", err)
 	}
@@ -135,7 +135,7 @@ func TestCuckooFilter(t *testing.T) {
 	// 11. Delete a non-existent value
 	mock.ExpectDo("CF.DEL", key, "non_existent_value").SetVal(false)
 
-	deleted, err = cuckoofilter.CuckooFilterDel(ctx, rdb, key, "non_existent_value")
+	deleted, err = cuckoofilter.Del(ctx, rdb, key, "non_existent_value")
 	if err != nil {
 		t.Fatalf("CuckooFilterDel failed for non-existent value: %v", err)
 	}

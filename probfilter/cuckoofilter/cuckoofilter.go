@@ -8,12 +8,12 @@ import (
 )
 
 // CuckooFilterReserve reserves a cuckoo filter with a specific capacity.
-func CuckooFilterReserve(ctx context.Context, rdb *redis.Client, key string, capacity int64) error {
+func Reserve(ctx context.Context, rdb *redis.Client, key string, capacity int64) error {
 	return rdb.Do(ctx, "CF.RESERVE", key, capacity).Err()
 }
 
 // CuckooFilterAdd adds an item to the cuckoo filter.
-func CuckooFilterAdd(ctx context.Context, rdb *redis.Client, key, value string) (bool, error) {
+func Add(ctx context.Context, rdb *redis.Client, key, value string) (bool, error) {
 	res, err := rdb.Do(ctx, "CF.ADD", key, value).Result()
 	if err != nil {
 		return false, err
@@ -27,7 +27,7 @@ func CuckooFilterAdd(ctx context.Context, rdb *redis.Client, key, value string) 
 }
 
 // CuckooFilterAddNX adds an item to the cuckoo filter if it does not exist.
-func CuckooFilterAddNX(ctx context.Context, rdb *redis.Client, key, value string) (bool, error) {
+func AddNX(ctx context.Context, rdb *redis.Client, key, value string) (bool, error) {
 	res, err := rdb.Do(ctx, "CF.ADDNX", key, value).Result()
 	if err != nil {
 		return false, err
@@ -41,7 +41,7 @@ func CuckooFilterAddNX(ctx context.Context, rdb *redis.Client, key, value string
 }
 
 // CuckooFilterExists checks if an item exists in the cuckoo filter.
-func CuckooFilterExists(ctx context.Context, rdb *redis.Client, key, value string) (bool, error) {
+func Exists(ctx context.Context, rdb *redis.Client, key, value string) (bool, error) {
 	res, err := rdb.Do(ctx, "CF.EXISTS", key, value).Result()
 	if err != nil {
 		return false, err
@@ -55,7 +55,7 @@ func CuckooFilterExists(ctx context.Context, rdb *redis.Client, key, value strin
 }
 
 // CuckooFilterDel deletes an item from the cuckoo filter.
-func CuckooFilterDel(ctx context.Context, rdb *redis.Client, key, value string) (bool, error) {
+func Del(ctx context.Context, rdb *redis.Client, key, value string) (bool, error) {
 	res, err := rdb.Do(ctx, "CF.DEL", key, value).Result()
 	if err != nil {
 		return false, err
@@ -69,7 +69,7 @@ func CuckooFilterDel(ctx context.Context, rdb *redis.Client, key, value string) 
 }
 
 // CuckooFilterCount returns the number of items in a cuckoo filter.
-func CuckooFilterCount(ctx context.Context, rdb *redis.Client, key, value string) (int64, error) {
+func Count(ctx context.Context, rdb *redis.Client, key, value string) (int64, error) {
 	res, err := rdb.Do(ctx, "CF.COUNT", key, value).Result()
 	if err != nil {
 		return 0, err
