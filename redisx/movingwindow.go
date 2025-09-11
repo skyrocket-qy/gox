@@ -20,6 +20,11 @@ func (realClock) Now() time.Time {
 	return time.Now()
 }
 
+// MovingWindowLimiterInterface defines the interface for a moving window rate limiter.
+type MovingWindowLimiterInterface interface {
+	Allow(ctx context.Context, key string, limit int64, window time.Duration) (bool, error)
+}
+
 // MovingWindowLimiter provides a general sliding window rate limiter using Redis.
 type MovingWindowLimiter struct {
 	redisClient *redis.Client
