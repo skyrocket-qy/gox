@@ -53,5 +53,14 @@ func (t *radixTree) Remove(s string) {
 }
 
 func (t *radixTree) Search(s string) bool {
-	return true
+	root := t
+	preI := 0
+	for i := 1; i <= len(s); i++ {
+		curS := s[preI:i]
+		if child, ok := root.children[curS]; ok {
+			root = child
+			preI = i
+		}
+	}
+	return preI == len(s)
 }
