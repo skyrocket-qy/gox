@@ -36,6 +36,7 @@ func TestCheckExist(t *testing.T) {
 	mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `users` WHERE name = ?")).
 		WithArgs("test").
 		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
+
 	err = CheckExist(gormDB, &User{}, "name = ?", "test")
 	if err == nil {
 		t.Error("expected an error, but got nil")
@@ -45,6 +46,7 @@ func TestCheckExist(t *testing.T) {
 	mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `users` WHERE name = ?")).
 		WithArgs("test").
 		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(0))
+
 	err = CheckExist(gormDB, &User{}, "name = ?", "test")
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)

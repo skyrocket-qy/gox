@@ -12,6 +12,7 @@ func TestOrd(t *testing.T) {
 	if Ord("foo", true) != "foo" {
 		t.Error("Ord with true failed")
 	}
+
 	if Ord("foo", false) != "foo DESC" {
 		t.Error("Ord with false failed")
 	}

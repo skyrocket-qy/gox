@@ -8,9 +8,11 @@ func TestRandomizedSet(t *testing.T) {
 	if !rs.Insert(1) {
 		t.Error("Insert(1) should return true")
 	}
+
 	if rs.Insert(1) {
 		t.Error("Insert(1) again should return false")
 	}
+
 	if !rs.Insert(2) {
 		t.Error("Insert(2) should return true")
 	}
@@ -24,6 +26,7 @@ func TestRandomizedSet(t *testing.T) {
 	if !rs.Remove(1) {
 		t.Error("Remove(1) should return true")
 	}
+
 	if rs.Remove(1) {
 		t.Error("Remove(1) again should return false")
 	}

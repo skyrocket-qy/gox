@@ -17,6 +17,7 @@ func TestCreateOrReplaceFile(t *testing.T) {
 	// Test case 1: Create a new file
 	filePath := filepath.Join(tmpDir, "testfile.txt")
 	content := "hello world"
+
 	err = CreateOrReplaceFile(filePath, content)
 	if err != nil {
 		t.Errorf("Failed to create file: %v", err)
@@ -27,12 +28,14 @@ func TestCreateOrReplaceFile(t *testing.T) {
 	if err != nil {
 		t.Errorf("Failed to read file: %v", err)
 	}
+
 	if string(data) != content {
 		t.Errorf("File content is incorrect, got: %s, want: %s", string(data), content)
 	}
 
 	// Test case 2: Replace an existing file
 	newContent := "hello again"
+
 	err = CreateOrReplaceFile(filePath, newContent)
 	if err != nil {
 		t.Errorf("Failed to replace file: %v", err)
@@ -43,6 +46,7 @@ func TestCreateOrReplaceFile(t *testing.T) {
 	if err != nil {
 		t.Errorf("Failed to read file: %v", err)
 	}
+
 	if string(data) != newContent {
 		t.Errorf("File content is incorrect, got: %s, want: %s", string(data), newContent)
 	}

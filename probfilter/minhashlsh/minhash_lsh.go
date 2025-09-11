@@ -1,10 +1,12 @@
 package minhashlsh
 
 import (
+	"errors"
 	"fmt"
 	"hash/fnv"
 	"math"
 	"sort"
+	"strconv"
 )
 
 // MinHasher generates MinHash signatures for sets.
@@ -78,7 +80,7 @@ type LSH struct {
 // numRows: Number of rows per band.
 func NewLSH(numBands, numRows int) (*LSH, error) {
 	if numBands <= 0 || numRows <= 0 {
-		return nil, fmt.Errorf("numBands and numRows must be greater than 0")
+		return nil, errors.New("numBands and numRows must be greater than 0")
 	}
 
 	return &LSH{
@@ -91,7 +93,7 @@ func NewLSH(numBands, numRows int) (*LSH, error) {
 // Add adds a document's signature to the LSH buckets.
 func (lsh *LSH) Add(docID string, signature []uint64) error {
 	if len(signature) != lsh.numBands*lsh.numRows {
-		return fmt.Errorf("signature length does not match LSH configuration")
+		return errors.New("signature length does not match LSH configuration")
 	}
 
 	for b := range lsh.numBands {
@@ -102,7 +104,7 @@ func (lsh *LSH) Add(docID string, signature []uint64) error {
 			fmt.Fprintf(h, "%d", val)
 		}
 
-		bucketKey := fmt.Sprintf("%x", h.Sum64())
+		bucketKey := strconv.FormatUint(h.Sum64(), 16)
 
 		lsh.buckets[bucketKey] = append(lsh.buckets[bucketKey], docID)
 	}
@@ -122,7 +124,7 @@ func (lsh *LSH) Query(docID string, signature []uint64) []string {
 			fmt.Fprintf(h, "%d", val)
 		}
 
-		bucketKey := fmt.Sprintf("%x", h.Sum64())
+		bucketKey := strconv.FormatUint(h.Sum64(), 16)
 
 		if docs, ok := lsh.buckets[bucketKey]; ok {
 			for _, d := range docs {

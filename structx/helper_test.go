@@ -72,11 +72,13 @@ func TestPrintStructInfo(t *testing.T) {
 		Name string
 		Age  int
 	}
+
 	p := Person{Name: "John", Age: 30}
 
 	// Redirect log output to a buffer
 	var buf bytes.Buffer
 	log.SetOutput(&buf)
+
 	defer func() {
 		log.SetOutput(os.Stderr)
 	}()
@@ -96,11 +98,13 @@ func TestPrintFields(t *testing.T) {
 		Name string
 		Age  int
 	}
+
 	p := Person{Name: "John", Age: 30}
 
 	// Redirect log output to a buffer
 	var buf bytes.Buffer
 	log.SetOutput(&buf)
+
 	defer func() {
 		log.SetOutput(os.Stderr)
 	}()

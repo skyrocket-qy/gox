@@ -81,6 +81,7 @@ func TestHandler_Errors(t *testing.T) {
 	// Backup the original functions
 	originalGenerateOTPURI := generateOTPURI
 	originalGenerateQRCode := generateQRCode
+
 	defer func() {
 		generateOTPURI = originalGenerateOTPURI
 		generateQRCode = originalGenerateQRCode

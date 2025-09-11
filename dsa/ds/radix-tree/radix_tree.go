@@ -4,10 +4,10 @@ import "strings"
 
 /* @tags: tree */
 
-// leafNode is used to represent a value
+// leafNode is used to represent a value.
 type leafNode struct {
 	key string
-	val interface{}
+	val any
 }
 
 type radixTree struct {
@@ -34,24 +34,28 @@ func Init(strs []string) *radixTree {
 }
 
 // longestPrefix finds the length of the shared prefix
-// of two strings
+// of two strings.
 func longestPrefix(k1, k2 string) int {
 	max := len(k1)
 	if l := len(k2); l < max {
 		max = l
 	}
+
 	var i int
 	for i = 0; i < max; i++ {
 		if k1[i] != k2[i] {
 			break
 		}
 	}
+
 	return i
 }
 
 func (t *radixTree) Insert(s string) {
 	var parent *radixTree
+
 	n := t
+
 	search := s
 	for {
 		// Handle key exhaustion
@@ -64,11 +68,13 @@ func (t *radixTree) Insert(s string) {
 				key: s,
 				val: s,
 			}
+
 			return
 		}
 
 		// Look for the edge
 		parent = n
+
 		child, ok := n.children[search[0]]
 		if !ok {
 			// No edge, create one
@@ -81,14 +87,17 @@ func (t *radixTree) Insert(s string) {
 				children: make(map[byte]*radixTree),
 			}
 			parent.children[search[0]] = e
+
 			return
 		}
+
 		n = child
 
 		// Determine longest prefix of the search key on match
 		commonPrefix := longestPrefix(search, n.prefix)
 		if commonPrefix == len(n.prefix) {
 			search = search[commonPrefix:]
+
 			continue
 		}
 
@@ -113,6 +122,7 @@ func (t *radixTree) Insert(s string) {
 		search = search[commonPrefix:]
 		if len(search) == 0 {
 			child.leaf = leaf
+
 			return
 		}
 
@@ -122,16 +132,21 @@ func (t *radixTree) Insert(s string) {
 			prefix:   search,
 			children: make(map[byte]*radixTree),
 		}
+
 		return
 	}
 }
 
 // Delete is used to delete a key, returning the previous
-// value and if it was deleted
+// value and if it was deleted.
 func (t *radixTree) Remove(s string) {
-	var parent *radixTree
-	var label byte
+	var (
+		parent *radixTree
+		label  byte
+	)
+
 	n := t
+
 	search := s
 	for {
 		// Check for key exhaution
@@ -139,16 +154,19 @@ func (t *radixTree) Remove(s string) {
 			if n.leaf == nil {
 				break
 			}
+
 			goto DELETE
 		}
 
 		// Look for an edge
 		parent = n
 		label = search[0]
+
 		child, ok := n.children[label]
 		if !ok {
 			break
 		}
+
 		n = child
 
 		// Consume the search prefix
@@ -158,6 +176,7 @@ func (t *radixTree) Remove(s string) {
 			break
 		}
 	}
+
 	return
 
 DELETE:
@@ -190,6 +209,7 @@ DELETE:
 
 func (t *radixTree) Search(s string) bool {
 	n := t
+
 	search := s
 	for {
 		// Check for key exhaustion
@@ -197,6 +217,7 @@ func (t *radixTree) Search(s string) bool {
 			if n.leaf != nil {
 				return true
 			}
+
 			break
 		}
 
@@ -205,6 +226,7 @@ func (t *radixTree) Search(s string) bool {
 		if !ok {
 			break
 		}
+
 		n = child
 
 		// Consume the search prefix
@@ -214,5 +236,6 @@ func (t *radixTree) Search(s string) bool {
 			break
 		}
 	}
+
 	return false
 }

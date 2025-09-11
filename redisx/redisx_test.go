@@ -30,6 +30,7 @@ func TestExecuteExactlyOnce_SuccessFirstTry(t *testing.T) {
 	if err != nil {
 		t.Errorf("ExecuteExactlyOnce returned an error: %v", err)
 	}
+
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
@@ -59,7 +60,7 @@ func TestExecuteExactlyOnce_RedisFailsOnSetNX(t *testing.T) {
 
 	mock.ExpectSetNX(lockKey, 1, lockTTL).SetErr(errors.New("redis error"))
 	mock.ExpectSetNX(lockKey, 1, lockTTL).SetVal(true)
-	mock.ExpectGet("job:status:"+baseKey).RedisNil()
+	mock.ExpectGet("job:status:" + baseKey).RedisNil()
 	mock.ExpectTxPipeline()
 	mock.ExpectSet("job:status:"+baseKey, JobStatusCompleted, 30*24*time.Hour).SetVal("OK")
 	mock.ExpectDel(lockKey).SetVal(1)
@@ -70,6 +71,7 @@ func TestExecuteExactlyOnce_RedisFailsOnSetNX(t *testing.T) {
 	if err != nil {
 		t.Errorf("ExecuteExactlyOnce returned an error: %v", err)
 	}
+
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
@@ -99,6 +101,7 @@ func TestExecuteExactlyOnce_RedisFailsOnGet(t *testing.T) {
 	if err != nil {
 		t.Errorf("ExecuteExactlyOnce returned an error: %v", err)
 	}
+
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
@@ -132,6 +135,7 @@ func TestExecuteExactlyOnce_RedisFailsOnTx(t *testing.T) {
 	if err != nil {
 		t.Errorf("ExecuteExactlyOnce returned an error: %v", err)
 	}
+
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
@@ -165,11 +169,13 @@ func TestExecuteExactlyOnce_JobFailsThenSucceeds(t *testing.T) {
 	lockTTL := 1 * time.Hour
 
 	var jobExecutionCount int
+
 	job := func() error {
 		jobExecutionCount++
 		if jobExecutionCount == 1 {
 			return errors.New("job failed")
 		}
+
 		return nil
 	}
 
@@ -191,6 +197,7 @@ func TestExecuteExactlyOnce_JobFailsThenSucceeds(t *testing.T) {
 	if err != nil {
 		t.Errorf("ExecuteExactlyOnce returned an error: %v", err)
 	}
+
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
@@ -221,6 +228,7 @@ func TestExecuteExactlyOnce_LockHeld(t *testing.T) {
 	if err != nil {
 		t.Errorf("ExecuteExactlyOnce returned an error: %v", err)
 	}
+
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
@@ -235,6 +243,7 @@ func TestExecuteExactlyOnce_JobAlreadyCompleted(t *testing.T) {
 
 	job := func() error {
 		t.Error("job should not be executed")
+
 		return nil
 	}
 
@@ -246,6 +255,7 @@ func TestExecuteExactlyOnce_JobAlreadyCompleted(t *testing.T) {
 	if err != nil {
 		t.Errorf("ExecuteExactlyOnce returned an error: %v", err)
 	}
+
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}

@@ -82,6 +82,7 @@ func TestNewLSH_Error(t *testing.T) {
 
 func TestLSH_Add_Error(t *testing.T) {
 	lsh, _ := minhashlsh.NewLSH(16, 8)
+
 	err := lsh.Add("doc1", make([]uint64, 127))
 	if err == nil {
 		t.Error("Expected error for signature length mismatch, but got nil")

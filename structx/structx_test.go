@@ -91,6 +91,7 @@ func TestInitFields(t *testing.T) {
 	type DeeplyNested struct {
 		Nested *NestedPointerStruct
 	}
+
 	deeplyNested := DeeplyNested{}
 	InitFields(&deeplyNested)
 	assert.NotNil(t, deeplyNested.Nested)

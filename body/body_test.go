@@ -69,11 +69,13 @@ func TestEncode_GzipWriteError(t *testing.T) {
 func TestDecode_CorruptedGzipError(t *testing.T) {
 	// Create a valid compressed stream
 	var buf bytes.Buffer
+
 	gz := gzip.NewWriter(&buf)
 	_, err := gz.Write([]byte("some data"))
 	assert.NoError(t, err)
 	err = gz.Close()
 	assert.NoError(t, err)
+
 	validData := buf.Bytes()
 
 	// Corrupt it by truncating it
@@ -94,6 +96,7 @@ func (fc *failingCloser) Write(p []byte) (n int, err error) {
 	if fc.callCount > 1 {
 		return 0, errors.New("write error on close")
 	}
+
 	return len(p), nil
 }
 
@@ -110,6 +113,9 @@ func TestEncode_GzipCloseError(t *testing.T) {
 func TestDecode_NonPointerError(t *testing.T) {
 	// This is expected to fail because TestMessage is a pointer receiver type.
 	// To test this, we would need a proto message type that is not a pointer receiver.
-	// We will skip this test for now as it is not possible to create such a type with the current generated code.
-	t.Skip("Skipping test for non-pointer error because it is not possible to create a non-pointer proto message with the current generated code.")
+	// We will skip this test for now as it is not possible to create such a type with the current
+	// generated code.
+	t.Skip(
+		"Skipping test for non-pointer error because it is not possible to create a non-pointer proto message with the current generated code.",
+	)
 }

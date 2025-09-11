@@ -14,7 +14,8 @@ type Point struct {
 
 // Node represents a node in the graph for A* search.
 type Node struct {
-	Point             // Coordinates of the node
+	Point // Coordinates of the node
+
 	Cost      float64 // Cost from start to this node (g-score)
 	Heuristic float64 // Estimated cost from this node to goal (h-score)
 	Parent    *Node   // Parent node to reconstruct path
@@ -58,6 +59,7 @@ func (pq *PriorityQueue) Pop() any {
 	old[n-1] = nil  // avoid memory leak
 	node.Index = -1 // for safety
 	*pq = old[0 : n-1]
+
 	return node
 }
 
@@ -68,18 +70,25 @@ func (pq *PriorityQueue) Pop() any {
 // goalX, goalY: Coordinates of the goal node.
 // heuristicFn: A function that calculates the heuristic (estimated cost to goal).
 //
-// Returns the path as a slice of Nodes (from start to goal) and the total cost, or nil and 0 if no path is found.
-func AStar(grid [][]int, startX, startY, goalX, goalY int, heuristicFn func(x1, y1, x2, y2 int) float64) ([]*Node, float64) {
+// Returns the path as a slice of Nodes (from start to goal) and the total cost, or nil and 0 if no
+// path is found.
+func AStar(
+	grid [][]int,
+	startX, startY, goalX, goalY int,
+	heuristicFn func(x1, y1, x2, y2 int) float64,
+) ([]*Node, float64) {
 	rows := len(grid)
 	if rows == 0 {
 		return nil, 0
 	}
+
 	cols := len(grid[0])
 
 	// Check if start and goal are within bounds and not obstacles
 	if startX < 0 || startX >= rows || startY < 0 || startY >= cols || grid[startX][startY] == 1 {
 		return nil, 0
 	}
+
 	if goalX < 0 || goalX >= rows || goalY < 0 || goalY >= cols || grid[goalX][goalY] == 1 {
 		return nil, 0
 	}
@@ -87,7 +96,11 @@ func AStar(grid [][]int, startX, startY, goalX, goalY int, heuristicFn func(x1, 
 	startPoint := Point{X: startX, Y: startY}
 	goalPoint := Point{X: goalX, Y: goalY}
 
-	startNode := &Node{Point: startPoint, Cost: 0, Heuristic: heuristicFn(startX, startY, goalX, goalY)}
+	startNode := &Node{
+		Point:     startPoint,
+		Cost:      0,
+		Heuristic: heuristicFn(startX, startY, goalX, goalY),
+	}
 
 	openSet := make(PriorityQueue, 0)
 	heap.Push(&openSet, startNode)
@@ -98,7 +111,8 @@ func AStar(grid [][]int, startX, startY, goalX, goalY int, heuristicFn func(x1, 
 	// cameFrom maps a node's Point to its parent Node.
 	cameFrom := make(map[Point]*Node)
 
-	// gScore maps a node's Point to the cost of the cheapest path from start to that node found so far.
+	// gScore maps a node's Point to the cost of the cheapest path from start to that node found so
+	// far.
 	gScore := make(map[Point]float64)
 	gScore[startPoint] = 0
 
@@ -112,6 +126,7 @@ func AStar(grid [][]int, startX, startY, goalX, goalY int, heuristicFn func(x1, 
 			for n := current; n != nil; n = cameFrom[n.Point] {
 				path = append([]*Node{n}, path...)
 			}
+
 			return path, current.Cost
 		}
 
@@ -119,19 +134,22 @@ func AStar(grid [][]int, startX, startY, goalX, goalY int, heuristicFn func(x1, 
 		dx := []int{-1, -1, -1, 0, 0, 1, 1, 1}
 		dy := []int{-1, 0, 1, -1, 1, -1, 0, 1}
 
-		for i := 0; i < len(dx); i++ {
+		for i := range len(dx) {
 			neighborX, neighborY := current.X+dx[i], current.Y+dy[i]
 			neighborPoint := Point{X: neighborX, Y: neighborY}
 
-			if neighborX >= 0 && neighborX < rows && neighborY >= 0 && neighborY < cols && grid[neighborX][neighborY] == 0 {
+			if neighborX >= 0 && neighborX < rows && neighborY >= 0 && neighborY < cols &&
+				grid[neighborX][neighborY] == 0 {
 				// Calculate tentative gScore for neighbor
 				moveCost := 1.0
 				if dx[i] != 0 && dy[i] != 0 { // Diagonal move
 					moveCost = math.Sqrt(2)
 				}
+
 				tentativeGScore := current.Cost + moveCost
 
-				if existingGScore, ok := gScore[neighborPoint]; !ok || tentativeGScore < existingGScore {
+				if existingGScore, ok := gScore[neighborPoint]; !ok ||
+					tentativeGScore < existingGScore {
 					cameFrom[neighborPoint] = current
 					gScore[neighborPoint] = tentativeGScore
 
@@ -167,5 +185,6 @@ func ManhattanDistance(x1, y1, x2, y2 int) float64 {
 func EuclideanDistance(x1, y1, x2, y2 int) float64 {
 	dx := float64(x1 - x2)
 	dy := float64(y1 - y2)
+
 	return math.Sqrt(dx*dx + dy*dy)
 }
