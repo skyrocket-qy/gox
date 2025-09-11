@@ -1,4 +1,4 @@
-package main
+package lcs
 
 func LongestCommonSubsequence3(text1, text2 string) int {
 	// makesure text2 is smaller than text1

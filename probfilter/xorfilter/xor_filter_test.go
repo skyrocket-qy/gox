@@ -3,7 +3,7 @@ package xorfilter_test
 import (
 	"testing"
 
-	"xorfilter"
+	"github.com/skyrocket-qy/gox/probfilter/xorfilter"
 )
 
 func TestXorFilterBasic(t *testing.T) {

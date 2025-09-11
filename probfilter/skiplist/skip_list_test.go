@@ -3,7 +3,7 @@ package skiplist_test
 import (
 	"testing"
 
-	"skiplist"
+	"github.com/skyrocket-qy/gox/probfilter/skiplist"
 )
 
 func TestSkipListBasic(t *testing.T) {

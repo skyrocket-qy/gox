@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/skyrocket-qy/gox/probfilter/minhash-lsh"
+	"github.com/skyrocket-qy/gox/probfilter/minhashlsh"
 )
 
 func TestMinHashLSHBasic(t *testing.T) {

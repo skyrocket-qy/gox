@@ -182,6 +182,14 @@ func (qf *QuotientFilter) Insert(data []byte) error {
 		insertIdx++
 	}
 
+	// If insertIdx has reached maxSize, it means there's no space to insert.
+	// This should ideally be caught by the qf.size == qf.maxSize check,
+	// but if the filter is almost full and a long run pushes the insertion point
+	// beyond the end, this check is needed.
+	if insertIdx >= qf.maxSize {
+		return fmt.Errorf("quotient filter is full (no space for insertion)")
+	}
+
 	// Shift elements to the right to make space for the new remainder
 	// If insertIdx is already at maxSize-1 and the table is full, this could be an issue.
 	// The `qf.size == qf.maxSize` check at the beginning should prevent overflow.

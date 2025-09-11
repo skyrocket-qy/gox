@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"quotientfilter"
+	"github.com/skyrocket-qy/gox/probfilter/quotientfilter"
 )
 
 func TestQuotientFilterBasic(t *testing.T) {

@@ -57,7 +57,7 @@ func replenish(array []int) ([]int, int) {
 }
 
 func (node *Node) Update(pos, value int) {
-	stk := stack.Stack{}
+	stk := stack.NewStack[*Node]()
 
 	var mid int
 	// find the leaf
@@ -75,12 +75,8 @@ func (node *Node) Update(pos, value int) {
 	node.sum = value
 
 	for !stk.IsEmpty() {
-		val := stk.Pop()
-		if n, ok := val.(*Node); ok {
-			node = n
-		} else {
-			panic("invalid type asserted from stack: expected *Node")
-		}
+		val, _ := stk.Pop()
+		node = val
 
 		node.sum = node.left.sum + node.right.sum
 	}
