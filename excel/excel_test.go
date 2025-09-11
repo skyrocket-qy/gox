@@ -334,3 +334,22 @@ func TestGetGroup(t *testing.T) {
 		})
 	}
 }
+
+func TestToColsList_KeyConversionError(t *testing.T) {
+	table := [][]string{
+		{"col1", "bad-key"},
+		{"1", "2"},
+	}
+	_, err := ToColsList[int, int](table)
+	assert.Error(t, err)
+}
+
+func TestToExcelGroup_KeyConversionError(t *testing.T) {
+	table := [][]string{
+		{"group1", "", "col1", "col2", "bad-group-key", "", "col3"},
+		{"", "row1", "1", "3", "", "row1", "5"},
+	}
+	pattern := `^group\d+|^bad-group-key`
+	_, _, err := ToExcelGroup[int](table, pattern)
+	assert.Error(t, err)
+}

@@ -132,3 +132,14 @@ func TestQuotientFilterEdgeCases(t *testing.T) {
 		t.Logf("Successfully caught expected error: %v", err)
 	}
 }
+
+func TestQuotientFilter_Capacity(t *testing.T) {
+	qf, err := quotientfilter.New(8, 8)
+	if err != nil {
+		t.Fatalf("Failed to create QuotientFilter: %v", err)
+	}
+
+	if qf.Capacity() != 1<<8 {
+		t.Errorf("Expected capacity %d, got %d", 1<<8, qf.Capacity())
+	}
+}

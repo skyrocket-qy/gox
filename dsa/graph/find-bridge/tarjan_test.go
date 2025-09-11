@@ -33,3 +33,10 @@ func TestTarjan(t *testing.T) {
 
 	assert.Equal(t, expectedBridges, bridges, "Bridges should match")
 }
+
+func TestSortBridges(t *testing.T) {
+	bridges := [][]int{{3, 0}, {4, 3}}
+	sortBridges(bridges)
+	expected := [][]int{{0, 3}, {3, 4}}
+	assert.Equal(t, expected, bridges)
+}

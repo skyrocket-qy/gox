@@ -1,6 +1,9 @@
 package structx
 
 import (
+	"bytes"
+	"log"
+	"os"
 	"reflect"
 	"testing"
 
@@ -62,4 +65,52 @@ func TestIsNonNilPointerOfStruct(t *testing.T) {
 	// Test with nil interface
 	var nilInterface any
 	assert.False(t, isNonNilPointerOfStruct(nilInterface))
+}
+
+func TestPrintStructInfo(t *testing.T) {
+	type Person struct {
+		Name string
+		Age  int
+	}
+	p := Person{Name: "John", Age: 30}
+
+	// Redirect log output to a buffer
+	var buf bytes.Buffer
+	log.SetOutput(&buf)
+	defer func() {
+		log.SetOutput(os.Stderr)
+	}()
+
+	PrintStructInfo(p)
+
+	output := buf.String()
+
+	assert.Contains(t, output, "Field Name: Name")
+	assert.Contains(t, output, "Field Type: string")
+	assert.Contains(t, output, "Field Name: Age")
+	assert.Contains(t, output, "Field Type: int")
+}
+
+func TestPrintFields(t *testing.T) {
+	type Person struct {
+		Name string
+		Age  int
+	}
+	p := Person{Name: "John", Age: 30}
+
+	// Redirect log output to a buffer
+	var buf bytes.Buffer
+	log.SetOutput(&buf)
+	defer func() {
+		log.SetOutput(os.Stderr)
+	}()
+
+	printFields(reflect.TypeOf(p), reflect.ValueOf(p))
+
+	output := buf.String()
+
+	assert.Contains(t, output, "Field Name: Name")
+	assert.Contains(t, output, "Field Type: string")
+	assert.Contains(t, output, "Field Name: Age")
+	assert.Contains(t, output, "Field Type: int")
 }

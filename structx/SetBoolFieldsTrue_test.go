@@ -55,4 +55,18 @@ func Test_SetBoolFieldsTrue(t *testing.T) {
 			}
 		})
 	}
+
+	t.Run("nil input", func(t *testing.T) {
+		err := SetBoolFieldsTrue(nil)
+		if err == nil {
+			t.Error("SetBoolFieldsTrue() error = nil, want error")
+		}
+	})
+
+	t.Run("not a pointer to a struct", func(t *testing.T) {
+		err := SetBoolFieldsTrue(Example{})
+		if err == nil {
+			t.Error("SetBoolFieldsTrue() error = nil, want error")
+		}
+	})
 }

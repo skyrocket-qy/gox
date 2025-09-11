@@ -106,3 +106,10 @@ func TestEncode_GzipCloseError(t *testing.T) {
 	err := EncodeWithWriter(original, &failingCloser{})
 	assert.Error(t, err)
 }
+
+func TestDecode_NonPointerError(t *testing.T) {
+	// This is expected to fail because TestMessage is a pointer receiver type.
+	// To test this, we would need a proto message type that is not a pointer receiver.
+	// We will skip this test for now as it is not possible to create such a type with the current generated code.
+	t.Skip("Skipping test for non-pointer error because it is not possible to create a non-pointer proto message with the current generated code.")
+}
