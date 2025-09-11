@@ -6,13 +6,13 @@ import (
 )
 
 const (
-	maxLevel     = 16 // Maximum level for a skip list
+	maxLevel    = 16  // Maximum level for a skip list
 	probability = 0.5 // Probability of increasing level
 )
 
 // Node represents a node in the skip list.
 type Node struct {
-	value int
+	value  int
 	levels []*Node // Array of pointers to next nodes at different levels
 }
 
@@ -25,7 +25,9 @@ type SkipList struct {
 // NewSkipList creates and initializes a new SkipList.
 func NewSkipList() *SkipList {
 	rand.Seed(time.Now().UnixNano())
+
 	header := &Node{value: 0, levels: make([]*Node, maxLevel)}
+
 	return &SkipList{
 		header: header,
 		level:  0,
@@ -38,6 +40,7 @@ func (sl *SkipList) randomLevel() int {
 	for rand.Float64() < probability && lvl < maxLevel-1 {
 		lvl++
 	}
+
 	return lvl
 }
 
@@ -50,6 +53,7 @@ func (sl *SkipList) Insert(value int) {
 		for current.levels[i] != nil && current.levels[i].value < value {
 			current = current.levels[i]
 		}
+
 		update[i] = current
 	}
 
@@ -63,6 +67,7 @@ func (sl *SkipList) Insert(value int) {
 			for i := sl.level + 1; i <= lvl; i++ {
 				update[i] = sl.header
 			}
+
 			sl.level = lvl
 		}
 
@@ -99,6 +104,7 @@ func (sl *SkipList) Delete(value int) {
 		for current.levels[i] != nil && current.levels[i].value < value {
 			current = current.levels[i]
 		}
+
 		update[i] = current
 	}
 
@@ -109,6 +115,7 @@ func (sl *SkipList) Delete(value int) {
 			if update[i].levels[i] != current {
 				break
 			}
+
 			update[i].levels[i] = current.levels[i]
 		}
 

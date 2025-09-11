@@ -1,6 +1,7 @@
 package xorfilter
 
 import (
+	"errors"
 	"fmt"
 	"hash/fnv"
 )
@@ -19,7 +20,7 @@ type XorFilter struct {
 // A full Xor Filter construction involves a more complex graph-based algorithm.
 func New(keys []uint64) (*XorFilter, error) {
 	if len(keys) == 0 {
-		return nil, fmt.Errorf("keys cannot be empty")
+		return nil, errors.New("keys cannot be empty")
 	}
 
 	// For a true Xor Filter, the construction is non-trivial.
@@ -51,12 +52,14 @@ func (xf *XorFilter) Contains(key uint64) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
 // hashKey generates a hash for a uint64 key.
-func (xf *XorFilter) hashKey(key uint64, seed uint64) uint64 {
+func (xf *XorFilter) hashKey(key, seed uint64) uint64 {
 	h := fnv.New64a()
-	h.Write([]byte(fmt.Sprintf("%d-%d", key, seed)))
+	fmt.Fprintf(h, "%d-%d", key, seed)
+
 	return h.Sum64()
 }

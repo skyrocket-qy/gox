@@ -7,6 +7,7 @@ import (
 func TestHashKey(t *testing.T) {
 	filter := &XorFilter{}
 	hash1 := filter.hashKey(1, 1)
+
 	hash2 := filter.hashKey(1, 1)
 	if hash1 != hash2 {
 		t.Errorf("Expected same hash for same key and seed, but got %d and %d", hash1, hash2)

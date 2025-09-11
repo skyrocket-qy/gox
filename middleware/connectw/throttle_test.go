@@ -8,18 +8,25 @@ import (
 
 	"connectrpc.com/connect"
 	"github.com/go-redis/redismock/v9"
+	"github.com/skyrocket-qy/gox/middleware/connectw"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/skyrocket-qy/gox/middleware/connectw"
 )
 
-// MockMovingWindowLimiter is a mock implementation of redisx.MovingWindowLimiterInterface for testing.
+// MockMovingWindowLimiter is a mock implementation of redisx.MovingWindowLimiterInterface for
+// testing.
 type MockMovingWindowLimiter struct {
 	mock.Mock
 }
 
-func (m *MockMovingWindowLimiter) Allow(ctx context.Context, key string, limit int64, window time.Duration) (bool, error) {
+func (m *MockMovingWindowLimiter) Allow(
+	ctx context.Context,
+	key string,
+	limit int64,
+	window time.Duration,
+) (bool, error) {
 	args := m.Called(ctx, key, limit, window)
+
 	return args.Bool(0), args.Error(1)
 }
 
@@ -66,7 +73,9 @@ func TestThrottle_UnaryInterceptor(t *testing.T) {
 	// Test case 1: allows request within limit
 	t.Run("allows request within limit", func(t *testing.T) {
 		// Expect the Allow method to be called and return true (allowed)
-		mockLimiter.On("Allow", mock.Anything, mock.AnythingOfType("string"), limit, window).Return(true, nil).Once()
+		mockLimiter.On("Allow", mock.Anything, mock.AnythingOfType("string"), limit, window).
+			Return(true, nil).
+			Once()
 
 		_, err := interceptor(mockHandler)(context.Background(), connect.NewRequest(&struct{}{}))
 		assert.NoError(t, err)
@@ -76,7 +85,9 @@ func TestThrottle_UnaryInterceptor(t *testing.T) {
 	// Test case 2: throttles request over limit
 	t.Run("throttles request over limit", func(t *testing.T) {
 		// Expect the Allow method to be called and return false (denied)
-		mockLimiter.On("Allow", mock.Anything, mock.AnythingOfType("string"), limit, window).Return(false, nil).Once()
+		mockLimiter.On("Allow", mock.Anything, mock.AnythingOfType("string"), limit, window).
+			Return(false, nil).
+			Once()
 
 		_, err := interceptor(mockHandler)(context.Background(), connect.NewRequest(&struct{}{}))
 		assert.Error(t, err)
@@ -89,7 +100,9 @@ func TestThrottle_UnaryInterceptor(t *testing.T) {
 	// Test case 3: error from limiter
 	t.Run("returns error from limiter", func(t *testing.T) {
 		// Expect the Allow method to be called and return an error
-		mockLimiter.On("Allow", mock.Anything, mock.AnythingOfType("string"), limit, window).Return(false, errors.New("limiter error")).Once()
+		mockLimiter.On("Allow", mock.Anything, mock.AnythingOfType("string"), limit, window).
+			Return(false, errors.New("limiter error")).
+			Once()
 
 		_, err := interceptor(mockHandler)(context.Background(), connect.NewRequest(&struct{}{}))
 		assert.Error(t, err)
@@ -103,6 +116,13 @@ func TestThrottle_UnaryInterceptor(t *testing.T) {
 
 func TestNewThrottle_NilLimiter(t *testing.T) {
 	db, _ := redismock.NewClientMock()
-	throttle := connectw.NewThrottle(db, 1, time.Second, "test", func(ctx context.Context) string { return "" }, nil)
+	throttle := connectw.NewThrottle(
+		db,
+		1,
+		time.Second,
+		"test",
+		func(ctx context.Context) string { return "" },
+		nil,
+	)
 	assert.NotNil(t, throttle)
 }

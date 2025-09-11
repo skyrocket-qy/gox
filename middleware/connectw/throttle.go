@@ -40,6 +40,7 @@ func NewThrottle(redisClient *redis.Client, limit int64, window time.Duration, k
 	if limiter == nil {
 		limiter = slidewindow.New(redisClient)
 	}
+
 	return &Throttle{
 		limiter:      limiter,
 		limit:        limit,

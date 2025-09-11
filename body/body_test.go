@@ -40,6 +40,7 @@ func TestDecode_GzipError(t *testing.T) {
 
 func TestDecode_UnmarshalError(t *testing.T) {
 	var buf bytes.Buffer
+
 	gz := gzip.NewWriter(&buf)
 	_, err := gz.Write([]byte("invalid protobuf data"))
 	assert.NoError(t, err)

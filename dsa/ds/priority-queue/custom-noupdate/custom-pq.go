@@ -19,6 +19,7 @@ func (q *PriorityQueue) Pop() Node {
 	(*q)[1] = (*q)[n]
 	*q = (*q)[:n]
 	q.down(1)
+
 	return res
 }
 
@@ -33,9 +34,11 @@ func (q PriorityQueue) down(i int) {
 		if j+1 < len(q) && q[j].Priority > q[j+1].Priority {
 			j++
 		}
+
 		if q[i].Priority < q[j].Priority {
 			break
 		}
+
 		q[i], q[j] = q[j], q[i]
 	}
 }

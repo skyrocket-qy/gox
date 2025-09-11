@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-// convert anything to string
+// convert anything to string.
 func ToString(v any) string {
 	switch val := v.(type) {
 	case string:

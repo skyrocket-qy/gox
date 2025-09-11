@@ -31,11 +31,13 @@ func TestSkipListBasic(t *testing.T) {
 
 	// Test Delete
 	sl.Delete(15)
+
 	if sl.Search(15) {
 		t.Errorf("Expected 15 to be deleted, but it's still found")
 	}
 
 	sl.Delete(5)
+
 	if sl.Search(5) {
 		t.Errorf("Expected 5 to be deleted, but it's still found")
 	}

@@ -17,18 +17,28 @@ func InitByDim(ctx context.Context, rdb *redis.Client, key string, width, depth 
 // InitByProb initializes a Count-Min Sketch with specified error rate and probability.
 // errorRate: The desired error rate (epsilon).
 // probability: The desired probability of error (delta).
-func InitByProb(ctx context.Context, rdb *redis.Client, key string, errorRate, probability float64) error {
+func InitByProb(
+	ctx context.Context,
+	rdb *redis.Client,
+	key string,
+	errorRate, probability float64,
+) error {
 	return rdb.Do(ctx, "CMS.INITBYPROB", key, errorRate, probability).Err()
 }
 
 // IncrBy increments the count of an item by a specified increment.
-func IncrBy(ctx context.Context, rdb *redis.Client, key, item string, increment int64) ([]int64, error) {
+func IncrBy(
+	ctx context.Context,
+	rdb *redis.Client,
+	key, item string,
+	increment int64,
+) ([]int64, error) {
 	res, err := rdb.Do(ctx, "CMS.INCRBY", key, item, increment).Result()
 	if err != nil {
 		return nil, err
 	}
 
-	if arr, ok := res.([]interface{}); ok {
+	if arr, ok := res.([]any); ok {
 		counts := make([]int64, len(arr))
 		for i, v := range arr {
 			if count, ok := v.(int64); ok {
@@ -37,6 +47,7 @@ func IncrBy(ctx context.Context, rdb *redis.Client, key, item string, increment 
 				return nil, fmt.Errorf("unexpected type for increment result at index %d: %T", i, v)
 			}
 		}
+
 		return counts, nil
 	}
 
@@ -50,10 +61,11 @@ func Query(ctx context.Context, rdb *redis.Client, key, item string) (int64, err
 		return 0, err
 	}
 
-	if arr, ok := res.([]interface{}); ok && len(arr) > 0 {
+	if arr, ok := res.([]any); ok && len(arr) > 0 {
 		if count, ok := arr[0].(int64); ok {
 			return count, nil
 		}
+
 		return 0, fmt.Errorf("unexpected type for CMS.QUERY result element: %T", arr[0])
 	}
 
@@ -62,9 +74,10 @@ func Query(ctx context.Context, rdb *redis.Client, key, item string) (int64, err
 
 // Merge merges multiple Count-Min Sketches into a destination sketch.
 func Merge(ctx context.Context, rdb *redis.Client, destKey string, sourceKeys []string) error {
-	args := []interface{}{"CMS.MERGE", destKey, len(sourceKeys)}
+	args := []any{"CMS.MERGE", destKey, len(sourceKeys)}
 	for _, k := range sourceKeys {
 		args = append(args, k)
 	}
+
 	return rdb.Do(ctx, args...).Err()
 }

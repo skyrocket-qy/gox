@@ -16,13 +16,14 @@ func (q PriorityQueue) Swap(i, j int) {
 	q[i], q[j] = q[j], q[i]
 }
 
-func (h *PriorityQueue) Push(x interface{}) {
+func (h *PriorityQueue) Push(x any) {
 	*h = append(*h, x.(Node))
 }
 
-func (h *PriorityQueue) Pop() interface{} {
+func (h *PriorityQueue) Pop() any {
 	l := len(*h) - 1
 	x := (*h)[l]
 	*h = (*h)[:l]
+
 	return x
 }

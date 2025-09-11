@@ -57,6 +57,7 @@ func TestMinHashLSHBasic(t *testing.T) {
 	if !contains(candidates1, "doc2") {
 		t.Errorf("Expected doc1 candidates to include doc2, got %v", candidates1)
 	}
+
 	if !contains(candidates2, "doc1") {
 		t.Errorf("Expected doc2 candidates to include doc1, got %v", candidates2)
 	}
@@ -73,5 +74,6 @@ func contains(slice []string, item string) bool {
 			return true
 		}
 	}
+
 	return false
 }

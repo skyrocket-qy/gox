@@ -10,24 +10,31 @@ import (
 // Reserve creates a new TopK sketch.
 // k: The number of top items to keep.
 // width: The total number of counters to maintain in the sketch.
-// decay: The decay factor for the counters. Items that are not seen for a while will have their counts reduced.
+// decay: The decay factor for the counters. Items that are not seen for a while will have their
+// counts reduced.
 // period: The number of additions between decay operations.
-func Reserve(ctx context.Context, rdb *redis.Client, key string, k, width, decay, period int64) error {
+func Reserve(
+	ctx context.Context,
+	rdb *redis.Client,
+	key string,
+	k, width, decay, period int64,
+) error {
 	return rdb.Do(ctx, "TOPK.RESERVE", key, k, width, decay, period).Err()
 }
 
 // Add adds items to the TopK sketch.
 func Add(ctx context.Context, rdb *redis.Client, key string, items ...string) ([]string, error) {
-	args := []interface{}{"TOPK.ADD", key}
+	args := []any{"TOPK.ADD", key}
 	for _, item := range items {
 		args = append(args, item)
 	}
+
 	res, err := rdb.Do(ctx, args...).Result()
 	if err != nil {
 		return nil, err
 	}
 
-	if arr, ok := res.([]interface{}); ok {
+	if arr, ok := res.([]any); ok {
 		removed := make([]string, len(arr))
 		for i, v := range arr {
 			if s, ok := v.(string); ok {
@@ -36,6 +43,7 @@ func Add(ctx context.Context, rdb *redis.Client, key string, items ...string) ([
 				return nil, fmt.Errorf("unexpected type for TOPK.ADD result at index %d: %T", i, v)
 			}
 		}
+
 		return removed, nil
 	}
 
@@ -44,16 +52,17 @@ func Add(ctx context.Context, rdb *redis.Client, key string, items ...string) ([
 
 // Query checks if items are among the top K items.
 func Query(ctx context.Context, rdb *redis.Client, key string, items ...string) ([]bool, error) {
-	args := []interface{}{"TOPK.QUERY", key}
+	args := []any{"TOPK.QUERY", key}
 	for _, item := range items {
 		args = append(args, item)
 	}
+
 	res, err := rdb.Do(ctx, args...).Result()
 	if err != nil {
 		return nil, err
 	}
 
-	if arr, ok := res.([]interface{}); ok {
+	if arr, ok := res.([]any); ok {
 		results := make([]bool, len(arr))
 		for i, v := range arr {
 			if val, ok := v.(int64); ok {
@@ -62,6 +71,7 @@ func Query(ctx context.Context, rdb *redis.Client, key string, items ...string) 
 				return nil, fmt.Errorf("unexpected type for TOPK.QUERY result at index %d: %T", i, v)
 			}
 		}
+
 		return results, nil
 	}
 
@@ -70,16 +80,17 @@ func Query(ctx context.Context, rdb *redis.Client, key string, items ...string) 
 
 // Count returns the count of specified items.
 func Count(ctx context.Context, rdb *redis.Client, key string, items ...string) ([]int64, error) {
-	args := []interface{}{"TOPK.COUNT", key}
+	args := []any{"TOPK.COUNT", key}
 	for _, item := range items {
 		args = append(args, item)
 	}
+
 	res, err := rdb.Do(ctx, args...).Result()
 	if err != nil {
 		return nil, err
 	}
 
-	if arr, ok := res.([]interface{}); ok {
+	if arr, ok := res.([]any); ok {
 		counts := make([]int64, len(arr))
 		for i, v := range arr {
 			if count, ok := v.(int64); ok {
@@ -88,6 +99,7 @@ func Count(ctx context.Context, rdb *redis.Client, key string, items ...string) 
 				return nil, fmt.Errorf("unexpected type for TOPK.COUNT result at index %d: %T", i, v)
 			}
 		}
+
 		return counts, nil
 	}
 
@@ -101,7 +113,7 @@ func List(ctx context.Context, rdb *redis.Client, key string) ([]string, error) 
 		return nil, err
 	}
 
-	if arr, ok := res.([]interface{}); ok {
+	if arr, ok := res.([]any); ok {
 		items := make([]string, len(arr))
 		for i, v := range arr {
 			if s, ok := v.(string); ok {
@@ -110,6 +122,7 @@ func List(ctx context.Context, rdb *redis.Client, key string) ([]string, error) 
 				return nil, fmt.Errorf("unexpected type for TOPK.LIST result at index %d: %T", i, v)
 			}
 		}
+
 		return items, nil
 	}
 
@@ -117,18 +130,19 @@ func List(ctx context.Context, rdb *redis.Client, key string) ([]string, error) 
 }
 
 // Info returns information about the TopK sketch.
-func Info(ctx context.Context, rdb *redis.Client, key string) (map[string]interface{}, error) {
+func Info(ctx context.Context, rdb *redis.Client, key string) (map[string]any, error) {
 	res, err := rdb.Do(ctx, "TOPK.INFO", key).Result()
 	if err != nil {
 		return nil, err
 	}
 
-	if arr, ok := res.([]interface{}); ok && len(arr) == 8 {
-		info := make(map[string]interface{})
+	if arr, ok := res.([]any); ok && len(arr) == 8 {
+		info := make(map[string]any)
 		info["k"] = arr[1]
 		info["width"] = arr[3]
 		info["decay"] = arr[5]
 		info["period"] = arr[7]
+
 		return info, nil
 	}
 

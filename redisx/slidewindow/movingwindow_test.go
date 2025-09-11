@@ -43,7 +43,7 @@ func TestMovingWindowLimiter_Allow(t *testing.T) {
 	ctx := context.Background()
 
 	// Test case 1: All requests allowed within the limit
-	for i := 0; i < int(limit); i++ {
+	for i := range limit {
 		currentNow := fixedTime.Add(time.Duration(i) * 10 * time.Millisecond).UnixNano()
 		minScore := currentNow - window.Nanoseconds()
 
@@ -80,7 +80,8 @@ func TestMovingWindowLimiter_Allow(t *testing.T) {
 	// Test case 3: Error during Redis pipeline execution (mocking ZRemRangeByScore error)
 	currentNow = fixedTime.Add(time.Duration(limit+1) * 10 * time.Millisecond).UnixNano()
 	minScore = currentNow - window.Nanoseconds()
-	mock.ExpectZRemRangeByScore(key, "0", strconv.FormatInt(minScore, 10)).SetErr(errors.New("redis ZRemRangeByScore error"))
+	mock.ExpectZRemRangeByScore(key, "0", strconv.FormatInt(minScore, 10)).
+		SetErr(errors.New("redis ZRemRangeByScore error"))
 
 	mockClock.NowFunc = func() time.Time { return time.Unix(0, currentNow) }
 

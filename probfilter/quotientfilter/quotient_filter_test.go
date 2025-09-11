@@ -13,7 +13,16 @@ func TestQuotientFilterBasic(t *testing.T) {
 		t.Fatalf("Failed to create QuotientFilter: %v", err)
 	}
 
-	testStrings := []string{"apple", "banana", "cherry", "date", "elderberry", "fig", "grape", "honeydew"}
+	testStrings := []string{
+		"apple",
+		"banana",
+		"cherry",
+		"date",
+		"elderberry",
+		"fig",
+		"grape",
+		"honeydew",
+	}
 
 	// Test insertion
 	for _, s := range testStrings {
@@ -49,10 +58,11 @@ func TestQuotientFilterBasic(t *testing.T) {
 		t.Fatalf("Failed to create QuotientFilter for capacity test: %v", err)
 	}
 
-	for i := 0; i < 250; i++ { // Insert 250 items into a 256-bucket filter
+	for i := range 250 { // Insert 250 items into a 256-bucket filter
 		err := qf2.Insert([]byte(fmt.Sprintf("item%d", i)))
 		if err != nil {
 			t.Errorf("Failed to insert item%d into qf2: %v", i, err)
+
 			break
 		}
 	}

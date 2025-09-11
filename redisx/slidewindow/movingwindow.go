@@ -45,8 +45,14 @@ func (l *MovingWindowLimiter) SetClock(clock Clock) {
 }
 
 // Allow checks if a request is allowed based on the sliding window algorithm.
-// It returns true if the request is allowed, false otherwise, and an error if any Redis operation fails.
-func (l *MovingWindowLimiter) Allow(ctx context.Context, key string, limit int64, window time.Duration) (bool, error) {
+// It returns true if the request is allowed, false otherwise, and an error if any Redis operation
+// fails.
+func (l *MovingWindowLimiter) Allow(
+	ctx context.Context,
+	key string,
+	limit int64,
+	window time.Duration,
+) (bool, error) {
 	now := l.clock.Now().UnixNano()
 	minScore := now - window.Nanoseconds()
 
