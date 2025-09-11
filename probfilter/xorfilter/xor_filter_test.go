@@ -29,3 +29,10 @@ func TestXorFilterBasic(t *testing.T) {
 		}
 	}
 }
+
+func TestNew_EmptyKeys(t *testing.T) {
+	_, err := xorfilter.New([]uint64{})
+	if err == nil {
+		t.Error("Expected error for empty keys, but got nil")
+	}
+}

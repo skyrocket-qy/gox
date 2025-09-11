@@ -2,6 +2,7 @@ package ginw
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
@@ -123,5 +124,62 @@ func TestThrottle(t *testing.T) {
 		req.RemoteAddr = clientIP + ":1234"
 		r.ServeHTTP(w, req)
 		assert.Equal(t, http.StatusOK, w.Code)
+	})
+}
+
+func TestThrottle_Errors(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	db, mock := redismock.NewClientMock()
+
+	limit := int64(2)
+	window := time.Second * 10
+	keyPrefix := "test_throttle_errors"
+	clientIP := "127.0.0.1"
+	expectedKey := keyPrefix + ":" + clientIP
+
+	keyExtractor := func(c *gin.Context) string {
+		return c.ClientIP()
+	}
+
+	throttle := NewThrottle(db, limit, window, keyPrefix, keyExtractor)
+	mockClock := &mockClock{currentTime: time.Now()}
+	throttle.clock = mockClock
+
+	r := gin.New()
+	r.Use(throttle.Middleware())
+	r.GET("/", func(c *gin.Context) {
+		c.String(http.StatusOK, "ok")
+	})
+
+	t.Run("pipeline error", func(t *testing.T) {
+		now := mockClock.Now().UnixNano()
+		minScore := now - window.Nanoseconds()
+
+		mock.ExpectZRemRangeByScore(expectedKey, "0", strconv.FormatInt(minScore, 10)).SetVal(0)
+		mock.ExpectZAdd(expectedKey, redis.Z{Score: float64(now), Member: now}).SetVal(1)
+		mock.ExpectExpire(expectedKey, window).SetErr(errors.New("redis error"))
+
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/", nil)
+		req.RemoteAddr = clientIP + ":1234"
+		r.ServeHTTP(w, req)
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("zcard error", func(t *testing.T) {
+		now := mockClock.Now().UnixNano()
+		minScore := now - window.Nanoseconds()
+
+		mock.ExpectZRemRangeByScore(expectedKey, "0", strconv.FormatInt(minScore, 10)).SetVal(0)
+		mock.ExpectZAdd(expectedKey, redis.Z{Score: float64(now), Member: now}).SetVal(1)
+		mock.ExpectExpire(expectedKey, window).SetVal(true)
+		mock.ExpectZCard(expectedKey).SetErr(errors.New("redis error"))
+
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/", nil)
+		req.RemoteAddr = clientIP + ":1234"
+		r.ServeHTTP(w, req)
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
 }

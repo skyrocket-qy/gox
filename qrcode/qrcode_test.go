@@ -2,6 +2,7 @@ package qrcode
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -54,4 +55,24 @@ func TestHandler(t *testing.T) {
 	// Test case 3: GenerateQRCode fails (mocking is hard here, so we'll rely on internal errors)
 	// This scenario is difficult to test directly without mocking the qrcode.Encode function.
 	// For now, we'll assume it works or fails as expected internally.
+}
+
+type errorResponseWriter struct {
+	httptest.ResponseRecorder
+}
+
+func (w *errorResponseWriter) Write(b []byte) (int, error) {
+	return 0, errors.New("write error")
+}
+
+func TestHandler_WriteError(t *testing.T) {
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, "/qrcode", nil)
+	assert.NoError(t, err)
+
+	rr := &errorResponseWriter{}
+	handler := http.HandlerFunc(Handler)
+
+	handler.ServeHTTP(rr, req)
+	// We can't assert much here, as the error is not returned.
+	// We are just covering the code path.
 }

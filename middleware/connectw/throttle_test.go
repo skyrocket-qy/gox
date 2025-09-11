@@ -100,3 +100,9 @@ func TestThrottle_UnaryInterceptor(t *testing.T) {
 		mockLimiter.AssertExpectations(t)
 	})
 }
+
+func TestNewThrottle_NilLimiter(t *testing.T) {
+	db, _ := redismock.NewClientMock()
+	throttle := connectw.NewThrottle(db, 1, time.Second, "test", func(ctx context.Context) string { return "" }, nil)
+	assert.NotNil(t, throttle)
+}

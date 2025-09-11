@@ -2,10 +2,12 @@ package cuckoofilter_test
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"github.com/go-redis/redismock/v9"
 	"github.com/skyrocket-qy/gox/probfilter/cuckoofilter"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCuckooFilter(t *testing.T) {
@@ -146,4 +148,77 @@ func TestCuckooFilter(t *testing.T) {
 
 	// Clean up after test
 	rdb.Del(ctx, key)
+}
+
+func TestCuckooFilter_Errors(t *testing.T) {
+	ctx := context.Background()
+	rdb, mock := redismock.NewClientMock()
+	key := "test_cuckoo_filter_errors"
+	value := "test_value"
+
+	t.Run("Reserve error", func(t *testing.T) {
+		mock.ExpectDo("CF.RESERVE", key, int64(1000)).SetErr(errors.New("redis error"))
+		err := cuckoofilter.Reserve(ctx, rdb, key, 1000)
+		assert.Error(t, err)
+	})
+
+	t.Run("Add error", func(t *testing.T) {
+		mock.ExpectDo("CF.ADD", key, value).SetErr(errors.New("redis error"))
+		_, err := cuckoofilter.Add(ctx, rdb, key, value)
+		assert.Error(t, err)
+	})
+
+	t.Run("Add type error", func(t *testing.T) {
+		mock.ExpectDo("CF.ADD", key, value).SetVal("not a bool")
+		_, err := cuckoofilter.Add(ctx, rdb, key, value)
+		assert.Error(t, err)
+	})
+
+	t.Run("AddNX error", func(t *testing.T) {
+		mock.ExpectDo("CF.ADDNX", key, value).SetErr(errors.New("redis error"))
+		_, err := cuckoofilter.AddNX(ctx, rdb, key, value)
+		assert.Error(t, err)
+	})
+
+	t.Run("AddNX type error", func(t *testing.T) {
+		mock.ExpectDo("CF.ADDNX", key, value).SetVal("not a bool")
+		_, err := cuckoofilter.AddNX(ctx, rdb, key, value)
+		assert.Error(t, err)
+	})
+
+	t.Run("Exists error", func(t *testing.T) {
+		mock.ExpectDo("CF.EXISTS", key, value).SetErr(errors.New("redis error"))
+		_, err := cuckoofilter.Exists(ctx, rdb, key, value)
+		assert.Error(t, err)
+	})
+
+	t.Run("Exists type error", func(t *testing.T) {
+		mock.ExpectDo("CF.EXISTS", key, value).SetVal("not a bool")
+		_, err := cuckoofilter.Exists(ctx, rdb, key, value)
+		assert.Error(t, err)
+	})
+
+	t.Run("Del error", func(t *testing.T) {
+		mock.ExpectDo("CF.DEL", key, value).SetErr(errors.New("redis error"))
+		_, err := cuckoofilter.Del(ctx, rdb, key, value)
+		assert.Error(t, err)
+	})
+
+	t.Run("Del type error", func(t *testing.T) {
+		mock.ExpectDo("CF.DEL", key, value).SetVal("not a bool")
+		_, err := cuckoofilter.Del(ctx, rdb, key, value)
+		assert.Error(t, err)
+	})
+
+	t.Run("Count error", func(t *testing.T) {
+		mock.ExpectDo("CF.COUNT", key, value).SetErr(errors.New("redis error"))
+		_, err := cuckoofilter.Count(ctx, rdb, key, value)
+		assert.Error(t, err)
+	})
+
+	t.Run("Count type error", func(t *testing.T) {
+		mock.ExpectDo("CF.COUNT", key, value).SetVal("not an int")
+		_, err := cuckoofilter.Count(ctx, rdb, key, value)
+		assert.Error(t, err)
+	})
 }
