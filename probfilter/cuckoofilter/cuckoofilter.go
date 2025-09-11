@@ -1,4 +1,4 @@
-package redisx
+package cuckoofilter
 
 import (
 	"context"
