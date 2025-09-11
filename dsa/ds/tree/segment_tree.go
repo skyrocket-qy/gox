@@ -1,6 +1,6 @@
 package tree
 
-import "github.com/skyrocket-qy/gox/basic/stack"
+import "github.com/skyrocket-qy/gox/dsa/ds/stack"
 
 /*Linked list.*/
 type Node struct {
