@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package body;
+
+option go_package = "github.com/skyrocket-qy/gox/body";
+
+message TestMessage {
+  string id = 1;
+  int64 value = 2;
+}
