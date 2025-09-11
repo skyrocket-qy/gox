@@ -11,24 +11,31 @@ import (
 )
 
 func Encode(in proto.Message) ([]byte, error) {
+	var buf bytes.Buffer
+	err := EncodeWithWriter(in, &buf)
+	return buf.Bytes(), err
+}
+
+func EncodeWithWriter(in proto.Message, w io.Writer) error {
+	if in == nil {
+		return errors.New("input message cannot be nil")
+	}
 	raw, err := proto.Marshal(in)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var buf bytes.Buffer
-
-	gz := gzip.NewWriter(&buf)
+	gz := gzip.NewWriter(w)
 
 	if _, err := gz.Write(raw); err != nil {
-		return nil, err
+		return err
 	}
 
 	if err := gz.Close(); err != nil {
-		return nil, err
+		return err
 	}
 
-	return buf.Bytes(), nil
+	return nil
 }
 
 func Decode[T proto.Message](data []byte) (T, error) {
