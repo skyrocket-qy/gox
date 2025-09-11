@@ -32,7 +32,7 @@ func TestToString(t *testing.T) {
 		{"float32", float32(1.23), "1.23"},
 		{"float64", float64(1.23), "1.23"},
 		{"struct", testStruct{s: "test"}, "{test}"},
-		{"nil", nil, "<nil>"},
+		{"nil", nil, ""},
 	}
 
 	for _, tt := range tests {
