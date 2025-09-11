@@ -5,6 +5,7 @@ import (
 	"compress/gzip"
 	"errors"
 	"io"
+	"reflect"
 
 	"google.golang.org/protobuf/proto"
 )
@@ -51,14 +52,17 @@ func Decode[T proto.Message](data []byte) (T, error) {
 		return out, err
 	}
 
-	msg := proto.Clone(out)
+	// We need a non-nil message to unmarshal into.
+	// We create one using reflection since T is a generic type.
+	typ := reflect.TypeOf(out)
+	if typ == nil || typ.Kind() != reflect.Ptr {
+		return out, errors.New("target type must be a pointer to a proto message")
+	}
+	msg := reflect.New(typ.Elem()).Interface().(T)
+
 	if err := proto.Unmarshal(decompressed, msg); err != nil {
 		return out, err
 	}
 
-	if assertedMsg, ok := msg.(T); ok {
-		return assertedMsg, nil
-	}
-
-	return out, errors.New("failed to assert type of decoded message")
+	return msg, nil
 }
