@@ -1,4 +1,4 @@
-package redisx_test
+package slidewindow_test
 
 import (
 	"context"
@@ -9,8 +9,8 @@ import (
 
 	"github.com/go-redis/redismock/v9"
 	"github.com/redis/go-redis/v9"
+	"github.com/skyrocket-qy/gox/redisx/slidewindow"
 	"github.com/stretchr/testify/assert"
-	"github.com/skyrocket-qy/gox/redisx"
 )
 
 // MockClock implements the Clock interface for testing.
@@ -33,7 +33,7 @@ func TestMovingWindowLimiter_Allow(t *testing.T) {
 	}
 
 	// Initialize the limiter with the mock clock
-	limiter := redisx.NewMovingWindowLimiter(client)
+	limiter := slidewindow.New(client)
 	limiter.SetClock(mockClock) // Assuming a SetClock method is added to MovingWindowLimiter
 
 	key := "test_moving_window_key"

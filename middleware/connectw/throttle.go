@@ -7,7 +7,7 @@ import (
 
 	"connectrpc.com/connect"
 	"github.com/redis/go-redis/v9"
-	"github.com/skyrocket-qy/gox/redisx"
+	"github.com/skyrocket-qy/gox/redisx/slidewindow"
 )
 
 // Clock is an interface for getting the current time.
@@ -24,7 +24,7 @@ func (realClock) Now() time.Time {
 
 // Throttle represents a sliding window rate limiter for connectrpc.
 type Throttle struct {
-	limiter      redisx.MovingWindowLimiterInterface
+	limiter      slidewindow.MovingWindowLimiterInterface
 	limit        int64
 	window       time.Duration
 	keyPrefix    string
@@ -35,10 +35,10 @@ type Throttle struct {
 // NewThrottle creates a new Throttle interceptor for connectrpc.
 func NewThrottle(redisClient *redis.Client, limit int64, window time.Duration, keyPrefix string,
 	keyExtractor func(ctx context.Context) string,
-	limiter redisx.MovingWindowLimiterInterface,
+	limiter slidewindow.MovingWindowLimiterInterface,
 ) *Throttle {
 	if limiter == nil {
-		limiter = redisx.NewMovingWindowLimiter(redisClient)
+		limiter = slidewindow.New(redisClient)
 	}
 	return &Throttle{
 		limiter:      limiter,

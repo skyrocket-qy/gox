@@ -1,4 +1,4 @@
-package redisx
+package slidewindow
 
 import (
 	"context"
@@ -32,7 +32,7 @@ type MovingWindowLimiter struct {
 }
 
 // NewMovingWindowLimiter creates a new MovingWindowLimiter.
-func NewMovingWindowLimiter(redisClient *redis.Client) *MovingWindowLimiter {
+func New(redisClient *redis.Client) *MovingWindowLimiter {
 	return &MovingWindowLimiter{
 		redisClient: redisClient,
 		clock:       realClock{},
