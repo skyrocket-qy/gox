@@ -68,6 +68,26 @@ func TestMinHashLSHBasic(t *testing.T) {
 	}
 }
 
+func TestNewLSH_Error(t *testing.T) {
+	_, err := minhashlsh.NewLSH(0, 8)
+	if err == nil {
+		t.Error("Expected error for numBands <= 0, but got nil")
+	}
+
+	_, err = minhashlsh.NewLSH(16, 0)
+	if err == nil {
+		t.Error("Expected error for numRows <= 0, but got nil")
+	}
+}
+
+func TestLSH_Add_Error(t *testing.T) {
+	lsh, _ := minhashlsh.NewLSH(16, 8)
+	err := lsh.Add("doc1", make([]uint64, 127))
+	if err == nil {
+		t.Error("Expected error for signature length mismatch, but got nil")
+	}
+}
+
 func contains(slice []string, item string) bool {
 	for _, s := range slice {
 		if s == item {

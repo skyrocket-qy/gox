@@ -86,4 +86,14 @@ func TestInitFields(t *testing.T) {
 	// Test with pointer to non-struct (should not panic, but also not modify)
 	intPtr := new(int)
 	InitFields(intPtr) // Should not panic
+
+	// Test with a more deeply nested struct
+	type DeeplyNested struct {
+		Nested *NestedPointerStruct
+	}
+	deeplyNested := DeeplyNested{}
+	InitFields(&deeplyNested)
+	assert.NotNil(t, deeplyNested.Nested)
+	assert.NotNil(t, deeplyNested.Nested.Nested)
+	assert.NotNil(t, deeplyNested.Nested.Another)
 }
