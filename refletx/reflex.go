@@ -72,7 +72,7 @@ func GetField[Out, Self any](it *Self, name string) (out *Out, throw error) {
 	return
 }
 
-func CallField[Self any](
+func CallMethod[Self any](
 	it *Self,
 	name string,
 	arguments []reflect.Value,
