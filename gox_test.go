@@ -1,8 +1,9 @@
-package common
+package gox_test
 
 import (
 	"testing"
 
+	"github.com/skyrocket-qy/gox"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,7 +19,7 @@ func TestBatch(t *testing.T) {
 	}
 
 	batches1 := make([][]int, 0)
-	for batch := range Batch(items1, batchSize1) {
+	for batch := range gox.Batch(items1, batchSize1) {
 		batches1 = append(batches1, batch)
 	}
 
@@ -34,7 +35,7 @@ func TestBatch(t *testing.T) {
 	}
 
 	batches2 := make([][]string, 0)
-	for batch := range Batch(items2, batchSize2) {
+	for batch := range gox.Batch(items2, batchSize2) {
 		batches2 = append(batches2, batch)
 	}
 
@@ -46,7 +47,7 @@ func TestBatch(t *testing.T) {
 	expected3 := [][]float64{}
 
 	batches3 := make([][]float64, 0)
-	for batch := range Batch(items3, batchSize3) {
+	for batch := range gox.Batch(items3, batchSize3) {
 		batches3 = append(batches3, batch)
 	}
 
@@ -60,7 +61,7 @@ func TestBatch(t *testing.T) {
 	}
 
 	batches4 := make([][]byte, 0)
-	for batch := range Batch(items4, batchSize4) {
+	for batch := range gox.Batch(items4, batchSize4) {
 		batches4 = append(batches4, batch)
 	}
 
@@ -76,7 +77,7 @@ func TestBatch(t *testing.T) {
 	}
 
 	batches5 := make([][]int, 0)
-	for batch := range Batch(items5, batchSize5) {
+	for batch := range gox.Batch(items5, batchSize5) {
 		batches5 = append(batches5, batch)
 	}
 

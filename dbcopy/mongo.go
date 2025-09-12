@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/skyrocket-qy/gox/common"
+	"github.com/skyrocket-qy/gox"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -147,7 +147,7 @@ func CopyMongoData(
 			return nil, fmt.Errorf("unsupported copy mode: %v", mode)
 		}
 
-		for batchDocs := range common.Batch(docs, BatchSize) {
+		for batchDocs := range gox.Batch(docs, BatchSize) {
 			if _, err := dst.InsertMany(ctx, batchDocs); err != nil {
 				return nil, fmt.Errorf("insert batch failed: %w", err)
 			}
