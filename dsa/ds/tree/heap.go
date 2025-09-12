@@ -1,6 +1,5 @@
 package tree
 
-import "log"
 
 /*array.*/
 type MinHeap []int
@@ -48,19 +47,3 @@ func compare(a, b int) bool { return a > b }
 
 func change(a, b *int) { *a, *b = *b, *a }
 
-func main() {
-	list := [...]int{11, 2, 10, 4, 5, 7, 9, 8, 6, 1}
-
-	mh := MinHeap{}
-	mh.Build()
-
-	for _, val := range list {
-		mh.Put(val)
-	}
-
-	log.Println(mh)
-	log.Println(mh.Get())
-	log.Println(mh)
-	log.Println(mh.Get())
-	log.Println(mh)
-}
