@@ -3,6 +3,7 @@ package tdigest
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -18,8 +19,14 @@ func Create(ctx context.Context, rdb *redis.Client, key string, compression floa
 // items: A slice of item-weight pairs. Each item is a float64, and its weight is an int64.
 func Add(ctx context.Context, rdb *redis.Client, key string, items map[float64]int64) error {
 	args := []any{"TDIGEST.ADD", key}
-	for item, weight := range items {
-		args = append(args, item, weight)
+	keys := make([]float64, 0, len(items))
+	for k := range items {
+		keys = append(keys, k)
+	}
+	sort.Float64s(keys)
+
+	for _, k := range keys {
+		args = append(args, k, items[k])
 	}
 
 	return rdb.Do(ctx, args...).Err()
