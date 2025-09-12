@@ -90,7 +90,7 @@ type closeEvent struct {
 func TestLifecycleParallel(t *testing.T) {
 	t.Parallel()
 
-	lc := lifecyclex.NewLifecycleParallel()
+	lc := lifecyclex.NewConcurrentLifecycle()
 
 	var (
 		mu         sync.Mutex
@@ -151,7 +151,7 @@ func TestLifecycleParallel(t *testing.T) {
 func TestLifecycleParallel_DanglingDependency(t *testing.T) {
 	t.Parallel()
 
-	lc := lifecyclex.NewLifecycleParallel()
+	lc := lifecyclex.NewConcurrentLifecycle()
 
 	appA := app("A")
 	appB := app("B")
@@ -168,7 +168,7 @@ func TestLifecycleParallel_DanglingDependency(t *testing.T) {
 func TestLifecycleParallel_Error(t *testing.T) {
 	t.Parallel()
 
-	lc := lifecyclex.NewLifecycleParallel()
+	lc := lifecyclex.NewConcurrentLifecycle()
 
 	var (
 		closed     []app
