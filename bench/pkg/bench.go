@@ -2,16 +2,13 @@ package pkg
 
 import (
 	"strconv"
-
-	"github.com/go-echarts/go-echarts/v2/opts"
 )
 
-func toLineData[T ~int | ~int32 | ~int64 | ~uint | ~uint32 | ~uint64](data []T) []opts.LineData {
-	ret := make([]opts.LineData, 0, len(data))
-	for _, v := range data {
-		ret = append(ret, opts.LineData{Value: v})
+func toInterfaceSlice[T ~int | ~int32 | ~int64 | ~uint | ~uint32 | ~uint64](data []T) []interface{} {
+	ret := make([]interface{}, len(data))
+	for i, v := range data {
+		ret[i] = v
 	}
-
 	return ret
 }
 
@@ -22,12 +19,12 @@ func Bench(fn func(), repeat int, outputFile string) error {
 	}
 
 	datas := []LineData{
-		{"Timings (ns)", toLineData(CollectTimings(fn, repeat))},
-		{"Heap Delta (bytes)", toLineData(CollectMems(fn, repeat))},
-		{"NumGCs", toLineData(CollectNumGCs(fn, repeat))},
-		{"Total Alloc (bytes)", toLineData(CollectAllocs(fn, repeat))},
-		{"PauseNs", toLineData(CollectPauseNs(fn, repeat))},
-		{"Goroutines", toLineData(CollectGoroutines(fn, repeat))},
+		{"Timings (ns)", toInterfaceSlice(CollectTimings(fn, repeat))},
+		{"Heap Delta (bytes)", toInterfaceSlice(CollectMems(fn, repeat))},
+		{"NumGCs", toInterfaceSlice(CollectNumGCs(fn, repeat))},
+		{"Total Alloc (bytes)", toInterfaceSlice(CollectAllocs(fn, repeat))},
+		{"PauseNs", toInterfaceSlice(CollectPauseNs(fn, repeat))},
+		{"Goroutines", toInterfaceSlice(CollectGoroutines(fn, repeat))},
 	}
 
 	return WriteChartToFile(outputFile, x, datas...)
