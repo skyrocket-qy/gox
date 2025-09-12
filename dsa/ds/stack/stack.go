@@ -27,6 +27,17 @@ func (stk *Stack[T]) Pop() (T, bool) {
 	return x, false
 }
 
+func (stk *Stack[T]) Peek() (T, bool) {
+	var x T
+	if len(stk.slice) > 0 {
+		x = stk.slice[len(stk.slice)-1]
+
+		return x, true
+	}
+
+	return x, false
+}
+
 func (stk *Stack[T]) IsEmpty() bool {
 	return len(stk.slice) == 0
 }
