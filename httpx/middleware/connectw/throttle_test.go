@@ -8,7 +8,7 @@ import (
 
 	"connectrpc.com/connect"
 	"github.com/go-redis/redismock/v9"
-	"github.com/skyrocket-qy/gox/middleware/connectw"
+	"github.com/skyrocket-qy/gox/httpx/middleware/connectw"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

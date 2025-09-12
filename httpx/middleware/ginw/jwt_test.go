@@ -1,4 +1,4 @@
-package ginw
+package ginw_test
 
 import (
 	"context"
@@ -15,6 +15,8 @@ import (
 	"github.com/skyrocket-qy/erx"
 	"github.com/skyrocket-qy/gox/errcode"
 	"github.com/skyrocket-qy/gox/httpx"
+	"github.com/skyrocket-qy/gox/httpx/middleware/ginw"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -42,8 +44,8 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 
 	gin.SetMode(gin.TestMode)
 
-	authMid := NewInterAuthMid()
-	authMid.errBinder = httpx.NewErrBinder(map[erx.Code]int{
+	authMid := ginw.NewInterAuthMid()
+	authMid.ErrBinder = httpx.NewErrBinder(map[erx.Code]int{
 		errcode.ErrUnauthorized:               http.StatusUnauthorized,
 		errcode.ErrMissingAuthorizationHeader: http.StatusUnauthorized,
 	})
@@ -174,7 +176,7 @@ func TestParseJWT(t *testing.T) {
 		signature := base64.RawURLEncoding.EncodeToString([]byte("bogussignature"))
 		tokenString := unsignedToken + "." + signature
 
-		_, err = ParseJWT(tokenString, []byte(testJWTSecret))
+		_, err = ginw.ParseJWT(tokenString, []byte(testJWTSecret))
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "unexpected signing method")
 	})

@@ -1,4 +1,4 @@
-package ginw
+package ginw_test
 
 import (
 	"context"
@@ -12,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redismock/v9"
 	"github.com/redis/go-redis/v9"
+	"github.com/skyrocket-qy/gox/httpx/middleware/ginw"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -43,7 +44,7 @@ func TestThrottle(t *testing.T) {
 		return c.ClientIP()
 	}
 
-	throttle := NewThrottle(db, limit, window, keyPrefix, keyExtractor)
+	throttle := ginw.NewThrottle(db, limit, window, keyPrefix, keyExtractor)
 	mockClock := &mockClock{currentTime: time.Now()}
 	throttle.clock = mockClock
 
@@ -142,7 +143,7 @@ func TestThrottle_Errors(t *testing.T) {
 		return c.ClientIP()
 	}
 
-	throttle := NewThrottle(db, limit, window, keyPrefix, keyExtractor)
+	throttle := ginw.NewThrottle(db, limit, window, keyPrefix, keyExtractor)
 	mockClock := &mockClock{currentTime: time.Now()}
 	throttle.clock = mockClock
 

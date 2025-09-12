@@ -12,18 +12,20 @@ import (
 )
 
 type InterAuthMid struct {
-	errBinder *httpx.ErrBinder
+	ErrBinder *httpx.ErrBinder
 }
 
 func NewInterAuthMid() *InterAuthMid {
-	return &InterAuthMid{}
+	return &InterAuthMid{
+		ErrBinder: httpx.NewErrBinder(nil),
+	}
 }
 
 func (a *InterAuthMid) CheckAuth(jwtSecret []byte) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.GetHeader("Authorization")
 		if token == "" {
-			a.errBinder.Bind(c, erx.New(errcode.ErrMissingAuthorizationHeader))
+			a.ErrBinder.Bind(c, erx.New(errcode.ErrMissingAuthorizationHeader))
 
 			return
 		}
@@ -34,7 +36,7 @@ func (a *InterAuthMid) CheckAuth(jwtSecret []byte) gin.HandlerFunc {
 
 		calm, err := ParseJWT(token, jwtSecret)
 		if err != nil {
-			a.errBinder.Bind(c, erx.W(err).SetCode(errcode.ErrUnauthorized))
+			a.ErrBinder.Bind(c, erx.W(err).SetCode(errcode.ErrUnauthorized))
 
 			return
 		}

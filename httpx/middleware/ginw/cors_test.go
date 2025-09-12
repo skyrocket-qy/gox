@@ -1,4 +1,4 @@
-package ginw
+package ginw_test
 
 import (
 	"context"
@@ -7,12 +7,13 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/skyrocket-qy/gox/httpx/middleware/ginw"
 	"github.com/stretchr/testify/assert"
 )
 
 func testCorsRequest(t *testing.T, method string, handler gin.HandlerFunc) {
 	r := gin.New()
-	r.Use(Cors())
+	r.Use(ginw.Cors())
 
 	switch method {
 	case http.MethodGet:
