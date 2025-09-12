@@ -1,9 +1,17 @@
 package main
 
-import "log"
+import (
+	"log"
+	"time"
+
+	"github.com/skyrocket-qy/gox/bench/pkg"
+)
 
 func main() {
-	if err := WriteChartToFile("chart.html", []string{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}); err != nil {
-		log.Printf("Error writing chart to file: %v", err)
+	err := pkg.Bench(func() {
+		time.Sleep(10 * time.Millisecond)
+	}, 100, "bench.html")
+	if err != nil {
+		log.Fatalf("Bench failed: %v", err)
 	}
 }
