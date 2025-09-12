@@ -10,7 +10,7 @@ import (
 func main() {
 	err := pkg.Bench(func() {
 		time.Sleep(10 * time.Millisecond)
-	}, 100, "bench.html")
+	}, 100, "bench.png")
 	if err != nil {
 		log.Fatalf("Bench failed: %v", err)
 	}

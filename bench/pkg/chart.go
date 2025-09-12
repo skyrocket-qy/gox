@@ -1,55 +1,51 @@
 package pkg
 
 import (
-	"math/rand/v2"
-	"os"
-
-	"github.com/go-echarts/go-echarts/v2/charts"
-	"github.com/go-echarts/go-echarts/v2/opts"
-	"github.com/go-echarts/go-echarts/v2/types"
+	"encoding/json"
+	"fmt"
+	"os/exec"
 )
 
-// generate random data for line chart.
-func generateLineItems() []opts.LineData {
-	items := make([]opts.LineData, 0)
-	for range 7 {
-		items = append(items, opts.LineData{Value: rand.IntN(300)})
-	}
-
-	return items
+type LineData struct {
+	Name string        `json:"Name"`
+	Data []interface{} `json:"Data"`
 }
 
-type LineData struct {
-	Name string
-	Data []opts.LineData
+// chartJSON is the top-level structure for the JSON data sent to the Python script.
+type chartJSON struct {
+	X     []string   `json:"x"`
+	Datas []LineData `json:"datas"`
 }
 
 func WriteChartToFile(filename string, x []string, datas ...LineData) error {
-	line := charts.NewLine()
-	line.SetGlobalOptions(
-		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeWesteros}),
-		charts.WithTitleOpts(opts.Title{
-			Title:    "Line example in Westeros theme",
-			Subtitle: "Line chart rendered by the http server this time",
-		}))
-
-	line.SetXAxis(x).
-		SetSeriesOptions(charts.WithLineChartOpts(opts.LineChart{Smooth: opts.Bool(true)}))
-
-	for _, data := range datas {
-		line.AddSeries(data.Name, data.Data)
+	// Prepare data for JSON marshaling
+	chartData := chartJSON{
+		X:     x,
+		Datas: datas,
 	}
 
-	f, err := os.Create(filename)
+	// Marshal data to JSON
+	jsonData, err := json.Marshal(chartData)
 	if err != nil {
 		return err
 	}
 
-	defer func() {
-		if cerr := f.Close(); cerr != nil && err == nil {
-			err = cerr // Only set err if no other error occurred
-		}
+	// Execute Python script
+	cmd := exec.Command("python3", "bench/pkg/plot.py", filename)
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		return err
+	}
+
+	go func() {
+		defer stdin.Close()
+		stdin.Write(jsonData)
 	}()
 
-	return line.Render(f)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("failed to execute python script: %w\nOutput:\n%s", err, string(output))
+	}
+
+	return nil
 }
