@@ -12,86 +12,82 @@ The representation of graph: map[node][]edge
 // T: O(V + E)
 // S: O(V).
 func TopoSortRemoveVertix(graph map[int][]int) (seq []int) {
-	// initialize indegree
-
-	// T: O(E)
-	inDeg := map[int]int{}
-
+	inDeg := make(map[int]int)
+	for node := range graph {
+		inDeg[node] = 0
+	}
 	for _, edges := range graph {
 		for _, edge := range edges {
-			if _, ok := inDeg[edge]; !ok {
-				inDeg[edge] = 1
-			} else {
-				inDeg[edge]++
-			}
+			inDeg[edge]++
 		}
 	}
 
-	// T: O(V)
+	queue := []int{}
 	for node, degree := range inDeg {
 		if degree == 0 {
-			seq = append(seq, node)
+			queue = append(queue, node)
 		}
 	}
 
-	// T: O(E)
-	for i := 0; i < len(seq); i++ {
-		for _, edge := range graph[inDeg[i]] {
+	for i := 0; i < len(queue); i++ {
+		node := queue[i]
+		for _, edge := range graph[node] {
 			inDeg[edge]--
 			if inDeg[edge] == 0 {
-				seq = append(seq, edge)
+				queue = append(queue, edge)
 			}
 		}
 	}
 
-	if len(seq) < len(graph) {
+	if len(queue) < len(graph) {
 		return nil
 	}
 
-	return seq
+	return queue
 }
 
-func TopoSortDfs(graph map[int][]int) []int {
-	isntRootNodes := map[int]bool{}
+const (
+	unvisited = 0
+	visiting  = 1
+	visited   = 2
+)
 
-	for _, edges := range graph {
-		for _, edge := range edges {
-			isntRootNodes[edge] = true
-		}
+func TopoSortDfs(graph map[int][]int) []int {
+	states := make(map[int]int)
+	for node := range graph {
+		states[node] = unvisited
 	}
 
-	rootNodes := []int{}
+	var result []int
+	var hasCycle bool
+
+	var dfs func(node int)
+	dfs = func(node int) {
+		states[node] = visiting
+		for _, neighbor := range graph[node] {
+			if states[neighbor] == visiting {
+				hasCycle = true
+				return
+			}
+			if states[neighbor] == unvisited {
+				dfs(neighbor)
+			}
+			if hasCycle {
+				return
+			}
+		}
+		states[node] = visited
+		result = append([]int{node}, result...)
+	}
 
 	for node := range graph {
-		if _, ok := isntRootNodes[node]; !ok {
-			rootNodes = append(rootNodes, node)
+		if states[node] == unvisited {
+			dfs(node)
+		}
+		if hasCycle {
+			return nil
 		}
 	}
 
-	visited := map[int]bool{}
-	reverseSeq := []int{}
-
-	var dfs func(graph map[int][]int, root int, visited map[int]bool, seq *[]int)
-
-	dfs = func(graph map[int][]int, root int, visited map[int]bool, seq *[]int) {
-		if _, ok := visited[root]; ok {
-			return
-		}
-
-		for _, v := range graph[root] {
-			dfs(graph, v, visited, seq)
-		}
-
-		*seq = append(*seq, root)
-	}
-	for _, node := range rootNodes {
-		dfs(graph, node, visited, &reverseSeq)
-	}
-
-	seq := []int{}
-	for i := len(reverseSeq) - 1; i >= 0; i-- {
-		seq = append(seq, reverseSeq[i])
-	}
-
-	return seq
+	return result
 }

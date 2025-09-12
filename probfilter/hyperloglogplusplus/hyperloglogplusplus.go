@@ -43,8 +43,11 @@ func (h *HyperLogLog) Clear() {
 // Add adds a new item to HyperLogLog h.
 func (h *HyperLogLog) Add(item Hash32) {
 	x := item.Sum32()
-	i := eb32(x, 32, 32-h.p) // {x31,...,x32-p}
-	w := x<<h.p | 1          // {x32-p-1,...,x0}1
+	// Use the top p bits of the hash for the register index.
+	// eb32(x, 32, h.p) extracts the top h.p bits from the 32-bit hash x,
+	// which is equivalent to x >> (32 - h.p).
+	i := eb32(x, 32, h.p) // {x31,...,x32-p}
+	w := x<<h.p | 1       // {x32-p-1,...,x0}1
 
 	zeroBits := clz32(w) + 1
 	if zeroBits > h.reg[i] {

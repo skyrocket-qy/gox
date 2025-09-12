@@ -7,6 +7,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestAbs(t *testing.T) {
+	assert.Equal(t, 1, gox.Abs(-1))
+	assert.Equal(t, 1, gox.Abs(1))
+	assert.Equal(t, 0, gox.Abs(0))
+	assert.Equal(t, 1.23, gox.Abs(-1.23))
+	assert.Equal(t, 1.23, gox.Abs(1.23))
+}
+
 func TestBatch(t *testing.T) {
 	// Test case 1: Simple slice and small batch size
 	items1 := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
