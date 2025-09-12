@@ -87,7 +87,10 @@ func SwapPermutation(nums []int) [][]int {
 
 	upset = func(nums []int, begin int, res *[][]int) {
 		if begin == len(nums) {
-			*res = append(*res, nums)
+			tmp := make([]int, len(nums))
+			copy(tmp, nums)
+			*res = append(*res, tmp)
+			return
 		}
 
 		for i := begin; i < len(nums); i++ {
