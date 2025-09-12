@@ -46,7 +46,7 @@ func TestThrottle(t *testing.T) {
 
 	throttle := ginw.NewThrottle(db, limit, window, keyPrefix, keyExtractor)
 	mockClock := &mockClock{currentTime: time.Now()}
-	throttle.clock = mockClock
+	throttle.SetClock(mockClock)
 
 	r := gin.New()
 	r.Use(throttle.Middleware())
@@ -145,7 +145,7 @@ func TestThrottle_Errors(t *testing.T) {
 
 	throttle := ginw.NewThrottle(db, limit, window, keyPrefix, keyExtractor)
 	mockClock := &mockClock{currentTime: time.Now()}
-	throttle.clock = mockClock
+	throttle.SetClock(mockClock)
 
 	r := gin.New()
 	r.Use(throttle.Middleware())

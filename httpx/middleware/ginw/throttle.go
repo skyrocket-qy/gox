@@ -31,6 +31,11 @@ type Throttle struct {
 	clock        Clock
 }
 
+// SetClock sets the clock implementation for testing purposes.
+func (t *Throttle) SetClock(c Clock) {
+	t.clock = c
+}
+
 // NewThrottle creates a new Throttle middleware.
 func NewThrottle(redisClient *redis.Client, limit int64, window time.Duration, keyPrefix string,
 	keyExtractor func(c *gin.Context) string,
