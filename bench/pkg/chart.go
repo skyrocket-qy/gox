@@ -17,11 +17,12 @@ type chartJSON struct {
 	Datas []LineData `json:"datas"`
 }
 
-func WriteChartToFile(filename string, x []string, datas ...LineData) error {
+func WriteChartToFile(filename string, x []string, data LineData) error {
 	// Prepare data for JSON marshaling
+	// The python script expects a list of series, so we create a list with one item.
 	chartData := chartJSON{
 		X:     x,
-		Datas: datas,
+		Datas: []LineData{data},
 	}
 
 	// Marshal data to JSON
