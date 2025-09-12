@@ -56,7 +56,7 @@ func (t *Trie) Remove(s string) {
 	}
 
 	i, j := len(s)-1, len(path)-2
-	for {
+	for j >= 0 {
 		delete(path[j].children, s[i])
 
 		if len(path[j].children) == 0 && !path[j].isWord {
