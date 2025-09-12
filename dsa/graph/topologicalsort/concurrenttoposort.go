@@ -97,7 +97,7 @@ func ConcurrentTopologicalSort(ctx context.Context, graph map[any][]any, worker 
 			return e
 		}
 		// If for some reason it's not an error, return a standard Go error.
-		return errors.New(fmt.Sprintf("shutdown failed: unexpected error type: %v", loadedErr))
+		return fmt.Errorf("shutdown failed: unexpected error type: %v", loadedErr)
 	}
 
 	// If not all nodes were processed, there must be a cycle in the graph.
