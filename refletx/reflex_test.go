@@ -142,34 +142,34 @@ func TestGetField(t *testing.T) {
 	assert.Contains(t, err.Error(), "assert field type fail")
 }
 
-func TestCallField(t *testing.T) {
+func TestCallMethod(t *testing.T) {
 	s := TestStruct{Name: "initial"}
 
 	// Test calling a method with no arguments and a return value
-	out, err := CallField(&s, "GetName", []reflect.Value{})
+	out, err := CallMethod(&s, "GetName", []reflect.Value{})
 	assert.NoError(t, err)
 	assert.Len(t, out, 1)
 	assert.Equal(t, "initial", out[0].String())
 
 	// Test calling a method with arguments and no return value
-	out, err = CallField(&s, "SetName", []reflect.Value{reflect.ValueOf("new name")})
+	out, err = CallMethod(&s, "SetName", []reflect.Value{reflect.ValueOf("new name")})
 	assert.NoError(t, err)
 	assert.Empty(t, out) // SetName has no return values
 	assert.Equal(t, "new name", s.Name)
 
 	// Test calling a method with arguments and a return value
-	out, err = CallField(&s, "Sum", []reflect.Value{reflect.ValueOf(5), reflect.ValueOf(7)})
+	out, err = CallMethod(&s, "Sum", []reflect.Value{reflect.ValueOf(5), reflect.ValueOf(7)})
 	assert.NoError(t, err)
 	assert.Len(t, out, 1)
 	assert.Equal(t, 12, int(out[0].Int()))
 
 	// Test calling a non-existent method
-	_, err = CallField(&s, "NonExistentMethod", []reflect.Value{})
+	_, err = CallMethod(&s, "NonExistentMethod", []reflect.Value{})
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "method is not exist")
 
 	// Test calling a method with wrong number of arguments
-	_, err = CallField(
+	_, err = CallMethod(
 		&s,
 		"SetName",
 		[]reflect.Value{reflect.ValueOf("one"), reflect.ValueOf("two")},
@@ -181,7 +181,7 @@ func TestCallField(t *testing.T) {
 	// error from our wrapper) This case is handled by reflect.Call panicking if types don't match,
 	// which is then recovered by our IsNil.
 	// For CallField, the error comes from NumIn() check.
-	_, err = CallField(&s, "SetName", []reflect.Value{reflect.ValueOf(123)})
+	_, err = CallMethod(&s, "SetName", []reflect.Value{reflect.ValueOf(123)})
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "failed to call method")
 }
