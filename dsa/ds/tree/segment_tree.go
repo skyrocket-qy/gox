@@ -9,6 +9,9 @@ type Node struct {
 }
 
 func NewNode(array []int) *Node {
+	if len(array) == 0 {
+		return nil
+	}
 	var i int
 
 	array, i = replenish(array)
@@ -21,9 +24,9 @@ func NewNode(array []int) *Node {
 
 	// recursive construct the node bottom-up
 	for i > 0 {
-		i >>= 1
+		i--
 
-		new := make([]*Node, i, i)
+		new := make([]*Node, 1<<i, 1<<i)
 		for j := range new {
 			new[j] = &Node{
 				arrayN[j<<1].l,
@@ -57,6 +60,9 @@ func replenish(array []int) ([]int, int) {
 }
 
 func (node *Node) Update(pos, value int) {
+	if node == nil {
+		return
+	}
 	stk := stack.NewStack[*Node]()
 
 	var mid int
@@ -83,6 +89,9 @@ func (node *Node) Update(pos, value int) {
 }
 
 func (node *Node) GetSum(left, right int) int {
+	if node == nil {
+		return 0
+	}
 	sum := 0
 	p := &sum
 	node.query(left, right, p)
@@ -91,17 +100,18 @@ func (node *Node) GetSum(left, right int) int {
 }
 
 func (node *Node) query(l, r int, p *int) {
-	if l > r {
+	// If the node's range is completely outside the query range, do nothing.
+	if node == nil || l > node.r || r < node.l {
 		return
 	}
 
-	if l == node.l && r == node.r {
+	// If the node's range is completely inside the query range, add its sum.
+	if l <= node.l && node.r <= r {
 		*p += node.sum
-
 		return
 	}
 
-	mid := (node.l + node.r) >> 1
-	node.left.query(l, mid, p)
-	node.right.query(mid+1, r, p)
+	// Partially overlapping, recurse on children
+	node.left.query(l, r, p)
+	node.right.query(l, r, p)
 }

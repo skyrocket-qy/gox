@@ -9,12 +9,24 @@ func TestStack(t *testing.T) {
 		t.Error("New stack should be empty")
 	}
 
+	if _, ok := stack.Peek(); ok {
+		t.Error("should not be able to peek an empty stack")
+	}
+
 	stack.Push(1)
 	stack.Push(2)
 	stack.Push(3)
 
 	if stack.IsEmpty() {
 		t.Error("Stack should not be empty after push")
+	}
+
+	if val, ok := stack.Peek(); !ok || val != 3 {
+		t.Errorf("peek failed, expected 3, got %d", val)
+	}
+	// ensure that peek does not pop the element
+	if val, ok := stack.Peek(); !ok || val != 3 {
+		t.Errorf("peek failed, expected 3, got %d", val)
 	}
 
 	val, ok := stack.Pop()
