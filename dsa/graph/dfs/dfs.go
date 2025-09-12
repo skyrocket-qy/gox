@@ -36,7 +36,10 @@ func DfsIterative(graph map[int][]int, root int) []int {
 		visitSequence = append(visitSequence, cur)
 
 		visited[cur] = true
-		for _, v := range graph[cur] {
+		// To match recursive behavior, process neighbors in reverse order of how they are pushed onto the stack
+		neighbors := graph[cur]
+		for i := len(neighbors) - 1; i >= 0; i-- {
+			v := neighbors[i]
 			if _, ok := visited[v]; !ok {
 				stk = append(stk, v)
 				visited[v] = true
