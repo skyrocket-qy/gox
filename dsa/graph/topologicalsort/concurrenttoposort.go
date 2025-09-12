@@ -2,10 +2,10 @@ package topologicalsort
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"sync"
 	"sync/atomic"
-
-	"github.com/skyrocket-qy/erx"
 )
 
 // WorkerFunc is a function that processes a single node.
@@ -15,19 +15,15 @@ type WorkerFunc func(ctx context.Context, node any) error
 // in a topologically sorted order, concurrently.
 // The graph is represented as an adjacency list where graph[node] -> dependencies.
 func ConcurrentTopologicalSort(ctx context.Context, graph map[any][]any, worker WorkerFunc) error {
-	// --- 1. Calculate In-Degrees ---
-	// In-degree is the number of nodes that depend on a given node.
+	// --- 1. Calculate In-Degrees (number of dependencies) ---
 	inDegrees := make(map[any]int)
 	allNodes := make(map[any]struct{})
 
 	for node, deps := range graph {
 		allNodes[node] = struct{}{}
-		if _, ok := inDegrees[node]; !ok {
-			inDegrees[node] = 0
-		}
+		inDegrees[node] = len(deps) // Node's in-degree is the count of its dependencies
 		for _, dep := range deps {
-			allNodes[dep] = struct{}{}
-			inDegrees[dep]++
+			allNodes[dep] = struct{}{} // Ensure all dependencies are also in allNodes
 		}
 	}
 
@@ -96,16 +92,17 @@ func ConcurrentTopologicalSort(ctx context.Context, graph map[any][]any, worker 
 	}
 
 	// --- 5. Final Error and Cycle Check ---
-	if err := firstErr.Load(); err != nil {
-		if e, ok := err.(error); ok {
-			return erx.W(e)
+	if loadedErr := firstErr.Load(); loadedErr != nil {
+		if e, ok := loadedErr.(error); ok {
+			return e
 		}
-		return erx.Newf(erx.ErrUnknown, "shutdown failed: %v", err)
+		// If for some reason it's not an error, return a standard Go error.
+		return errors.New(fmt.Sprintf("shutdown failed: unexpected error type: %v", loadedErr))
 	}
 
 	// If not all nodes were processed, there must be a cycle in the graph.
 	if int(processed) != len(allNodes) {
-		return erx.Newf(erx.ErrUnknown, "cycle detected in dependency graph")
+		return errors.New("cycle detected in dependency graph")
 	}
 
 	return nil
