@@ -18,14 +18,14 @@ func DijkstraAlgorithm(graph [][]int, start, end int) int {
 	dis[start] = 0
 	parent[start] = start
 
-	for i := range n {
+	for range n {
 		a := -1
 
 		min := math.MaxInt
 		for j := range n {
 			if !visited[j] && dis[j] < min {
-				a = i
-				min = dis[i]
+				a = j
+				min = dis[j]
 			}
 		}
 

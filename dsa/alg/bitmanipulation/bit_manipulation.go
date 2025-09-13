@@ -100,7 +100,7 @@ func LeastSignificantBit1(in int) int {
 }
 
 func IsPowerOf2(in uint) bool {
-	return (in & (in - 1)) == 0
+	return in != 0 && (in&(in-1)) == 0
 }
 
 // in = [0,1,2,4], out = 3.
