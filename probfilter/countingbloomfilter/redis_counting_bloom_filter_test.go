@@ -29,6 +29,10 @@ func TestAdd(t *testing.T) {
 	mock.ExpectDo("BF.ADD", "mykey", "item1").SetVal("OK")
 	err := Add(ctx, db, "mykey", "item1")
 	assert.NoError(t, err)
+
+	mock.ExpectDo("BF.ADD", "mykey", "item1").SetErr(errors.New("add failed"))
+	err = Add(ctx, db, "mykey", "item1")
+	assert.Error(t, err)
 }
 
 func TestExists(t *testing.T) {
@@ -44,6 +48,14 @@ func TestExists(t *testing.T) {
 	exists, err = Exists(ctx, db, "mykey", "item2")
 	assert.NoError(t, err)
 	assert.False(t, exists)
+
+	mock.ExpectDo("BF.EXISTS", "mykey", "item3").SetErr(errors.New("exists failed"))
+	_, err = Exists(ctx, db, "mykey", "item3")
+	assert.Error(t, err)
+
+	mock.ExpectDo("BF.EXISTS", "mykey", "item4").SetVal("not an int")
+	_, err = Exists(ctx, db, "mykey", "item4")
+	assert.Error(t, err)
 }
 
 func TestRemove(t *testing.T) {

@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -73,24 +74,46 @@ func TestPrintStructInfo(t *testing.T) {
 		Age  int
 	}
 
-	p := Person{Name: "John", Age: 30}
+	t.Run("Input is a struct", func(t *testing.T) {
+		p := Person{Name: "John", Age: 30}
+		var buf bytes.Buffer
+		log.SetOutput(&buf)
+		defer func() {
+			log.SetOutput(os.Stderr)
+		}()
+		PrintStructInfo(p)
+		output := buf.String()
+		assert.Contains(t, output, "Field Name: Name")
+		assert.Contains(t, output, "Field Type: string")
+		assert.Contains(t, output, "Field Name: Age")
+		assert.Contains(t, output, "Field Type: int")
+	})
 
-	// Redirect log output to a buffer
-	var buf bytes.Buffer
-	log.SetOutput(&buf)
+	t.Run("Input is a pointer to a struct", func(t *testing.T) {
+		p := &Person{Name: "John", Age: 30}
+		var buf bytes.Buffer
+		log.SetOutput(&buf)
+		defer func() {
+			log.SetOutput(os.Stderr)
+		}()
+		PrintStructInfo(p)
+		output := buf.String()
+		assert.Contains(t, output, "Field Name: Name")
+		assert.Contains(t, output, "Field Type: string")
+		assert.Contains(t, output, "Field Name: Age")
+		assert.Contains(t, output, "Field Type: int")
+	})
 
-	defer func() {
-		log.SetOutput(os.Stderr)
-	}()
-
-	PrintStructInfo(p)
-
-	output := buf.String()
-
-	assert.Contains(t, output, "Field Name: Name")
-	assert.Contains(t, output, "Field Type: string")
-	assert.Contains(t, output, "Field Name: Age")
-	assert.Contains(t, output, "Field Type: int")
+	t.Run("Input is not a struct", func(t *testing.T) {
+		var buf bytes.Buffer
+		log.SetOutput(&buf)
+		defer func() {
+			log.SetOutput(os.Stderr)
+		}()
+		PrintStructInfo(123)
+		output := buf.String()
+		assert.True(t, strings.Contains(output, "Input is not a struct or a pointer of struct"))
+	})
 }
 
 func TestPrintFields(t *testing.T) {

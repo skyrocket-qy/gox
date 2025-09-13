@@ -1,6 +1,15 @@
 package columnname
 
-import "testing"
+import (
+	"os"
+	"regexp"
+	"testing"
+
+	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/stretchr/testify/assert"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+)
 
 func TestToCamel(t *testing.T) {
 	tests := []struct {
@@ -27,6 +36,14 @@ func TestToCamel(t *testing.T) {
 			input: "a_b_c",
 			want:  "ABC",
 		},
+		{
+			input: "_a",
+			want:  "A",
+		},
+		{
+			input: "a_",
+			want:  "A",
+		},
 	}
 
 	for _, tt := range tests {
@@ -36,4 +53,68 @@ func TestToCamel(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestGetColumns(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	assert.NoError(t, err)
+	defer db.Close()
+
+	gormDB, err := gorm.Open(mysql.New(mysql.Config{
+		Conn:                      db,
+		SkipInitializeWithVersion: true,
+	}), &gorm.Config{})
+	assert.NoError(t, err)
+
+	mock.ExpectQuery(regexp.QuoteMeta("SELECT SCHEMA_NAME from Information_schema.SCHEMATA")).WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).WillReturnRows(sqlmock.NewRows([]string{"SCHEMA_NAME"}).AddRow("test"))
+	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `users` LIMIT ?")).WithArgs(1).WillReturnRows(sqlmock.NewRows(nil))
+
+	rows := sqlmock.NewRows([]string{"column_name", "column_default", "is_nullable", "data_type", "character_maximum_length", "column_type", "column_key", "extra", "column_comment", "numeric_precision", "numeric_scale", "datetime_precision"}).
+		AddRow("id", nil, false, "int", nil, "int(11)", "PRI", "auto_increment", "", nil, nil, nil).
+		AddRow("name", nil, true, "varchar", 255, "varchar(255)", "", "", "", nil, nil, nil)
+
+	mock.ExpectQuery(regexp.QuoteMeta("SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = ? AND table_name = ? ORDER BY ORDINAL_POSITION")).
+		WithArgs("test", "users").
+		WillReturnRows(rows)
+
+	columns, err := getColumns(gormDB, "users")
+	assert.NoError(t, err)
+	assert.Equal(t, []string{"id", "name"}, columns)
+	assert.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestGenTableColumnNamesCode(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	assert.NoError(t, err)
+	defer db.Close()
+
+	gormDB, err := gorm.Open(mysql.New(mysql.Config{
+		Conn:                      db,
+		SkipInitializeWithVersion: true,
+	}), &gorm.Config{})
+	assert.NoError(t, err)
+
+	mock.ExpectQuery(regexp.QuoteMeta("SELECT SCHEMA_NAME from Information_schema.SCHEMATA")).WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).WillReturnRows(sqlmock.NewRows([]string{"SCHEMA_NAME"}).AddRow("test"))
+	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `users` LIMIT ?")).WithArgs(1).WillReturnRows(sqlmock.NewRows(nil))
+	rows := sqlmock.NewRows([]string{"column_name", "column_default", "is_nullable", "data_type", "character_maximum_length", "column_type", "column_key", "extra", "column_comment", "numeric_precision", "numeric_scale", "datetime_precision"}).
+		AddRow("id", nil, false, "int", nil, "int(11)", "PRI", "auto_increment", "", nil, nil, nil).
+		AddRow("user_name", nil, true, "varchar", 255, "varchar(255)", "", "", "", nil, nil, nil)
+
+	mock.ExpectQuery(regexp.QuoteMeta("SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = ? AND table_name = ? ORDER BY ORDINAL_POSITION")).
+		WithArgs("test", "users").
+		WillReturnRows(rows)
+
+	path := "./col/users.go"
+	err = GenTableColumnNamesCode(gormDB, []string{"users"}, path)
+	assert.NoError(t, err)
+	assert.NoError(t, mock.ExpectationsWereMet())
+
+	// cleanup
+	err = os.RemoveAll("./col")
+	assert.NoError(t, err)
+}
+
+func TestGenTableColumnNamesCode_ToCamel(t *testing.T) {
+	output := ToCamel("hello_world")
+	assert.Equal(t, "HelloWorld", output)
 }
