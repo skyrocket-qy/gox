@@ -35,9 +35,9 @@ func CountBit1(in int) int {
 
 func CountBit1ChangeIn(in int) int {
 	out := 0
-
-	for ; in != 0; in >>= 1 {
-		if (in & 1) != 0 {
+	uIn := uint32(in)
+	for ; uIn != 0; uIn >>= 1 {
+		if (uIn & 1) != 0 {
 			out++
 		}
 	}
@@ -48,7 +48,7 @@ func CountBit1ChangeIn(in int) int {
 func CountBit0(in int) int {
 	out := 0
 
-	for i := range 32 {
+	for i := 0; i < 32; i++ {
 		if (in & (1 << i)) == 0 {
 			out++
 		}
@@ -60,7 +60,7 @@ func CountBit0(in int) int {
 func CountBit0ChangeIn(in int) int {
 	out := 0
 
-	for range 32 {
+	for i := 0; i < 32; i++ {
 		if (in & 1) == 0 {
 			out++
 		}
@@ -98,7 +98,7 @@ func LeastSignificantBit1(in int) int {
 }
 
 func IsPowerOf2(in uint) bool {
-	return (in & (in - 1)) == 0
+	return in != 0 && (in&(in-1)) == 0
 }
 
 // in = [0,1,2,4], out = 3.
