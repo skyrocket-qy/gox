@@ -63,6 +63,9 @@ func GenTableColumnNamesCode(db *gorm.DB, tableNames []string, path string) erro
 }
 
 func ToCamel(input string) string {
+	if input == "" {
+		return ""
+	}
 	// Split the string by underscores
 	words := strings.Split(input, "_")
 	if len(words) == 0 {
@@ -70,7 +73,9 @@ func ToCamel(input string) string {
 	}
 
 	for i := range words {
-		words[i] = strings.ToUpper(string(words[i][0])) + words[i][1:]
+		if len(words[i]) > 0 {
+			words[i] = strings.ToUpper(string(words[i][0])) + words[i][1:]
+		}
 	}
 	// Join the capitalized words
 	return strings.Join(words, "")
