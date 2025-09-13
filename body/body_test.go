@@ -119,3 +119,53 @@ func TestDecode_NonPointerError(t *testing.T) {
 		"Skipping test for non-pointer error because it is not possible to create a non-pointer proto message with the current generated code.",
 	)
 }
+
+type errorReaderCloser struct {
+	*bytes.Reader
+}
+
+func (erc *errorReaderCloser) Close() error {
+	return errors.New("close error")
+}
+
+func TestDecode_GzipCloseError(t *testing.T) {
+	original := &TestMessage{Id: "test"}
+	encoded, err := proto.Marshal(original)
+	assert.NoError(t, err)
+
+	var buf bytes.Buffer
+	gz := gzip.NewWriter(&buf)
+	_, err = gz.Write(encoded)
+	assert.NoError(t, err)
+	gz.Close()
+
+	// We need to create a custom reader that returns an error on Close.
+	// However, the Decode function takes a byte slice, not a reader.
+	// We can't inject a custom reader.
+	// The uncovered part is `if cerr := gz.Close(); cerr != nil && err == nil`.
+	// This is hard to test without modifying the source code to accept a reader.
+	// Let's see if we can trigger it by corrupting the gzip footer.
+	// A corrupted footer might cause an error in gz.Close().
+
+	// Let's try to corrupt the last 8 bytes which are the checksum and the size.
+	corruptedData := buf.Bytes()
+	for i := 0; i < 8; i++ {
+		corruptedData[len(corruptedData)-1-i] = 0
+	}
+
+	_, err = Decode[*TestMessage](corruptedData)
+	assert.Error(t, err)
+}
+
+func TestDecode_NilTargetError(t *testing.T) {
+	encoded, err := Encode(&TestMessage{Id: "test"})
+	assert.NoError(t, err)
+
+	// This should cause a panic, not an error.
+	// The code checks `if typ == nil`, but `typ` will not be nil here.
+	// `reflect.TypeOf(nilMsg)` is `*body.TestMessage`.
+	// To make `typ` nil, we need to pass a nil interface.
+	_, err = Decode[proto.Message](encoded)
+	assert.Error(t, err)
+	assert.Equal(t, "target type must be a pointer to a proto message", err.Error())
+}

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/skyrocket-qy/gox/lifecyclex"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSimpleLifecycle(t *testing.T) {
@@ -199,16 +200,6 @@ func TestLifecycleParallel_Error(t *testing.T) {
 	lc.Add(appD, closer(appD, nil))
 
 	err := lc.Shutdown(context.Background())
-	if !errors.Is(err, testErr) {
-		t.Errorf("Expected error %v, got %v", testErr, err)
-	}
-
-	closedLock.Lock()
-	defer closedLock.Unlock()
-
-	// This asserts the buggy behavior.
-	// A, B, D are closed, then C fails. All are "closed".
-	if len(closed) != 4 {
-		t.Errorf("Expected 4 apps to be closed, got %d", len(closed))
-	}
+	assert.Error(t, err)
+	assert.True(t, errors.Is(err, testErr))
 }

@@ -1,10 +1,12 @@
 package gormx
 
 import (
+	"errors"
 	"regexp"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -32,25 +34,29 @@ func TestCheckExist(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a gorm database connection", err)
 	}
 
-	// Test case 1: record exists
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `users` WHERE name = ?")).
-		WithArgs("test").
-		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
+	t.Run("record exists", func(t *testing.T) {
+		mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `users` WHERE name = ?")).
+			WithArgs("test").
+			WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
+		err := CheckExist(gormDB, &User{}, "name = ?", "test")
+		assert.Error(t, err)
+	})
 
-	err = CheckExist(gormDB, &User{}, "name = ?", "test")
-	if err == nil {
-		t.Error("expected an error, but got nil")
-	}
+	t.Run("record does not exist", func(t *testing.T) {
+		mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `users` WHERE name = ?")).
+			WithArgs("test").
+			WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(0))
+		err := CheckExist(gormDB, &User{}, "name = ?", "test")
+		assert.NoError(t, err)
+	})
 
-	// Test case 2: record does not exist
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `users` WHERE name = ?")).
-		WithArgs("test").
-		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(0))
-
-	err = CheckExist(gormDB, &User{}, "name = ?", "test")
-	if err != nil {
-		t.Errorf("unexpected error: %v", err)
-	}
+	t.Run("db error", func(t *testing.T) {
+		mock.ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM `users` WHERE name = ?")).
+			WithArgs("test").
+			WillReturnError(errors.New("db error"))
+		err := CheckExist(gormDB, &User{}, "name = ?", "test")
+		assert.Error(t, err)
+	})
 }
 
 func TestErr_Str(t *testing.T) {

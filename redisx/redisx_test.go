@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redismock/v9"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestExecuteExactlyOnce_SuccessFirstTry(t *testing.T) {
@@ -49,6 +50,56 @@ func TestExecuteExactlyOnce_ContextCanceled(t *testing.T) {
 	if !errors.Is(err, context.Canceled) {
 		t.Errorf("Expected context.Canceled error, got %v", err)
 	}
+}
+
+func TestExecuteExactlyOnce_ContextCanceledDuringJobRetry(t *testing.T) {
+	db, mock := redismock.NewClientMock()
+	baseKey := "my-job-ctx-job-retry"
+	lockKey := "job:lock:" + baseKey
+	statusKey := "job:status:" + baseKey
+	lockTTL := 1 * time.Hour
+
+	job := func() error { return errors.New("job failed") }
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// First attempt (job fails)
+	mock.ExpectSetNX(lockKey, 1, lockTTL).SetVal(true)
+	mock.ExpectGet(statusKey).RedisNil()
+	mock.ExpectDel(lockKey).SetVal(1) // Defer in tryJobExecution
+
+	// Before the next attempt, cancel the context
+	go func() {
+		time.Sleep(500 * time.Millisecond) // Shorter than jobRetryDelay
+		cancel()
+	}()
+
+	err := ExecuteExactlyOnce(ctx, db, baseKey, lockTTL, job)
+	assert.ErrorIs(t, err, context.Canceled)
+}
+
+func TestExecuteExactlyOnce_ContextCanceledDuringLockPoll(t *testing.T) {
+	db, mock := redismock.NewClientMock()
+	baseKey := "my-job-ctx-lock-poll"
+	lockKey := "job:lock:" + baseKey
+	lockTTL := 1 * time.Hour
+	job := func() error { return nil }
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// First attempt (lock is held)
+	mock.ExpectSetNX(lockKey, 1, lockTTL).SetVal(false)
+
+	// Before the next attempt, cancel the context
+	go func() {
+		time.Sleep(1 * time.Second) // Shorter than lockPollInterval
+		cancel()
+	}()
+
+	err := ExecuteExactlyOnce(ctx, db, baseKey, lockTTL, job)
+	assert.ErrorIs(t, err, context.Canceled)
 }
 
 func TestExecuteExactlyOnce_RedisFailsOnSetNX(t *testing.T) {
@@ -141,6 +192,34 @@ func TestExecuteExactlyOnce_RedisFailsOnTx(t *testing.T) {
 	}
 }
 
+func TestExecuteExactlyOnce_DeferDelFails(t *testing.T) {
+	db, mock := redismock.NewClientMock()
+	baseKey := "my-job-defer-del-fails"
+	lockKey := "job:lock:" + baseKey
+	statusKey := "job:status:" + baseKey
+	lockTTL := 1 * time.Hour
+	job := func() error { return nil }
+
+	// First attempt fails because deferred Del fails
+	mock.ExpectSetNX(lockKey, 1, lockTTL).SetVal(true)
+	mock.ExpectGet(statusKey).SetErr(errors.New("some error to trigger defer"))
+	mock.ExpectDel(lockKey).SetErr(errors.New("del failed"))
+
+	// Second attempt succeeds
+	mock.ExpectSetNX(lockKey, 1, lockTTL).SetVal(true)
+	mock.ExpectGet(statusKey).RedisNil()
+	mock.ExpectTxPipeline()
+	mock.ExpectSet(statusKey, JobStatusCompleted, 30*24*time.Hour).SetVal("OK")
+	mock.ExpectDel(lockKey).SetVal(1)
+	mock.ExpectTxPipelineExec()
+	mock.ExpectDel(lockKey).SetVal(0)
+
+	err := ExecuteExactlyOnce(context.Background(), db, baseKey, lockTTL, job)
+	assert.NoError(t, err)
+
+	assert.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestRenewLock(t *testing.T) {
 	db, mock := redismock.NewClientMock()
 	key := "my-lock"
@@ -154,7 +233,7 @@ func TestRenewLock(t *testing.T) {
 
 	go renewLock(ctx, db, key, ttl)
 
-	time.Sleep(250 * time.Millisecond) // Allow time for a few renewals
+	time.Sleep(250 * time.Millisecond)
 
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)

@@ -44,3 +44,53 @@ func TestDoublyLinkedList(t *testing.T) {
 		t.Errorf("RemoveNode failed")
 	}
 }
+
+func TestDoublyLinkedList_EdgeCases(t *testing.T) {
+	// PopHead on an empty list
+	l := New()
+	if node := l.PopHead(); node != nil {
+		t.Errorf("PopHead on empty list should return nil, but got %v", node)
+	}
+
+	// PopTail on an empty list
+	if node := l.PopTail(); node != nil {
+		t.Errorf("PopTail on empty list should return nil, but got %v", node)
+	}
+
+	// PopHead on a list with one element
+	l.AddHead(1)
+	if node := l.PopHead(); node.Val != 1 || l.Len() != 0 || l.head != nil || l.tail != nil {
+		t.Errorf("PopHead on a list with one element failed")
+	}
+
+	// PopTail on a list with one element
+	l.AddHead(1)
+	if node := l.PopTail(); node.Val != 1 || l.Len() != 0 || l.head != nil || l.tail != nil {
+		t.Errorf("PopTail on a list with one element failed")
+	}
+
+	// RemoveNode for the head node
+	l = New()
+	n1 := l.AddHead(1)
+	n2 := l.AddHead(2)
+	l.RemoveNode(n2)
+	if l.Len() != 1 || l.head != n1 || l.tail != n1 || n1.prev != nil {
+		t.Errorf("RemoveNode for head failed")
+	}
+
+	// RemoveNode for the tail node
+	l = New()
+	n1 = l.AddTail(1)
+	n2 = l.AddTail(2)
+	l.RemoveNode(n2)
+	if l.Len() != 1 || l.head != n1 || l.tail != n1 || n1.next != nil {
+		t.Errorf("RemoveNode for tail failed")
+	}
+
+	// AddTail on an empty list
+	l = New()
+	n1 = l.AddTail(1)
+	if l.Len() != 1 || l.head != n1 || l.tail != n1 {
+		t.Errorf("AddTail on empty list failed")
+	}
+}

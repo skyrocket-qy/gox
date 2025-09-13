@@ -203,6 +203,32 @@ func TestDiffTimeCheck(t *testing.T) {
 
 func TestSelfAdaptiveTimeCheck(t *testing.T) {
 	runCommonTimeCheckTestsWithMaxInterval(t, SelfAdaptiveTimeCheck, 2)
+
+	t.Run("DenominatorIsZero", func(t *testing.T) {
+		callCount := 0
+		getCurrentStatus := func() (int, error) {
+			callCount++
+			if callCount == 3 {
+				return 10, nil
+			}
+			// This will make the diff the same for the first two calls
+			return 5, nil
+		}
+		checkFunc := func(cur, target int) bool {
+			return cur == target
+		}
+
+		err := SelfAdaptiveTimeCheck(
+			getCurrentStatus,
+			10,
+			checkFunc,
+			1*time.Millisecond,
+			10*time.Millisecond,
+			100*time.Millisecond,
+		)
+		assert.NoError(t, err)
+		assert.Equal(t, 3, callCount)
+	})
 }
 
 func TestAbs(t *testing.T) {
