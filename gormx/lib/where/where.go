@@ -28,5 +28,5 @@ func Desc(column string) string {
 }
 
 func Asc(column string) string {
-	return column
+	return column + " ASC"
 }
