@@ -8,31 +8,31 @@ import (
 )
 
 func main() {
-	err := pkg.Bench(bNumbers, 1, "bench.png")
+	err := pkg.Bench(benchNumbersWithChannel, 1, "bench.png")
 	if err != nil {
 		log.Fatalf("Bench failed: %v", err)
 	}
 
-	err = pkg.Bench(bt, 100, "bt.png")
+	err = pkg.Bench(benchSliceAppend, 1, "bt.png")
 	if err != nil {
 		log.Fatalf("Bench failed: %v", err)
 	}
 }
 
-const t = 100000
+const t = 100000000
 
 func numbers() <-chan int {
-	ch := make(chan int)
+	ch := make(chan int, 1024)
 	go func() {
 		defer close(ch) // close when done
-		for i := 0; i <= t; i++ {
+		for i := 0; i < t; i++ {
 			ch <- i // "yield return i"
 		}
 	}()
 	return ch
 }
 
-func bNumbers() {
+func benchNumbersWithChannel() {
 	sum := 0
 	for v := range numbers() {
 		sum += v
@@ -48,7 +48,7 @@ func tradit() []int {
 	return res
 }
 
-func bt() {
+func benchSliceAppend() {
 	sum := 0
 	for v := range tradit() {
 		sum += v

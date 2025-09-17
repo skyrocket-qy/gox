@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -50,6 +51,31 @@ func Bench(fn func(), repeat int, baseOutputFile string) error {
 			// log.Printf("Failed to generate chart for %s: %v", data.Name, err)
 			return err // Or return immediately on first error
 		}
+	}
+
+	if err := WriteResultsToFile(baseOutputFile, datas); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func WriteResultsToFile(baseOutputFile string, datas []LineData) error {
+	ext := filepath.Ext(baseOutputFile)
+	baseName := baseOutputFile[:len(baseOutputFile)-len(ext)]
+	outputFile := filepath.Join("tmp", baseName + "_results.json")
+
+	file, err := os.Create(outputFile)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	encoder.SetIndent("", "  ") // For pretty printing
+
+	if err := encoder.Encode(datas); err != nil {
+		return err
 	}
 
 	return nil
