@@ -7,7 +7,7 @@ import (
 )
 
 func TestFind(t *testing.T) {
-	uf := unionfind.New()
+	uf := unionfind.New[int]()
 
 	// Test find on a new element
 	if uf.Find(1) != 1 {
@@ -30,7 +30,7 @@ func TestFind(t *testing.T) {
 }
 
 func TestUnion(t *testing.T) {
-	uf := unionfind.New()
+	uf := unionfind.New[int]()
 
 	uf.Union(1, 2)
 
@@ -54,5 +54,29 @@ func TestUnion(t *testing.T) {
 
 	if uf.Find(1) != uf.Find(5) {
 		t.Errorf("Expected uf.Find(1) to be equal to uf.Find(5) after uf.Union(1, 4)")
+	}
+}
+
+func TestUnionFindString(t *testing.T) {
+	uf := unionfind.New[string]()
+
+	uf.Union("a", "b")
+	if uf.Find("a") != uf.Find("b") {
+		t.Errorf("Expected uf.Find(\"a\") to be equal to uf.Find(\"b\") after uf.Union(\"a\", \"b\")")
+	}
+
+	uf.Union("b", "c")
+	if uf.Find("a") != uf.Find("c") {
+		t.Errorf("Expected uf.Find(\"a\") to be equal to uf.Find(\"c\") after uf.Union(\"b\", \"c\")")
+	}
+
+	uf.Union("d", "e")
+	if uf.Find("a") == uf.Find("d") {
+		t.Errorf("Expected uf.Find(\"a\") to not be equal to uf.Find(\"d\")")
+	}
+
+	uf.Union("a", "d")
+	if uf.Find("a") != uf.Find("e") {
+		t.Errorf("Expected uf.Find(\"a\") to be equal to uf.Find(\"e\") after uf.Union(\"a\", \"d\")")
 	}
 }
