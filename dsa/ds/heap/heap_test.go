@@ -132,7 +132,9 @@ var lessFunc = func(a, b int) bool { return a < b }
 
 func BenchmarkCustomHeap_Init(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		_ = heapx.New(testData, lessFunc)
+		dataCopy := make(IntHeap, benchmarkSize)
+		copy(dataCopy, testData)
+		_ = heapx.New(dataCopy, lessFunc)
 	}
 }
 
