@@ -134,7 +134,7 @@ func AStar(
 		dx := []int{-1, -1, -1, 0, 0, 1, 1, 1}
 		dy := []int{-1, 0, 1, -1, 1, -1, 0, 1}
 
-		for i := range len(dx) {
+		for i := range dx {
 			neighborX, neighborY := current.X+dx[i], current.Y+dy[i]
 			neighborPoint := Point{X: neighborX, Y: neighborY}
 

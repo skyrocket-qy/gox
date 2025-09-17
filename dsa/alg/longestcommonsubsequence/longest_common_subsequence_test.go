@@ -7,6 +7,7 @@ func Test_longestCommonSubsequence(t *testing.T) {
 		text1 string
 		text2 string
 	}
+
 	tests := []struct {
 		name string
 		args args

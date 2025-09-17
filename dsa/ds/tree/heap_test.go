@@ -18,9 +18,11 @@ func TestMinHeap(t *testing.T) {
 	if mh.Get() != 1 {
 		t.Error("expected to get 1 from heap")
 	}
+
 	if mh.Get() != 2 {
 		t.Error("expected to get 2 from heap")
 	}
+
 	if mh.Get() != 4 {
 		t.Error("expected to get 4 from heap")
 	}

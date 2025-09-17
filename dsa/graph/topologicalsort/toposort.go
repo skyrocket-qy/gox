@@ -16,6 +16,7 @@ func TopoSortRemoveVertix(graph map[int][]int) (seq []int) {
 	for node := range graph {
 		inDeg[node] = 0
 	}
+
 	for _, edges := range graph {
 		for _, edge := range edges {
 			inDeg[edge]++
@@ -23,6 +24,7 @@ func TopoSortRemoveVertix(graph map[int][]int) (seq []int) {
 	}
 
 	queue := []int{}
+
 	for node, degree := range inDeg {
 		if degree == 0 {
 			queue = append(queue, node)
@@ -58,24 +60,31 @@ func TopoSortDfs(graph map[int][]int) []int {
 		states[node] = unvisited
 	}
 
-	var result []int
-	var hasCycle bool
+	var (
+		result   []int
+		hasCycle bool
+	)
 
 	var dfs func(node int)
+
 	dfs = func(node int) {
 		states[node] = visiting
 		for _, neighbor := range graph[node] {
 			if states[neighbor] == visiting {
 				hasCycle = true
+
 				return
 			}
+
 			if states[neighbor] == unvisited {
 				dfs(neighbor)
 			}
+
 			if hasCycle {
 				return
 			}
 		}
+
 		states[node] = visited
 		result = append([]int{node}, result...)
 	}
@@ -84,6 +93,7 @@ func TopoSortDfs(graph map[int][]int) []int {
 		if states[node] == unvisited {
 			dfs(node)
 		}
+
 		if hasCycle {
 			return nil
 		}

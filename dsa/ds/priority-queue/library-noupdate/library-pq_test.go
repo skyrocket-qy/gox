@@ -51,5 +51,6 @@ func TestPriorityQueue(t *testing.T) {
 			t.Errorf("The code did not panic when popping from an empty queue")
 		}
 	}()
+
 	_ = heap.Pop(&pq)
 }

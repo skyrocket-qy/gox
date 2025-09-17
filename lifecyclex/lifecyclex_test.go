@@ -201,5 +201,5 @@ func TestLifecycleParallel_Error(t *testing.T) {
 
 	err := lc.Shutdown(context.Background())
 	assert.Error(t, err)
-	assert.True(t, errors.Is(err, testErr))
+	assert.ErrorIs(t, err, testErr)
 }

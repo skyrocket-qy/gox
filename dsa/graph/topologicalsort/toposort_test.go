@@ -77,6 +77,7 @@ func isValidTopoSortHelper(graph map[int][]int, seq []int) bool {
 	if seq == nil {
 		return false
 	}
+
 	pos := make(map[int]int)
 	for i, node := range seq {
 		pos[node] = i

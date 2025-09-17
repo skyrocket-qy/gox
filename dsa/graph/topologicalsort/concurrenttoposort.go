@@ -21,6 +21,7 @@ func ConcurrentTopologicalSort(ctx context.Context, graph map[any][]any, worker 
 
 	for node, deps := range graph {
 		allNodes[node] = struct{}{}
+
 		inDegrees[node] = len(deps) // Node's in-degree is the count of its dependencies
 		for _, dep := range deps {
 			allNodes[dep] = struct{}{} // Ensure all dependencies are also in allNodes
@@ -65,6 +66,7 @@ func ConcurrentTopologicalSort(ctx context.Context, graph map[any][]any, worker 
 			// Execute the specific work for this node.
 			if err := worker(ctx, node); err != nil {
 				firstErr.Store(err)
+
 				return
 			}
 
@@ -77,12 +79,15 @@ func ConcurrentTopologicalSort(ctx context.Context, graph map[any][]any, worker 
 				for _, dep := range deps {
 					if dep == node {
 						mu.Lock()
+
 						inDegrees[dependent]--
 						isReady := inDegrees[dependent] == 0
+
 						mu.Unlock()
 
 						if isReady {
 							wg.Add(1)
+
 							readyCh <- dependent
 						}
 					}

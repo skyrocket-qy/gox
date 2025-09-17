@@ -51,12 +51,14 @@ func TestSleepSort(t *testing.T) {
 	// For now, let's just check if the elements are present.
 	// We can sort both slices and compare them.
 
-	// A proper test would require refactoring the original function to allow for dependency injection of the sleep function.
+	// A proper test would require refactoring the original function to allow for dependency
+	// injection of the sleep function.
 	// Since we can't do that, we have to rely on this flaky test.
 
 	// Let's try to check for equality. It might pass most of the time.
 	// sort the result before comparing
-	// The problem is that the result is not guaranteed to be fully populated when the final sleep ends.
+	// The problem is that the result is not guaranteed to be fully populated when the final sleep
+	// ends.
 	// Let's increase the final sleep time.
 	sleepSortForTest2 := func(nums []int) []int {
 		res := make([]int, len(nums))
@@ -89,5 +91,6 @@ func TestSleepSort(t *testing.T) {
 	if os.Getenv("CI") != "" {
 		t.Skip("Skipping slow test in CI environment")
 	}
+
 	SleepSort(nums)
 }

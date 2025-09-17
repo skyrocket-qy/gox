@@ -12,6 +12,7 @@ var blackHole []byte
 // to simulate work for the collection functions.
 func dummyFunc() {
 	blackHole = make([]byte, 1024) // Allocate 1KB
+
 	time.Sleep(1 * time.Millisecond)
 }
 
@@ -20,6 +21,7 @@ func TestCollectTimings(t *testing.T) {
 	if len(timings) != 5 {
 		t.Fatalf("Expected 5 timings, got %d", len(timings))
 	}
+
 	for _, timing := range timings {
 		if timing < 1_000_000 { // 1ms
 			t.Errorf("Expected timing to be at least 1ms, got %d ns", timing)
@@ -54,6 +56,7 @@ func TestCollectAllocs(t *testing.T) {
 	if len(allocs) != 4 {
 		t.Fatalf("Expected 4 allocation counts, got %d", len(allocs))
 	}
+
 	for _, alloc := range allocs {
 		if alloc < 1024 {
 			t.Errorf("Expected at least 1024 bytes allocated, got %d", alloc)
@@ -76,6 +79,7 @@ func TestCollectGoroutines(t *testing.T) {
 	if len(counts1) != 3 {
 		t.Fatalf("Expected 3 goroutine counts, got %d", len(counts1))
 	}
+
 	for _, count := range counts1 {
 		if count != 0 {
 			// It might not be exactly 0 if the test runner has other goroutines.
@@ -89,10 +93,13 @@ func TestCollectGoroutines(t *testing.T) {
 	// Test with a function that does spawn a goroutine
 	counts2 := CollectGoroutines(func() {
 		ch := make(chan bool)
+
 		go func() {
 			time.Sleep(1 * time.Millisecond)
+
 			ch <- true
 		}()
+
 		<-ch
 	}, 2)
 
@@ -114,7 +121,7 @@ func TestCollectGoroutines(t *testing.T) {
 }
 
 // Helper to check if a value is positive, for tests where we expect some allocation/time.
-func isPositive(val interface{}) bool {
+func isPositive(val any) bool {
 	switch v := val.(type) {
 	case int:
 		return v > 0
@@ -136,32 +143,39 @@ func TestCollectorsWithNoop(t *testing.T) {
 	if len(CollectTimings(noop, repeat)) != repeat {
 		t.Error("CollectTimings wrong length")
 	}
+
 	if len(CollectMems(noop, repeat)) != repeat {
 		t.Error("CollectMems wrong length")
 	}
+
 	if len(CollectNumGCs(noop, repeat)) != repeat {
 		t.Error("CollectNumGCs wrong length")
 	}
+
 	if len(CollectAllocs(noop, repeat)) != repeat {
 		t.Error("CollectAllocs wrong length")
 	}
+
 	if len(CollectPauseNs(noop, repeat)) != repeat {
 		t.Error("CollectPauseNs wrong length")
 	}
+
 	if len(CollectGoroutines(noop, repeat)) != repeat {
 		t.Error("CollectGoroutines wrong length")
 	}
 }
 
-// A more reliable goroutine test
+// A more reliable goroutine test.
 func TestCollectGoroutinesReliable(t *testing.T) {
 	counts := CollectGoroutines(func() {
 		var wg sync.WaitGroup
 		wg.Add(1)
+
 		go func() {
 			time.Sleep(5 * time.Millisecond)
 			wg.Done()
 		}()
+
 		wg.Wait()
 	}, 1)
 

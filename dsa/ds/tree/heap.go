@@ -1,6 +1,5 @@
 package tree
 
-
 /*array.*/
 type MinHeap []int
 
@@ -46,4 +45,3 @@ func (mh *MinHeap) goDown(k int) {
 func compare(a, b int) bool { return a > b }
 
 func change(a, b *int) { *a, *b = *b, *a }
-

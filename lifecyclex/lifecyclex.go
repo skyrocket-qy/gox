@@ -60,13 +60,13 @@ func (l *ConcurrentLifecycle) Shutdown(c context.Context) error {
 	// So for shutdown, we need to process things that nothing depends on first.
 
 	// The graph for topsort should be: dependent -> {list of its dependencies}
-	// Your `appUpstreams` map is already in this format: app -> {list of its upstreams/dependencies}
+	// Your `appUpstreams` map is already in this format: app -> {list of its
+	// upstreams/dependencies}
 	// However, the shutdown logic requires closing `app` before closing its `deps`.
 	// This means `app` is a "dependent" and must be processed first.
 	// Kahn's algorithm processes nodes with an in-degree of 0 first.
 	// To shut down `app` first, it must have an in-degree of 0.
 	// This requires inverting the graph: dependency -> {list of dependents}
-
 	shutdownGraph := make(map[any][]any)
 	allNodes := make(map[any]struct{})
 
@@ -75,6 +75,7 @@ func (l *ConcurrentLifecycle) Shutdown(c context.Context) error {
 		if _, ok := shutdownGraph[app]; !ok {
 			shutdownGraph[app] = []any{}
 		}
+
 		for _, dep := range deps {
 			allNodes[dep] = struct{}{}
 			shutdownGraph[dep] = append(shutdownGraph[dep], app)
@@ -87,6 +88,7 @@ func (l *ConcurrentLifecycle) Shutdown(c context.Context) error {
 		if closer, ok := l.appCloser[node]; ok && closer != nil {
 			return closer(ctx)
 		}
+
 		return nil
 	}
 

@@ -7,9 +7,9 @@ import (
 )
 
 type testStruct struct {
-	Name    string
-	Age     int
-	Address string
+	Name            string
+	Age             int
+	Address         string
 	unexportedField bool
 }
 

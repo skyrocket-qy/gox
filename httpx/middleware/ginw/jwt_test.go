@@ -16,7 +16,6 @@ import (
 	"github.com/skyrocket-qy/gox/errcode"
 	"github.com/skyrocket-qy/gox/httpx"
 	"github.com/skyrocket-qy/gox/httpx/middleware/ginw"
-
 	"github.com/stretchr/testify/assert"
 )
 

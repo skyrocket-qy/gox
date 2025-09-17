@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/skyrocket-qy/gox/body"
-
 	"github.com/stretchr/testify/assert"
 )
 

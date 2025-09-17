@@ -38,6 +38,7 @@ func TestPopFromEmptyQueue(t *testing.T) {
 			t.Errorf("The code did not panic when popping from an empty queue")
 		}
 	}()
+
 	pq.Pop()
 }
 
@@ -48,6 +49,7 @@ func TestDown(t *testing.T) {
 	pq = append(pq, Node{Priority: 5})
 	pq = append(pq, Node{Priority: 6})
 	pq.down(1)
+
 	if pq[1].Priority != 5 {
 		t.Errorf("down failed, expected 5, got %d", pq[1].Priority)
 	}
@@ -57,6 +59,7 @@ func TestDown(t *testing.T) {
 	pq = append(pq, Node{Priority: 6})
 	pq = append(pq, Node{Priority: 5})
 	pq.down(1)
+
 	if pq[1].Priority != 5 {
 		t.Errorf("down failed, expected 5, got %d", pq[1].Priority)
 	}
@@ -66,6 +69,7 @@ func TestDown(t *testing.T) {
 	pq = append(pq, Node{Priority: 6})
 	pq = append(pq, Node{Priority: 5})
 	pq.down(1)
+
 	if pq[1].Priority != 1 {
 		t.Errorf("down failed, expected 1, got %d", pq[1].Priority)
 	}

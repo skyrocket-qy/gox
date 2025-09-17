@@ -13,6 +13,7 @@ func TestGetSubsequences(t *testing.T) {
 		{1, 3},
 		{2, 3},
 	}
+
 	result := GetSubsequences(nums, k)
 	if !reflect.DeepEqual(result, expected) {
 		t.Errorf("GetSubsequences() = %v; want %v", result, expected)
@@ -30,6 +31,7 @@ func TestGetSubsequencesIndex(t *testing.T) {
 		{1, 3},
 		{2, 3},
 	}
+
 	result := GetSubsequencesIndex(n, k)
 	if !reflect.DeepEqual(result, expected) {
 		t.Errorf("GetSubsequencesIndex() = %v; want %v", result, expected)

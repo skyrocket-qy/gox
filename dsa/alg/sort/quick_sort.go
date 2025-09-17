@@ -14,10 +14,12 @@ func qSortOutMem(nums []int) []int {
 	pivot := nums[pivotIndex]
 
 	var l, r []int
+
 	for i, num := range nums {
 		if i == pivotIndex {
 			continue
 		}
+
 		if num < pivot {
 			l = append(l, num)
 		} else {
@@ -37,23 +39,28 @@ func qSortInMem(nums []int, l, r int) {
 	}
 
 	pivot := nums[(l+r)>>1]
+
 	i, j := l, r
 	for i <= j {
 		for nums[i] < pivot {
 			i++
 		}
+
 		for nums[j] > pivot {
 			j--
 		}
+
 		if i <= j {
 			nums[i], nums[j] = nums[j], nums[i]
 			i++
 			j--
 		}
 	}
+
 	if l < j {
 		qSortInMem(nums, l, j)
 	}
+
 	if i < r {
 		qSortInMem(nums, i, r)
 	}

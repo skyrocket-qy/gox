@@ -2,7 +2,7 @@ package bloomfilter
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"testing"
 
 	"github.com/go-redis/redismock/v9"
@@ -48,7 +48,7 @@ func TestExists_Error(t *testing.T) {
 	key := "test_bloom"
 	value := "test_value"
 
-	mock.ExpectDo("BF.EXISTS", key, value).SetErr(fmt.Errorf("redis error"))
+	mock.ExpectDo("BF.EXISTS", key, value).SetErr(errors.New("redis error"))
 
 	exists, err := Exists(ctx, db, key, value)
 	assert.Error(t, err)
@@ -92,7 +92,7 @@ func TestReserve_Error(t *testing.T) {
 	errorRate := 0.01
 	capacity := int64(1000)
 
-	mock.ExpectDo("BF.RESERVE", key, errorRate, capacity).SetErr(fmt.Errorf("redis error"))
+	mock.ExpectDo("BF.RESERVE", key, errorRate, capacity).SetErr(errors.New("redis error"))
 
 	err := Reserve(ctx, db, key, errorRate, capacity)
 	assert.Error(t, err)

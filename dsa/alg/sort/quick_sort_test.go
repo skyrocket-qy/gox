@@ -23,7 +23,9 @@ func TestQSortOutMem(t *testing.T) {
 		original := make([]int, len(tc))
 		copy(original, tc)
 		sorted := qSortOutMem(tc)
+
 		sort.Ints(original)
+
 		if !reflect.DeepEqual(sorted, original) {
 			t.Errorf("qSortOutMem(%v) = %v, want %v", tc, sorted, original)
 		}
@@ -47,6 +49,7 @@ func TestQSortInMem(t *testing.T) {
 		copy(original, tc)
 		qSortInMem(tc, 0, len(tc)-1)
 		sort.Ints(original)
+
 		if !reflect.DeepEqual(tc, original) {
 			t.Errorf("qSortInMem(%v) = %v, want %v", original, tc, original)
 		}
@@ -69,6 +72,7 @@ func TestQSortInPartition(t *testing.T) {
 		copy(original, tc)
 		qSortInPartition(tc, 0, len(tc)-1)
 		sort.Ints(original)
+
 		if !reflect.DeepEqual(tc, original) {
 			t.Errorf("qSortInPartition(%v) = %v, want %v", original, tc, original)
 		}

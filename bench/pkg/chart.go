@@ -7,8 +7,8 @@ import (
 )
 
 type LineData struct {
-	Name string        `json:"Name"`
-	Data []interface{} `json:"Data"`
+	Name string `json:"Name"`
+	Data []any  `json:"Data"`
 }
 
 // chartJSON is the top-level structure for the JSON data sent to the Python script.
@@ -33,6 +33,7 @@ func WriteChartToFile(filename string, x []string, data LineData) error {
 
 	// Execute Python script
 	cmd := exec.Command("python3", "bench/pkg/plot.py", filename)
+
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
 		return err
@@ -40,6 +41,7 @@ func WriteChartToFile(filename string, x []string, data LineData) error {
 
 	go func() {
 		defer stdin.Close()
+
 		stdin.Write(jsonData)
 	}()
 

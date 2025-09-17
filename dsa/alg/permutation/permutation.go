@@ -90,6 +90,7 @@ func SwapPermutation(nums []int) [][]int {
 			tmp := make([]int, len(nums))
 			copy(tmp, nums)
 			*res = append(*res, tmp)
+
 			return
 		}
 

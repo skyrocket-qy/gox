@@ -47,7 +47,11 @@ func ApplyFilter(filters []*pkgpbv1.Filter, validFields []string, filterExprs ma
 			pkgpbv1.Operator_LT,
 			pkgpbv1.Operator_LTE:
 			if len(ft.GetValues()) != 1 {
-				return nil, erx.Newf(errcode.ErrBadRequest, "%v filter requires one value", ft.GetOp())
+				return nil, erx.Newf(
+					errcode.ErrBadRequest,
+					"%v filter requires one value",
+					ft.GetOp(),
+				)
 			}
 		case pkgpbv1.Operator_BETWEEN:
 			if len(ft.GetValues()) != 2 {

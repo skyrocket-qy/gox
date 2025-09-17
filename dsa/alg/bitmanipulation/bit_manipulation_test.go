@@ -58,6 +58,7 @@ func TestBitManipulation(t *testing.T) {
 		if got := MarkNThBitTo1(8, 3); got != 12 {
 			t.Errorf("MarkNThBitTo1() = %v, want %v", got, 12)
 		}
+
 		if got := MarkNThBitTo1(5, 3); got != 5 {
 			t.Errorf("MarkNThBitTo1() = %v, want %v", got, 5)
 		}
@@ -110,9 +111,11 @@ func TestBitManipulation(t *testing.T) {
 		if !IsPowerOf2(8) {
 			t.Errorf("IsPowerOf2(8) = false, want true")
 		}
+
 		if IsPowerOf2(9) {
 			t.Errorf("IsPowerOf2(9) = true, want false")
 		}
+
 		if IsPowerOf2(0) {
 			t.Errorf("IsPowerOf2(0) = true, want false")
 		}
@@ -129,6 +132,7 @@ func TestBitManipulation(t *testing.T) {
 		if got := ToLower('A'); got != 'a' {
 			t.Errorf("ToLower('A') = %c, want %c", got, 'a')
 		}
+
 		if got := ToLower('z'); got != 'z' {
 			t.Errorf("ToLower('z') = %c, want %c", got, 'z')
 		}
@@ -138,6 +142,7 @@ func TestBitManipulation(t *testing.T) {
 		if got := ToUpper('a'); got != 'A' {
 			t.Errorf("ToUpper('a') = %c, want %c", got, 'A')
 		}
+
 		if got := ToUpper('Z'); got != 'Z' {
 			t.Errorf("ToUpper('Z') = %c, want %c", got, 'Z')
 		}

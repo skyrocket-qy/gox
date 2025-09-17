@@ -69,9 +69,11 @@ func TestBinaryIndexedTreeSetToZero(t *testing.T) {
 	bit := NewBinaryIndexedTree(10)
 	bit.Update(1, 1)
 	bit.Set(1, 0)
+
 	if bit.Query(1) != 0 {
 		t.Errorf("Set(1, 0) failed, Query(1) got %d, want 0", bit.Query(1))
 	}
+
 	if bit.QueryPrefixSum(1) != 0 {
 		t.Errorf("QueryPrefixSum(1) after Set(1,0) failed, got %d, want 0", bit.QueryPrefixSum(1))
 	}

@@ -11,6 +11,7 @@ func TestB(t *testing.T) {
 		field string
 		oper  string
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -46,6 +47,7 @@ func TestBSub(t *testing.T) {
 		field string
 		oper  string
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -75,6 +77,7 @@ func TestDesc(t *testing.T) {
 	type args struct {
 		column string
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -99,6 +102,7 @@ func TestAsc(t *testing.T) {
 	type args struct {
 		column string
 	}
+
 	tests := []struct {
 		name string
 		args args

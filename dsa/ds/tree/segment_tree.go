@@ -12,6 +12,7 @@ func NewNode(array []int) *Node {
 	if len(array) == 0 {
 		return nil
 	}
+
 	var i int
 
 	array, i = replenish(array)
@@ -63,6 +64,7 @@ func (node *Node) Update(pos, value int) {
 	if node == nil {
 		return
 	}
+
 	stk := stack.NewStack[*Node]()
 
 	var mid int
@@ -92,6 +94,7 @@ func (node *Node) GetSum(left, right int) int {
 	if node == nil {
 		return 0
 	}
+
 	sum := 0
 	p := &sum
 	node.query(left, right, p)
@@ -108,6 +111,7 @@ func (node *Node) query(l, r int, p *int) {
 	// If the node's range is completely inside the query range, add its sum.
 	if l <= node.l && node.r <= r {
 		*p += node.sum
+
 		return
 	}
 

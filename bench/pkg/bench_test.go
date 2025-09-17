@@ -9,7 +9,8 @@ func TestToInterfaceSlice(t *testing.T) {
 	// Test with []int
 	intData := []int{1, 2, 3}
 	intResult := toInterfaceSlice(intData)
-	expectedInt := []interface{}{1, 2, 3}
+
+	expectedInt := []any{1, 2, 3}
 	if !reflect.DeepEqual(intResult, expectedInt) {
 		t.Errorf("For []int, expected %v, got %v", expectedInt, intResult)
 	}
@@ -17,7 +18,8 @@ func TestToInterfaceSlice(t *testing.T) {
 	// Test with []int64
 	int64Data := []int64{10, 20, 30}
 	int64Result := toInterfaceSlice(int64Data)
-	expectedInt64 := []interface{}{int64(10), int64(20), int64(30)}
+
+	expectedInt64 := []any{int64(10), int64(20), int64(30)}
 	if !reflect.DeepEqual(int64Result, expectedInt64) {
 		t.Errorf("For []int64, expected %v, got %v", expectedInt64, int64Result)
 	}
@@ -25,7 +27,8 @@ func TestToInterfaceSlice(t *testing.T) {
 	// Test with []uint32
 	uint32Data := []uint32{5, 15, 25}
 	uint32Result := toInterfaceSlice(uint32Data)
-	expectedUint32 := []interface{}{uint32(5), uint32(15), uint32(25)}
+
+	expectedUint32 := []any{uint32(5), uint32(15), uint32(25)}
 	if !reflect.DeepEqual(uint32Result, expectedUint32) {
 		t.Errorf("For []uint32, expected %v, got %v", expectedUint32, uint32Result)
 	}
@@ -33,7 +36,8 @@ func TestToInterfaceSlice(t *testing.T) {
 	// Test with an empty slice
 	emptyData := []int{}
 	emptyResult := toInterfaceSlice(emptyData)
-	expectedEmpty := []interface{}{}
+	expectedEmpty := []any{}
+
 	if len(emptyResult) != 0 {
 		t.Errorf("For empty slice, expected empty, got %v", emptyResult)
 	}

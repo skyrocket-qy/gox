@@ -10,15 +10,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// a simple hash function for testing
+// a simple hash function for testing.
 type stringHash string
 
 func (s stringHash) Sum32() uint32 {
 	h := uint32(2166136261)
-	for i := 0; i < len(s); i++ {
+	for i := range len(s) {
 		h ^= uint32(s[i])
 		h *= 16777619
 	}
+
 	return h
 }
 
@@ -37,7 +38,7 @@ func TestNew(t *testing.T) {
 func TestAddAndCount(t *testing.T) {
 	hll, _ := hyperloglogplusplus.New(14)
 
-	for i := 0; i < 100000; i++ {
+	for i := range 100000 {
 		hll.Add(stringHash(strconv.Itoa(i)))
 	}
 
@@ -62,7 +63,7 @@ func TestAddAndCount_NoZeroRegisters(t *testing.T) {
 	hll, _ := hyperloglogplusplus.New(4) // p=4, m=16
 
 	// Add enough items to make it likely that all registers are non-zero.
-	for i := 0; i < 100; i++ {
+	for i := range 100 {
 		hll.Add(stringHash(strconv.Itoa(i)))
 	}
 
@@ -84,7 +85,7 @@ func TestMerge(t *testing.T) {
 	hll2, _ := hyperloglogplusplus.New(14)
 	hll3, _ := hyperloglogplusplus.New(15)
 
-	for i := 0; i < 50000; i++ {
+	for i := range 50000 {
 		hll1.Add(stringHash(strconv.Itoa(i)))
 	}
 
@@ -105,7 +106,7 @@ func TestMerge(t *testing.T) {
 
 func TestGobEncodeDecode(t *testing.T) {
 	hll, _ := hyperloglogplusplus.New(14)
-	for i := 0; i < 10000; i++ {
+	for i := range 10000 {
 		hll.Add(stringHash(strconv.Itoa(i)))
 	}
 
@@ -128,8 +129,10 @@ func TestGobDecodeError(t *testing.T) {
 
 	// Test with a buffer that causes an error in the second Decode
 	var buf bytes.Buffer
+
 	enc := gob.NewEncoder(&buf)
 	enc.Encode([]uint8{1, 2, 3}) // reg
+
 	err = hll.GobDecode(buf.Bytes())
 	assert.Error(t, err)
 
@@ -137,6 +140,7 @@ func TestGobDecodeError(t *testing.T) {
 	buf.Reset()
 	enc.Encode([]uint8{1, 2, 3}) // reg
 	enc.Encode(uint32(16384))    // m
+
 	err = hll.GobDecode(buf.Bytes())
 	assert.Error(t, err)
 }

@@ -3,20 +3,23 @@ package stringmatch
 // BoyerMoore finds all occurrences of a pattern in a text using the Boyer-Moore algorithm.
 func BoyerMoore(text, pattern string) []int {
 	n := len(text)
+
 	m := len(pattern)
 	if m == 0 {
 		return []int{}
 	}
+
 	if n < m {
 		return []int{}
 	}
 
 	badChar := make(map[byte]int)
-	for i := 0; i < m; i++ {
+	for i := range m {
 		badChar[pattern[i]] = i
 	}
 
 	result := []int{}
+
 	s := 0
 	for s <= (n - m) {
 		j := m - 1
@@ -45,6 +48,7 @@ func BoyerMoore(text, pattern string) []int {
 			}
 		}
 	}
+
 	return result
 }
 
@@ -52,5 +56,6 @@ func max(a, b int) int {
 	if a > b {
 		return a
 	}
+
 	return b
 }

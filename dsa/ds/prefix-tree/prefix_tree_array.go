@@ -20,7 +20,7 @@ func Init(strs []string) *Trie_array {
 
 func (t *Trie_array) Insert(s string) {
 	root := t
-	for i := 0; i < len(s); i++ {
+	for i := range len(s) {
 		if root.children[s[i]-'a'] == nil {
 			root.children[s[i]-'a'] = &Trie_array{
 				children: [26]*Trie_array{},
@@ -33,7 +33,7 @@ func (t *Trie_array) Insert(s string) {
 
 func (t *Trie_array) Remove(s string) {
 	root := t
-	for i := 0; i < len(s)-1; i++ {
+	for i := range len(s) - 1 {
 		if root.children[s[i]-'a'] == nil {
 			return
 		}
@@ -46,7 +46,7 @@ func (t *Trie_array) Remove(s string) {
 
 func (t *Trie_array) Search(s string) bool {
 	root := t
-	for i := 0; i < len(s); i++ {
+	for i := range len(s) {
 		if root.children[s[i]-'a'] == nil {
 			return false
 		}

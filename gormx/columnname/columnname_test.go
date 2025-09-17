@@ -58,6 +58,7 @@ func TestToCamel(t *testing.T) {
 func TestGetColumns(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	assert.NoError(t, err)
+
 	defer db.Close()
 
 	gormDB, err := gorm.Open(mysql.New(mysql.Config{
@@ -66,8 +67,12 @@ func TestGetColumns(t *testing.T) {
 	}), &gorm.Config{})
 	assert.NoError(t, err)
 
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT SCHEMA_NAME from Information_schema.SCHEMATA")).WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).WillReturnRows(sqlmock.NewRows([]string{"SCHEMA_NAME"}).AddRow("test"))
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `users` LIMIT ?")).WithArgs(1).WillReturnRows(sqlmock.NewRows(nil))
+	mock.ExpectQuery(regexp.QuoteMeta("SELECT SCHEMA_NAME from Information_schema.SCHEMATA")).
+		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).
+		WillReturnRows(sqlmock.NewRows([]string{"SCHEMA_NAME"}).AddRow("test"))
+	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `users` LIMIT ?")).
+		WithArgs(1).
+		WillReturnRows(sqlmock.NewRows(nil))
 
 	rows := sqlmock.NewRows([]string{"column_name", "column_default", "is_nullable", "data_type", "character_maximum_length", "column_type", "column_key", "extra", "column_comment", "numeric_precision", "numeric_scale", "datetime_precision"}).
 		AddRow("id", nil, false, "int", nil, "int(11)", "PRI", "auto_increment", "", nil, nil, nil).
@@ -86,6 +91,7 @@ func TestGetColumns(t *testing.T) {
 func TestGenTableColumnNamesCode(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	assert.NoError(t, err)
+
 	defer db.Close()
 
 	gormDB, err := gorm.Open(mysql.New(mysql.Config{
@@ -94,8 +100,12 @@ func TestGenTableColumnNamesCode(t *testing.T) {
 	}), &gorm.Config{})
 	assert.NoError(t, err)
 
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT SCHEMA_NAME from Information_schema.SCHEMATA")).WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).WillReturnRows(sqlmock.NewRows([]string{"SCHEMA_NAME"}).AddRow("test"))
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `users` LIMIT ?")).WithArgs(1).WillReturnRows(sqlmock.NewRows(nil))
+	mock.ExpectQuery(regexp.QuoteMeta("SELECT SCHEMA_NAME from Information_schema.SCHEMATA")).
+		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).
+		WillReturnRows(sqlmock.NewRows([]string{"SCHEMA_NAME"}).AddRow("test"))
+	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `users` LIMIT ?")).
+		WithArgs(1).
+		WillReturnRows(sqlmock.NewRows(nil))
 	rows := sqlmock.NewRows([]string{"column_name", "column_default", "is_nullable", "data_type", "character_maximum_length", "column_type", "column_key", "extra", "column_comment", "numeric_precision", "numeric_scale", "datetime_precision"}).
 		AddRow("id", nil, false, "int", nil, "int(11)", "PRI", "auto_increment", "", nil, nil, nil).
 		AddRow("user_name", nil, true, "varchar", 255, "varchar(255)", "", "", "", nil, nil, nil)

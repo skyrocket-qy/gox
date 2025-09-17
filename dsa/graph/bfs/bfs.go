@@ -12,6 +12,7 @@ func BfsRecursive(graph map[int][]int, root int) []int {
 		if len(vertices) == 0 {
 			return
 		}
+
 		visitSequence = append(visitSequence, vertices...)
 		next := []int{}
 
@@ -23,6 +24,7 @@ func BfsRecursive(graph map[int][]int, root int) []int {
 				}
 			}
 		}
+
 		bfs(next, graph)
 	}
 

@@ -134,6 +134,7 @@ func TestDecode_GzipCloseError(t *testing.T) {
 	assert.NoError(t, err)
 
 	var buf bytes.Buffer
+
 	gz := gzip.NewWriter(&buf)
 	_, err = gz.Write(encoded)
 	assert.NoError(t, err)
@@ -149,7 +150,7 @@ func TestDecode_GzipCloseError(t *testing.T) {
 
 	// Let's try to corrupt the last 8 bytes which are the checksum and the size.
 	corruptedData := buf.Bytes()
-	for i := 0; i < 8; i++ {
+	for i := range 8 {
 		corruptedData[len(corruptedData)-1-i] = 0
 	}
 

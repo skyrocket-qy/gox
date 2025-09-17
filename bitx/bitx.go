@@ -35,6 +35,7 @@ func CountBit1(in int) int {
 
 func CountBit1ChangeIn(in int) int {
 	out := 0
+
 	uIn := uint32(in)
 	for ; uIn != 0; uIn >>= 1 {
 		if (uIn & 1) != 0 {
@@ -48,7 +49,7 @@ func CountBit1ChangeIn(in int) int {
 func CountBit0(in int) int {
 	out := 0
 
-	for i := 0; i < 32; i++ {
+	for i := range 32 {
 		if (in & (1 << i)) == 0 {
 			out++
 		}
@@ -60,7 +61,7 @@ func CountBit0(in int) int {
 func CountBit0ChangeIn(in int) int {
 	out := 0
 
-	for i := 0; i < 32; i++ {
+	for range 32 {
 		if (in & 1) == 0 {
 			out++
 		}

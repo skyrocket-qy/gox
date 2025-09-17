@@ -156,10 +156,10 @@ func TestCountBit0ChangeIn(t *testing.T) {
 
 func TestMarkNThBitTo1(t *testing.T) {
 	tests := []struct {
-		name  string
-		in    int
-		n     int
-		want  int
+		name string
+		in   int
+		n    int
+		want int
 	}{
 		{"mark 3rd bit of 0", 0, 3, 4},
 		{"mark 1st bit of 8", 8, 1, 9},
@@ -174,10 +174,10 @@ func TestMarkNThBitTo1(t *testing.T) {
 
 func TestReverseNthBit(t *testing.T) {
 	tests := []struct {
-		name  string
-		in    int
-		n     int
-		want  int
+		name string
+		in   int
+		n    int
+		want int
 	}{
 		{"reverse 3rd bit of 0", 0, 3, 4},
 		{"reverse 1st bit of 9", 9, 1, 8},
@@ -192,10 +192,10 @@ func TestReverseNthBit(t *testing.T) {
 
 func TestClearNthBit(t *testing.T) {
 	tests := []struct {
-		name  string
-		in    int
-		n     int
-		want  int
+		name string
+		in   int
+		n    int
+		want int
 	}{
 		{"clear 3rd bit of 4", 4, 3, 0},
 		{"clear 1st bit of 9", 9, 1, 8},

@@ -6,11 +6,12 @@ import (
 	"strconv"
 )
 
-func toInterfaceSlice[T ~int | ~int32 | ~int64 | ~uint | ~uint32 | ~uint64](data []T) []interface{} {
-	ret := make([]interface{}, len(data))
+func toInterfaceSlice[T ~int | ~int32 | ~int64 | ~uint | ~uint32 | ~uint64](data []T) []any {
+	ret := make([]any, len(data))
 	for i, v := range data {
 		ret[i] = v
 	}
+
 	return ret
 }
 
@@ -44,5 +45,6 @@ func Bench(fn func(), repeat int, baseOutputFile string) error {
 			return err // Or return immediately on first error
 		}
 	}
+
 	return nil
 }

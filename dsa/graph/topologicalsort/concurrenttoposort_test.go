@@ -21,7 +21,9 @@ func newOrderTrackingWorker(order *[]string, mu *sync.Mutex) topologicalsort.Wor
 
 		mu.Lock()
 		defer mu.Unlock()
+
 		*order = append(*order, node.(string))
+
 		return nil
 	}
 }
@@ -36,24 +38,34 @@ func isValidOrder(order []string, graph map[any][]any) (bool, string) {
 
 	for nodeAny, depsAny := range graph {
 		node := nodeAny.(string)
+
 		nodePos, exists := positions[node]
 		if !exists {
-			// This can happen if the worker fails mid-process. It's not an invalid order, just incomplete.
+			// This can happen if the worker fails mid-process. It's not an invalid order, just
+			// incomplete.
 			continue
 		}
 
 		for _, depAny := range depsAny {
 			dep := depAny.(string)
+
 			depPos, exists := positions[dep]
 			if !exists {
 				continue
 			}
 
 			if nodePos < depPos {
-				return false, fmt.Sprintf("invalid order: node '%s' appeared at position %d before its dependency '%s' at position %d", node, nodePos, dep, depPos)
+				return false, fmt.Sprintf(
+					"invalid order: node '%s' appeared at position %d before its dependency '%s' at position %d",
+					node,
+					nodePos,
+					dep,
+					depPos,
+				)
 			}
 		}
 	}
+
 	return true, ""
 }
 
@@ -67,8 +79,11 @@ func TestConcurrentTopologicalSort_Success(t *testing.T) {
 			"C": {},
 		}
 
-		var order []string
-		var mu sync.Mutex
+		var (
+			order []string
+			mu    sync.Mutex
+		)
+
 		worker := newOrderTrackingWorker(&order, &mu)
 
 		err := topologicalsort.ConcurrentTopologicalSort(context.Background(), graph, worker)
@@ -82,6 +97,7 @@ func TestConcurrentTopologicalSort_Success(t *testing.T) {
 
 		// The only valid order is C, B, A
 		expectedOrder := "C,B,A"
+
 		actualOrder := strings.Join(order, ",")
 		if actualOrder != expectedOrder {
 			t.Errorf("Expected order %s, but got %s", expectedOrder, actualOrder)
@@ -102,8 +118,11 @@ func TestConcurrentTopologicalSort_Success(t *testing.T) {
 			"E": {},
 		}
 
-		var order []string
-		var mu sync.Mutex
+		var (
+			order []string
+			mu    sync.Mutex
+		)
+
 		worker := newOrderTrackingWorker(&order, &mu)
 
 		err := topologicalsort.ConcurrentTopologicalSort(context.Background(), graph, worker)
@@ -117,7 +136,11 @@ func TestConcurrentTopologicalSort_Success(t *testing.T) {
 
 		valid, reason := isValidOrder(order, graph)
 		if !valid {
-			t.Errorf("Topological sort produced an invalid order: %s. Full order: %v", reason, order)
+			t.Errorf(
+				"Topological sort produced an invalid order: %s. Full order: %v",
+				reason,
+				order,
+			)
 		}
 	})
 }
@@ -131,13 +154,16 @@ func TestConcurrentTopologicalSort_ErrorHandling(t *testing.T) {
 		}
 
 		expectedErr := errors.New("worker failed on B")
+
 		var processedCount int32
 
 		worker := func(ctx context.Context, node any) error {
 			atomic.AddInt32(&processedCount, 1)
+
 			if node.(string) == "B" {
 				return expectedErr
 			}
+
 			return nil
 		}
 
@@ -151,10 +177,14 @@ func TestConcurrentTopologicalSort_ErrorHandling(t *testing.T) {
 		}
 
 		// C should process, B should fail, A should not start because the error stops the chain.
-		// It's possible A runs concurrently with B, so count can be 2 or 3. But it can't be all nodes.
+		// It's possible A runs concurrently with B, so count can be 2 or 3. But it can't be all
+		// nodes.
 		// A better check is that not all nodes were processed successfully.
 		if atomic.LoadInt32(&processedCount) == int32(len(graph)) {
-			t.Errorf("Expected processing to stop or be incomplete after error, but all %d nodes were processed", len(graph))
+			t.Errorf(
+				"Expected processing to stop or be incomplete after error, but all %d nodes were processed",
+				len(graph),
+			)
 		}
 	})
 
@@ -167,8 +197,10 @@ func TestConcurrentTopologicalSort_ErrorHandling(t *testing.T) {
 		}
 
 		var processedCount int32
+
 		worker := func(ctx context.Context, node any) error {
 			atomic.AddInt32(&processedCount, 1)
+
 			return nil
 		}
 
@@ -182,7 +214,10 @@ func TestConcurrentTopologicalSort_ErrorHandling(t *testing.T) {
 		}
 
 		if atomic.LoadInt32(&processedCount) > 0 {
-			t.Logf("Note: %d nodes were processed before cycle was detected. This is acceptable.", atomic.LoadInt32(&processedCount))
+			t.Logf(
+				"Note: %d nodes were processed before cycle was detected. This is acceptable.",
+				atomic.LoadInt32(&processedCount),
+			)
 		}
 	})
 }
@@ -192,8 +227,10 @@ func TestConcurrentTopologicalSort_EdgeCases(t *testing.T) {
 		graph := map[any][]any{}
 		worker := func(ctx context.Context, node any) error {
 			t.Fatal("Worker should not be called for an empty graph")
+
 			return nil
 		}
+
 		err := topologicalsort.ConcurrentTopologicalSort(context.Background(), graph, worker)
 		if err != nil {
 			t.Fatalf("Expected no error for an empty graph, but got: %v", err)
@@ -209,8 +246,11 @@ func TestConcurrentTopologicalSort_EdgeCases(t *testing.T) {
 			"D": {},
 		}
 
-		var order []string
-		var mu sync.Mutex
+		var (
+			order []string
+			mu    sync.Mutex
+		)
+
 		worker := newOrderTrackingWorker(&order, &mu)
 
 		err := topologicalsort.ConcurrentTopologicalSort(context.Background(), graph, worker)
@@ -224,7 +264,11 @@ func TestConcurrentTopologicalSort_EdgeCases(t *testing.T) {
 
 		valid, reason := isValidOrder(order, graph)
 		if !valid {
-			t.Errorf("Topological sort produced an invalid order: %s. Full order: %v", reason, order)
+			t.Errorf(
+				"Topological sort produced an invalid order: %s. Full order: %v",
+				reason,
+				order,
+			)
 		}
 	})
 
@@ -237,8 +281,10 @@ func TestConcurrentTopologicalSort_EdgeCases(t *testing.T) {
 		}
 
 		var processedCount int32
+
 		worker := func(ctx context.Context, node any) error {
 			atomic.AddInt32(&processedCount, 1)
+
 			return nil
 		}
 
@@ -248,7 +294,10 @@ func TestConcurrentTopologicalSort_EdgeCases(t *testing.T) {
 		}
 
 		if atomic.LoadInt32(&processedCount) != 3 {
-			t.Fatalf("Expected 3 items to be processed, but got %d", atomic.LoadInt32(&processedCount))
+			t.Fatalf(
+				"Expected 3 items to be processed, but got %d",
+				atomic.LoadInt32(&processedCount),
+			)
 		}
 	})
 }

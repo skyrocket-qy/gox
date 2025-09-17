@@ -53,12 +53,14 @@ func TestCreateOrReplaceFile(t *testing.T) {
 
 	// Test case 3: Error case - read-only directory
 	readOnlyDir := filepath.Join(tmpDir, "readonly")
-	err = os.Mkdir(readOnlyDir, 0555) // Read and execute permissions
+
+	err = os.Mkdir(readOnlyDir, 0o555) // Read and execute permissions
 	if err != nil {
 		t.Fatalf("Failed to create read-only dir: %v", err)
 	}
 
 	filePathInReadOnlyDir := filepath.Join(readOnlyDir, "testfile.txt")
+
 	err = CreateOrReplaceFile(filePathInReadOnlyDir, content)
 	if err == nil {
 		t.Errorf("Expected an error when writing to a read-only directory, but got nil")
@@ -66,7 +68,8 @@ func TestCreateOrReplaceFile(t *testing.T) {
 
 	// Test case 4: Error case - path is a non-empty directory
 	dirPath := filepath.Join(tmpDir, "dir")
-	err = os.Mkdir(dirPath, 0755)
+
+	err = os.Mkdir(dirPath, 0o755)
 	if err != nil {
 		t.Fatalf("Failed to create dir: %v", err)
 	}
@@ -75,6 +78,7 @@ func TestCreateOrReplaceFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create file in dir: %v", err)
 	}
+
 	err = CreateOrReplaceFile(dirPath, content)
 	if err == nil {
 		t.Errorf("Expected an error when path is a non-empty directory, but got nil")

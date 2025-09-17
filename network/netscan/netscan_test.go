@@ -25,6 +25,7 @@ func TestScanPorts(t *testing.T) {
 			t.Fatalf("Failed to listen on a port: %v", err)
 		}
 		defer listener.Close()
+
 		openPort := listener.Addr().(*net.TCPAddr).Port
 
 		var wg sync.WaitGroup
@@ -44,9 +45,11 @@ func TestScanPorts(t *testing.T) {
 			if strings.Contains(err.Error(), "address family not supported by protocol") {
 				t.Skip("IPv6 not supported, skipping test")
 			}
+
 			t.Fatalf("Failed to listen on a port: %v", err)
 		}
 		defer listener6.Close()
+
 		openPort6 := listener6.Addr().(*net.TCPAddr).Port
 
 		var wg6 sync.WaitGroup
@@ -59,6 +62,7 @@ func TestScanPorts(t *testing.T) {
 
 	t.Run("Closed Port", func(t *testing.T) {
 		logBuf.Reset()
+
 		var wgClosed sync.WaitGroup
 		// Assuming port 1 is not open
 		ScanPorts("tcp", "127.0.0.1", 1, 1, &wgClosed)

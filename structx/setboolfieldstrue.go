@@ -35,6 +35,7 @@ func setBoolFieldsTrueHelper(v reflect.Value) error {
 
 	// get all bool fields in the current struct
 	boolFields := make(map[string]any)
+
 	for i := 0; i < v.NumField(); i++ {
 		field := v.Type().Field(i)
 		if field.Type.Kind() == reflect.Bool {
@@ -50,6 +51,7 @@ func setBoolFieldsTrueHelper(v reflect.Value) error {
 			// All fields of a struct taken from a pointer are addressable.
 			return errors.New("cannot get address of struct")
 		}
+
 		if err := SetFields(v.Addr().Interface(), boolFields); err != nil {
 			return err
 		}

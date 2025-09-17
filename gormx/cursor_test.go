@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/skyrocket-qy/gox/gormx"
-
 	pkgpbv1 "github.com/skyrocket-qy/protos/gen/pkgpb/v1"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/sqlite"
