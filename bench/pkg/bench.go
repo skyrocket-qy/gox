@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"os"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -33,11 +34,16 @@ func Bench(fn func(), repeat int, baseOutputFile string) error {
 	// Not safe for concurrent execution
 	reg := regexp.MustCompile("[^a-zA-Z0-9]+")
 
+	// Create the 'tmp' directory if it doesn't exist
+	if err := os.MkdirAll("tmp", 0755); err != nil {
+		return err
+	}
+
 	for _, data := range datas {
 		ext := filepath.Ext(baseOutputFile)
 		baseName := baseOutputFile[:len(baseOutputFile)-len(ext)]
 		sanitizedSeriesName := reg.ReplaceAllString(data.Name, "_")
-		outputFile := baseName + "_" + sanitizedSeriesName + ext
+		outputFile := filepath.Join("tmp", baseName + "_" + sanitizedSeriesName + ext)
 
 		if err := WriteChartToFile(outputFile, x, data); err != nil {
 			// Continue to generate other charts even if one fails
