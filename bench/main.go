@@ -17,6 +17,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("Bench failed: %v", err)
 	}
+
+	err = pkg.Bench(benchCallbackLoop, 1, "cb.png")
+	if err != nil {
+		log.Fatalf("Bench failed: %v", err)
+	}
 }
 
 const t = 100000000
@@ -53,5 +58,21 @@ func benchSliceAppend() {
 	for v := range tradit() {
 		sum += v
 	}
+	fmt.Println(sum)
+}
+
+func CallbackLoop(f func(v int)) []int {
+	res := []int{}
+	for i := 0; i < t; i++ {
+		f(i)
+	}
+	return res
+}
+
+func benchCallbackLoop() {
+	sum := 0
+	CallbackLoop(func(v int) {
+		sum += v
+	})
 	fmt.Println(sum)
 }
