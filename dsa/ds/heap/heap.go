@@ -16,13 +16,14 @@ func New[T any](eles []T, less func(T, T) bool) *Heap[T] {
 		data: make([]T, 1, len(eles)+1), // 1-indexed heap, so first element is dummy
 		less: less,
 	}
-	// Add a dummy element at index 0
-	var zeroValue T
-	h.data[0] = zeroValue
 
-	for _, e := range eles {
-		h.Push(e)
+	copy(h.data[1:], eles)
+
+	n := len(eles)
+	for i := n / 2; i > 0; i-- {
+		h.down(i)
 	}
+
 	return h
 }
 
