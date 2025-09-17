@@ -1,8 +1,10 @@
-package heap
+package heap_test
 
 import (
 	"sync"
 	"testing"
+
+	heapx "github.com/skyrocket-qy/gox/cdsa/ds/heap"
 )
 
 func TestMinHeap(t *testing.T) {
@@ -10,7 +12,7 @@ func TestMinHeap(t *testing.T) {
 		return a < b
 	}
 
-	h := New([]int{}, less)
+	h := heapx.New([]int{}, less)
 	h.Push(3)
 	h.Push(2)
 	h.Push(1)
@@ -38,7 +40,7 @@ func TestMaxHeap(t *testing.T) {
 		return a > b
 	}
 
-	h := New([]int{}, less)
+	h := heapx.New([]int{}, less)
 	h.Push(1)
 	h.Push(2)
 	h.Push(3)
@@ -67,7 +69,7 @@ func TestHeapWithInitialElements(t *testing.T) {
 	}
 
 	elements := []int{5, 2, 8, 1, 9, 4}
-	h := New(elements, less)
+	h := heapx.New(elements, less)
 
 	expected := []int{1, 2, 4, 5, 8, 9}
 	for _, val := range expected {
@@ -84,7 +86,7 @@ func TestConcurrentHeap(t *testing.T) {
 	less := func(a, b int) bool {
 		return a < b
 	}
-	h := New([]int{}, less)
+	h := heapx.New([]int{}, less)
 
 	var wg sync.WaitGroup
 	numGoroutines := 100
