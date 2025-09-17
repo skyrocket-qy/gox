@@ -1,53 +1,58 @@
-package unionfind
+package unionfind_test
 
 import (
 	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/alg/unionfind"
 )
 
-func setup() {
-	parents = make(map[int]int)
-}
-
 func TestFind(t *testing.T) {
-	setup()
+	uf := unionfind.New()
 
 	// Test find on a new element
-	if find(1) != 1 {
-		t.Errorf("Expected find(1) to be 1, but got %d", find(1))
+	if uf.Find(1) != 1 {
+		t.Errorf("Expected uf.Find(1) to be 1, but got %d", uf.Find(1))
 	}
 
 	// Test find after a union
-	parents[1] = 2
+	uf.Union(1, 2)
 
-	if find(1) != 2 {
-		t.Errorf("Expected find(1) to be 2, but got %d", find(1))
+	if uf.Find(1) != uf.Find(2) {
+		t.Errorf("Expected uf.Find(1) to be equal to uf.Find(2) after uf.Union(1, 2)")
+	}
+
+	// Test path compression indirectly
+	uf.Union(2, 3)
+	// Now 1, 2, 3 should be in the same set. uf.Find(1) should eventually point to the root of 3.
+	if uf.Find(1) != uf.Find(3) {
+		t.Errorf("Expected uf.Find(1) to be equal to uf.Find(3) after uf.Union(2, 3)")
 	}
 }
 
 func TestUnion(t *testing.T) {
-	setup()
+	uf := unionfind.New()
 
-	union(1, 2)
+	uf.Union(1, 2)
 
-	if find(1) != find(2) {
-		t.Errorf("Expected find(1) to be equal to find(2) after union(1, 2)")
+	if uf.Find(1) != uf.Find(2) {
+		t.Errorf("Expected uf.Find(1) to be equal to uf.Find(2) after uf.Union(1, 2)")
 	}
 
-	union(2, 3)
+	uf.Union(2, 3)
 
-	if find(1) != find(3) {
-		t.Errorf("Expected find(1) to be equal to find(3) after union(2, 3)")
+	if uf.Find(1) != uf.Find(3) {
+		t.Errorf("Expected uf.Find(1) to be equal to uf.Find(3) after uf.Union(2, 3)")
 	}
 
-	union(4, 5)
+	uf.Union(4, 5)
 
-	if find(1) == find(4) {
-		t.Errorf("Expected find(1) to not be equal to find(4)")
+	if uf.Find(1) == uf.Find(4) {
+		t.Errorf("Expected uf.Find(1) to not be equal to uf.Find(4)")
 	}
 
-	union(1, 4)
+	uf.Union(1, 4)
 
-	if find(1) != find(5) {
-		t.Errorf("Expected find(1) to be equal to find(5) after union(1, 4)")
+	if uf.Find(1) != uf.Find(5) {
+		t.Errorf("Expected uf.Find(1) to be equal to uf.Find(5) after uf.Union(1, 4)")
 	}
 }
