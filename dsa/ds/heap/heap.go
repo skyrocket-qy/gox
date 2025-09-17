@@ -1,59 +1,72 @@
 package heap
 
-/* @tags: heap,priority queue */
-
-// The difference between built-in heap is:
-// You only need to implement the Element interface
-// and the Less method which is used to compare elements
-// And, there is some performance optimization than built-in at Pop()
-// because built-in sacrifice some performance for better flexibility
-type Element interface {
-	Less(e Element) bool
+// Heap is a min-heap or max-heap implementation using generics.
+// It is 1-indexed, meaning the first element (index 0) is a dummy value.
+type Heap[T any] struct {
+	data []T
+	less func(T, T) bool // less(a, b) returns true if a < b (for min-heap) or a > b (for max-heap)
 }
 
-type Heap []Element
+// New creates and initializes a new Heap with the given elements and a less function.
+// The less function determines the heap's order:
+// - For a min-heap, less(a, b) should return true if a < b.
+// - For a max-heap, less(a, b) should return true if a > b.
+func New[T any](eles []T, less func(T, T) bool) *Heap[T] {
+	h := &Heap[T]{
+		data: make([]T, 1, len(eles)+1), // 1-indexed heap, so first element is dummy
+		less: less,
+	}
+	// Add a dummy element at index 0
+	var zeroValue T
+	h.data[0] = zeroValue
 
-func Init(eles []Element) *Heap {
-	// offset
-	h := &Heap{eles[0]}
 	for _, e := range eles {
 		h.Push(e)
 	}
 	return h
 }
 
-func (h Heap) Len() int { return len(h) - 1 }
+// Len returns the number of elements in the heap.
+func (h *Heap[T]) Len() int { return len(h.data) - 1 }
 
-func (h Heap) swap(i, j int) { h[i], h[j] = h[j], h[i] }
+func (h *Heap[T]) swap(i, j int) { h.data[i], h.data[j] = h.data[j], h.data[i] }
 
-func (h *Heap) Push(e Element) {
-	*h = append(*h, e)
-	h.up(len(*h) - 1)
+// Push adds an element to the heap.
+func (h *Heap[T]) Push(e T) {
+	h.data = append(h.data, e)
+	h.up(h.Len())
 }
 
-func (h *Heap) Pop() Element {
-	n := len(*h) - 1
-	res := (*h)[1]
-	(*h)[1] = (*h)[n]
-	*h = (*h)[:n]
+// Pop removes and returns the top element from the heap.
+func (h *Heap[T]) Pop() T {
+	if h.Len() == 0 {
+		var zeroValue T
+		return zeroValue // Or panic, depending on desired behavior for empty heap
+	}
+
+	n := h.Len()
+	res := h.data[1]
+	h.data[1] = h.data[n]
+	h.data = h.data[:n] // Shrink the slice
 	h.down(1)
 	return res
 }
 
-func (h Heap) up(i int) {
-	for j := i >> 1; i > 1 && h[j].Less(h[i]); i, j = j, j>>1 {
+func (h *Heap[T]) up(i int) {
+	for j := i >> 1; i > 1 && h.less(h.data[i], h.data[j]); i, j = j, j>>1 {
 		h.swap(i, j)
 	}
 }
 
-func (h Heap) down(i int) {
-	for j := i << 1; j < len(h); i, j = j, j<<1 {
-		if j+1 < len(h) && h[j].Less(h[j+1]) {
+func (h *Heap[T]) down(i int) {
+	for j := i << 1; j <= h.Len(); i, j = j, j<<1 {
+		if j+1 <= h.Len() && h.less(h.data[j+1], h.data[j]) {
 			j++
 		}
-		if h[j].Less(h[i]) {
+		if h.less(h.data[j], h.data[i]) {
+			h.swap(i, j)
+		} else {
 			break
 		}
-		h.swap(i, j)
 	}
 }
