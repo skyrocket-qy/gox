@@ -13,17 +13,11 @@ type Heap[T any] struct {
 // - For a max-heap, less(a, b) should return true if a > b.
 func New[T any](eles []T, less func(T, T) bool) *Heap[T] {
 	h := &Heap[T]{
-		// 1. Create the slice with length 1 (for the dummy element)
-		//    and capacity for all future elements.
 		data: make([]T, 1, len(eles)+1),
 		less: less,
 	}
 
-	// 2. Append the initial elements. This correctly sets the slice's length.
 	h.data = append(h.data, eles...)
-
-	// 3. The heapify logic remains the same and is now safe to run.
-	// h.Len() correctly returns n here.
 	for i := h.Len() / 2; i > 0; i-- {
 		h.down(i)
 	}
