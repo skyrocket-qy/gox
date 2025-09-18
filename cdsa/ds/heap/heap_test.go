@@ -20,7 +20,6 @@ func TestMinHeap(t *testing.T) {
 	if h.Len() != 3 {
 		t.Errorf("Expected length 3, got %d", h.Len())
 	}
-
 	if h.Pop() != 1 {
 		t.Errorf("Expected 1, got %d", h.Pop())
 	}
