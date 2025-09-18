@@ -15,23 +15,23 @@ func init() {
 	}
 }
 
-// func BenchmarkInsertPermutation(b *testing.B) {
-// 	nums := make([]int, N)
-// 	copy(nums, BaseNums)
-// 	b.ResetTimer()
-// 	for i := 0; i < b.N; i++ {
-// 		InsertPermutation(nums)
-// 	}
-// }
+func BenchmarkInsertPermutation(b *testing.B) {
+	nums := make([]int, N)
+	copy(nums, BaseNums)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		InsertPermutation(nums)
+	}
+}
 
-// func BenchmarkBackTrackPermutation(b *testing.B) {
-// 	nums := make([]int, N)
-// 	copy(nums, BaseNums)
-// 	b.ResetTimer()
-// 	for i := 0; i < b.N; i++ {
-// 		BackTrackPermutation(nums)
-// 	}
-// }
+func BenchmarkBackTrackPermutation(b *testing.B) {
+	nums := make([]int, N)
+	copy(nums, BaseNums)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		BackTrackPermutation(nums)
+	}
+}
 
 func BenchmarkSwapPermutation(b *testing.B) {
 	nums := make([]int, N)

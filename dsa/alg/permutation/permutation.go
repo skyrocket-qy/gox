@@ -7,6 +7,8 @@ Input: nums = [1,2,3]
 Output: [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
 */
 
+import "slices"
+
 /*
 Stage1: [1]
 Stage2: [2,1], [1,2]
@@ -48,17 +50,7 @@ func BackTrackPermutation(nums []int) [][]int {
 		}
 
 		for _, num := range nums {
-			isContained := false
-
-			for _, v := range curNums {
-				if v == num {
-					isContained = true
-
-					break
-				}
-			}
-
-			if isContained {
+			if slices.Contains(curNums, num) {
 				continue
 			}
 
