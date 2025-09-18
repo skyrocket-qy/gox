@@ -6,7 +6,7 @@ import (
 	"github.com/skyrocket-qy/gox/dsa/alg/permutation"
 )
 
-const N = 8 // Reduced N to a reasonable size for permutation benchmarks
+const N = 10 // Reduced N to a reasonable size for permutation benchmarks
 
 var BaseNums []int
 

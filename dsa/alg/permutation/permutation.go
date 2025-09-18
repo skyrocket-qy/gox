@@ -15,20 +15,19 @@ Stage3: Insert 3 based on stage 2.
 func InsertPermutation(nums []int) [][]int {
 	res := [][]int{{}}
 	for _, num := range nums {
-		res2 := [][]int{}
+		res2 := make([][]int, 0, len(res)*(len(res[0])+1)) // Pre-allocate capacity for res2
 
 		for _, cur := range res {
 			for i := 0; i <= len(cur); i++ {
-				now := append([]int{}, cur[:i]...)
-				now = append(now, num)
-				now = append(now, cur[i:]...)
+				now := make([]int, len(cur)+1) // Pre-allocate 'now' slice
+				copy(now, cur[:i])
+				now[i] = num
+				copy(now[i+1:], cur[i:])
 				res2 = append(res2, now)
 			}
 		}
-
 		res = res2
 	}
-
 	return res
 }
 
