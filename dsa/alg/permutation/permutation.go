@@ -106,3 +106,35 @@ func SwapPermutation(nums []int) [][]int {
 
 	return res
 }
+
+// HeapPermutation generates all permutations of the given slice using Heap's algorithm.
+func HeapPermutation(nums []int) [][]int {
+	var result [][]int
+
+	var generate func(k int, arr []int)
+	generate = func(k int, arr []int) {
+		if k == 1 {
+			temp := make([]int, len(arr))
+			copy(temp, arr)
+			result = append(result, temp)
+			return
+		}
+
+		generate(k-1, arr)
+
+		for i := 0; i < k-1; i++ {
+			if k%2 == 0 {
+				arr[i], arr[k-1] = arr[k-1], arr[i]
+			} else {
+				arr[0], arr[k-1] = arr[k-1], arr[0]
+			}
+			generate(k-1, arr)
+		}
+	}
+
+	initialNums := make([]int, len(nums))
+	copy(initialNums, nums)
+	generate(len(initialNums), initialNums)
+
+	return result
+}

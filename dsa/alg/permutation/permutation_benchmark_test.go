@@ -1,11 +1,10 @@
 package permutation
 
 import (
-	"math/rand"
 	"testing"
 )
 
-const N = 100
+const N = 8 // Reduced N to a reasonable size for permutation benchmarks
 
 var BaseNums []int
 
@@ -14,28 +13,25 @@ func init() {
 	for i := 0; i < N; i++ {
 		BaseNums[i] = i
 	}
-	rand.Shuffle(len(BaseNums), func(i, j int) {
-		BaseNums[i], BaseNums[j] = BaseNums[j], BaseNums[i]
-	})
 }
 
-func BenchmarkInsertPermutation(b *testing.B) {
-	nums := make([]int, N)
-	copy(nums, BaseNums)
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		InsertPermutation(nums)
-	}
-}
+// func BenchmarkInsertPermutation(b *testing.B) {
+// 	nums := make([]int, N)
+// 	copy(nums, BaseNums)
+// 	b.ResetTimer()
+// 	for i := 0; i < b.N; i++ {
+// 		InsertPermutation(nums)
+// 	}
+// }
 
-func BenchmarkBackTrackPermutation(b *testing.B) {
-	nums := make([]int, N)
-	copy(nums, BaseNums)
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		BackTrackPermutation(nums)
-	}
-}
+// func BenchmarkBackTrackPermutation(b *testing.B) {
+// 	nums := make([]int, N)
+// 	copy(nums, BaseNums)
+// 	b.ResetTimer()
+// 	for i := 0; i < b.N; i++ {
+// 		BackTrackPermutation(nums)
+// 	}
+// }
 
 func BenchmarkSwapPermutation(b *testing.B) {
 	nums := make([]int, N)
@@ -43,5 +39,14 @@ func BenchmarkSwapPermutation(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		SwapPermutation(nums)
+	}
+}
+
+func BenchmarkHeapPermutation(b *testing.B) {
+	nums := make([]int, N)
+	copy(nums, BaseNums)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		HeapPermutation(nums)
 	}
 }
