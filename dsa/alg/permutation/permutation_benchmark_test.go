@@ -1,7 +1,9 @@
-package permutation
+package permutation_test
 
 import (
 	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/alg/permutation"
 )
 
 const N = 8 // Reduced N to a reasonable size for permutation benchmarks
@@ -20,7 +22,7 @@ func BenchmarkInsertPermutation(b *testing.B) {
 	copy(nums, BaseNums)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		InsertPermutation(nums)
+		permutation.InsertPermutation(nums)
 	}
 }
 
@@ -29,7 +31,7 @@ func BenchmarkBackTrackPermutation(b *testing.B) {
 	copy(nums, BaseNums)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		BackTrackPermutation(nums)
+		permutation.BackTrackPermutation(nums)
 	}
 }
 
@@ -38,7 +40,7 @@ func BenchmarkSwapPermutation(b *testing.B) {
 	copy(nums, BaseNums)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		SwapPermutation(nums)
+		permutation.SwapPermutation(nums)
 	}
 }
 
@@ -47,6 +49,6 @@ func BenchmarkHeapPermutation(b *testing.B) {
 	copy(nums, BaseNums)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		HeapPermutation(nums)
+		permutation.HeapPermutation(nums)
 	}
 }
