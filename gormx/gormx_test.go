@@ -1,4 +1,4 @@
-package gormx
+package gormx_test
 
 import (
 	"errors"
@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/skyrocket-qy/gox/gormx"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -39,7 +40,7 @@ func TestCheckExist(t *testing.T) {
 			WithArgs("test").
 			WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
 
-		err := CheckExist(gormDB, &User{}, "name = ?", "test")
+		err := gormx.CheckExist(gormDB, &User{}, "name = ?", "test")
 		assert.Error(t, err)
 	})
 
@@ -48,7 +49,7 @@ func TestCheckExist(t *testing.T) {
 			WithArgs("test").
 			WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(0))
 
-		err := CheckExist(gormDB, &User{}, "name = ?", "test")
+		err := gormx.CheckExist(gormDB, &User{}, "name = ?", "test")
 		assert.NoError(t, err)
 	})
 
@@ -57,13 +58,13 @@ func TestCheckExist(t *testing.T) {
 			WithArgs("test").
 			WillReturnError(errors.New("db error"))
 
-		err := CheckExist(gormDB, &User{}, "name = ?", "test")
+		err := gormx.CheckExist(gormDB, &User{}, "name = ?", "test")
 		assert.Error(t, err)
 	})
 }
 
 func TestErr_Str(t *testing.T) {
-	if ErrDuplicate.Str() != "409.0000" {
-		t.Errorf("ErrDuplicate.Str() failed, got %s", ErrDuplicate.Str())
+	if gormx.ErrDuplicate.Str() != "409.0000" {
+		t.Errorf("ErrDuplicate.Str() failed, got %s", gormx.ErrDuplicate.Str())
 	}
 }

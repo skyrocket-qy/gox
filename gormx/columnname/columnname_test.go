@@ -1,4 +1,4 @@
-package columnname
+package columnname_test
 
 import (
 	"os"
@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/skyrocket-qy/gox/gormx/columnname"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -48,7 +49,7 @@ func TestToCamel(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.input, func(t *testing.T) {
-			if got := ToCamel(tt.input); got != tt.want {
+			if got := columnname.ToCamel(tt.input); got != tt.want {
 				t.Errorf("ToCamel() = %v, want %v", got, tt.want)
 			}
 		})
@@ -78,11 +79,10 @@ func TestGetColumns(t *testing.T) {
 		AddRow("id", nil, false, "int", nil, "int(11)", "PRI", "auto_increment", "", nil, nil, nil).
 		AddRow("name", nil, true, "varchar", 255, "varchar(255)", "", "", "", nil, nil, nil)
 
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = ? AND table_name = ? ORDER BY ORDINAL_POSITION")).
-		WithArgs("test", "users").
+	mock.ExpectQuery(regexp.QuoteMeta("SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = ? AND table_name = ? ORDER BY ORDINAL_POSITION")).WithArgs("test", "users").
 		WillReturnRows(rows)
 
-	columns, err := getColumns(gormDB, "users")
+	columns, err := columnname.GetColumns(gormDB, "users")
 	assert.NoError(t, err)
 	assert.Equal(t, []string{"id", "name"}, columns)
 	assert.NoError(t, mock.ExpectationsWereMet())
@@ -115,7 +115,7 @@ func TestGenTableColumnNamesCode(t *testing.T) {
 		WillReturnRows(rows)
 
 	path := "./col/users.go"
-	err = GenTableColumnNamesCode(gormDB, []string{"users"}, path)
+	err = columnname.GenTableColumnNamesCode(gormDB, []string{"users"}, path)
 	assert.NoError(t, err)
 	assert.NoError(t, mock.ExpectationsWereMet())
 
@@ -125,6 +125,6 @@ func TestGenTableColumnNamesCode(t *testing.T) {
 }
 
 func TestGenTableColumnNamesCode_ToCamel(t *testing.T) {
-	output := ToCamel("hello_world")
+	output := columnname.ToCamel("hello_world")
 	assert.Equal(t, "HelloWorld", output)
 }

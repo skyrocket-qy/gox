@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func getColumns(db *gorm.DB, tableName string) (columns []string, err error) {
+func GetColumns(db *gorm.DB, tableName string) (columns []string, err error) {
 	// Use Migrator to get column types
 	columnTypes, err := db.Migrator().ColumnTypes(tableName)
 	if err != nil {
@@ -28,7 +28,7 @@ func GenTableColumnNamesCode(db *gorm.DB, tableNames []string, path string) erro
 	code += "package col\n\n"
 
 	for _, tableName := range tableNames {
-		columns, err := getColumns(db, tableName)
+		columns, err := GetColumns(db, tableName)
 		if err != nil {
 			return err
 		}
@@ -54,9 +54,9 @@ func GenTableColumnNamesCode(db *gorm.DB, tableNames []string, path string) erro
 		code += "}\n\n"
 	}
 
-	err := utils.CreateOrReplaceFile(path, code)
-	if err != nil {
-		return err
+	funcErr := utils.CreateOrReplaceFile(path, code)
+	if funcErr != nil {
+		return funcErr
 	}
 
 	return nil
