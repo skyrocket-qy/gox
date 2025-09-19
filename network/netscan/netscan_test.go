@@ -1,4 +1,4 @@
-package netscan
+package netscan_test
 
 import (
 	"bytes"
@@ -9,6 +9,7 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/skyrocket-qy/gox/network/netscan"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -29,7 +30,7 @@ func TestScanPorts(t *testing.T) {
 		openPort := listener.Addr().(*net.TCPAddr).Port
 
 		var wg sync.WaitGroup
-		ScanPorts("tcp", "127.0.0.1", openPort, openPort, &wg)
+		netscan.ScanPorts("tcp", "127.0.0.1", openPort, openPort, &wg) // Added netscan.
 		wg.Wait()
 
 		// Check if the open port was logged
@@ -53,7 +54,7 @@ func TestScanPorts(t *testing.T) {
 		openPort6 := listener6.Addr().(*net.TCPAddr).Port
 
 		var wg6 sync.WaitGroup
-		ScanPorts("tcp6", "localhost", openPort6, openPort6, &wg6)
+		netscan.ScanPorts("tcp6", "localhost", openPort6, openPort6, &wg6) // Added netscan.
 		wg6.Wait()
 
 		// Check if the open port was logged
@@ -65,7 +66,7 @@ func TestScanPorts(t *testing.T) {
 
 		var wgClosed sync.WaitGroup
 		// Assuming port 1 is not open
-		ScanPorts("tcp", "127.0.0.1", 1, 1, &wgClosed)
+		netscan.ScanPorts("tcp", "127.0.0.1", 1, 1, &wgClosed) // Added netscan.
 		wgClosed.Wait()
 		assert.Empty(t, logBuf.String(), "Expected no log output for a closed port")
 	})

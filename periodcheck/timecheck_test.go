@@ -1,4 +1,4 @@
-package periodcheck
+package periodcheck_test
 
 import (
 	"errors"
@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/skyrocket-qy/gox/periodcheck"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -190,19 +191,19 @@ func runCommonTimeCheckTestsWithMaxInterval(
 }
 
 func TestFixedTimeCheck(t *testing.T) {
-	runCommonTimeCheckTests(t, FixedTimeCheck, 2)
+	runCommonTimeCheckTests(t, periodcheck.FixedTimeCheck, 2)
 }
 
 func TestExponentialTimeCheck(t *testing.T) {
-	runCommonTimeCheckTests(t, ExponentialTimeCheck, 3)
+	runCommonTimeCheckTests(t, periodcheck.ExponentialTimeCheck, 3)
 }
 
 func TestDiffTimeCheck(t *testing.T) {
-	runCommonTimeCheckTestsWithMaxInterval(t, DiffTimeCheck, 2)
+	runCommonTimeCheckTestsWithMaxInterval(t, periodcheck.DiffTimeCheck, 2)
 }
 
 func TestSelfAdaptiveTimeCheck(t *testing.T) {
-	runCommonTimeCheckTestsWithMaxInterval(t, SelfAdaptiveTimeCheck, 2)
+	runCommonTimeCheckTestsWithMaxInterval(t, periodcheck.SelfAdaptiveTimeCheck, 2)
 
 	t.Run("DenominatorIsZero", func(t *testing.T) {
 		callCount := 0
@@ -218,7 +219,7 @@ func TestSelfAdaptiveTimeCheck(t *testing.T) {
 			return cur == target
 		}
 
-		err := SelfAdaptiveTimeCheck(
+		err := periodcheck.SelfAdaptiveTimeCheck( // Added periodcheck.
 			getCurrentStatus,
 			10,
 			checkFunc,
@@ -232,7 +233,7 @@ func TestSelfAdaptiveTimeCheck(t *testing.T) {
 }
 
 func TestAbs(t *testing.T) {
-	assert.Equal(t, 5, abs(5))
-	assert.Equal(t, 5, abs(-5))
-	assert.Equal(t, 0, abs(0))
+	assert.Equal(t, 5, periodcheck.Abs(5)) // Changed to periodcheck.Abs
+	assert.Equal(t, 5, periodcheck.Abs(-5)) // Changed to periodcheck.Abs
+	assert.Equal(t, 0, periodcheck.Abs(0)) // Changed to periodcheck.Abs
 }
