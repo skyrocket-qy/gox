@@ -160,7 +160,11 @@ func TestCallMethod(t *testing.T) {
 	assert.Equal(t, "new name", s.Name)
 
 	// Test calling a method with arguments and a return value
-	out, err = refletx.CallMethod(&s, "Sum", []reflect.Value{reflect.ValueOf(5), reflect.ValueOf(7)})
+	out, err = refletx.CallMethod(
+		&s,
+		"Sum",
+		[]reflect.Value{reflect.ValueOf(5), reflect.ValueOf(7)},
+	)
 	assert.NoError(t, err)
 	assert.Len(t, out, 1)
 	assert.Equal(t, 12, int(out[0].Int()))
