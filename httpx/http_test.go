@@ -1,4 +1,4 @@
-package httpx
+package httpx_test
 
 import (
 	"bytes"
@@ -14,6 +14,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/skyrocket-qy/erx"
+	"github.com/skyrocket-qy/gox/httpx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,9 +22,9 @@ func TestNewErrBinder(t *testing.T) {
 	errMap := map[erx.Code]int{
 		erx.ErrUnknown: http.StatusInternalServerError,
 	}
-	binder := NewErrBinder(errMap)
+	binder := httpx.NewErrBinder(errMap)
 	assert.NotNil(t, binder)
-	assert.Equal(t, errMap, binder.errToHTTP)
+	assert.Equal(t, errMap, binder.ErrToHTTP) // Changed from errToHTTP
 }
 
 func TestTrimToProject(t *testing.T) {
@@ -60,7 +61,7 @@ func TestTrimToProject(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			actual := trimToProject(tt.path)
+			actual := httpx.TrimToProject(tt.path) // Changed from trimToProject
 			assert.Equal(t, tt.expected, actual)
 		})
 	}
@@ -101,7 +102,7 @@ func TestExtractFuncName(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			actual := extractFuncName(tt.fullFunc)
+			actual := httpx.ExtractFuncName(tt.fullFunc) // Changed from extractFuncName
 			assert.Equal(t, tt.expected, actual)
 		})
 	}
@@ -169,14 +170,14 @@ func TestErrBinder_Bind(t *testing.T) {
 			c, _ := gin.CreateTestContext(recorder)
 			c.Set("reqId", tt.reqID)
 
-			binder := NewErrBinder(tt.errToHTTP)
+			binder := httpx.NewErrBinder(tt.errToHTTP)
 
 			t.Logf("Before Bind: log.Logger is %v", log.Logger)
 			binder.Bind(c, tt.err)
 
 			assert.Equal(t, tt.expectedStatus, recorder.Code)
 
-			var resp ErrResp
+			var resp httpx.ErrResp
 
 			err := json.Unmarshal(recorder.Body.Bytes(), &resp)
 			assert.NoError(t, err)
@@ -244,7 +245,7 @@ func TestFilterCallerInfos(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			actual := filterCallerInfos(tt.infos)
+			actual := httpx.FilterCallerInfos(tt.infos) // Changed from filterCallerInfos
 			assert.Equal(t, tt.expected, actual)
 		})
 	}
@@ -254,7 +255,7 @@ func TestGetCallStack(t *testing.T) {
 	// This test is a bit tricky as the call stack depends on the test runner and environment.
 	// We'll just assert that it returns at least one frame and that the file path contains
 	// "http_test.go".
-	callerInfos := getCallStack()
+	callerInfos := httpx.GetCallStack() // Changed from getCallStack
 	assert.NotEmpty(t, callerInfos)
 
 	// Check if at least one frame points to this test file
@@ -271,7 +272,7 @@ func TestGetCallStack(t *testing.T) {
 	assert.True(t, found, "Expected to find http_test.go in call stack")
 
 	// Test with callerSkip
-	callerInfosWithSkip := getCallStack(1) // Skip one more frame
+	callerInfosWithSkip := httpx.GetCallStack(1) // Changed from getCallStack
 	assert.NotEmpty(t, callerInfosWithSkip)
 	// The first frame should now be different from the one without skip
 	assert.NotEqual(t, callerInfos[0].Function, callerInfosWithSkip[0].Function)

@@ -14,11 +14,11 @@ import (
 )
 
 type ErrBinder struct {
-	errToHTTP map[erx.Code]int
+	ErrToHTTP map[erx.Code]int // Exported
 }
 
 func NewErrBinder(errToHTTP map[erx.Code]int) *ErrBinder {
-	return &ErrBinder{errToHTTP: errToHTTP}
+	return &ErrBinder{ErrToHTTP: errToHTTP} // Updated to use ErrToHTTP
 }
 
 type ErrResp struct {
@@ -34,7 +34,7 @@ func (b *ErrBinder) Bind(c *gin.Context, err error) {
 	if !errors.As(err, &ctxErr) {
 		c.JSON(http.StatusInternalServerError, ErrResp{ReqId: reqId, Code: erx.ErrUnknown.Str()})
 
-		callerInfos := getCallStack(2)
+		callerInfos := GetCallStack(2) // Updated to use GetCallStack
 		log.Error().Err(err).Str("call",
 			fmt.Sprintf("%+v", callerInfos)).Msg("error not wrapped by erx")
 
@@ -51,21 +51,21 @@ func (b *ErrBinder) Bind(c *gin.Context, err error) {
 	e.Str("code", ctxErr.Code.Str())
 
 	// Convert callerInfos to pretty strings
-	filtered := filterCallerInfos(ctxErr.CallerInfos)
+	filtered := FilterCallerInfos(ctxErr.CallerInfos) // Updated to use FilterCallerInfos
 
 	trace := make([]string, 0, len(filtered))
 	for _, ci := range filtered {
 		trace = append(trace, fmt.Sprintf("%s %d %s",
-			trimToProject(ci.File),
+			TrimToProject(ci.File), // Updated to use TrimToProject
 			ci.Line,
-			extractFuncName(ci.Function),
+			ExtractFuncName(ci.Function), // Updated to use ExtractFuncName
 		))
 	}
 
 	e.Strs("callerTrace", trace)
 	e.Msg("error")
 
-	httpStatus, ok := b.errToHTTP[ctxErr.Code]
+	httpStatus, ok := b.ErrToHTTP[ctxErr.Code] // Updated to use ErrToHTTP
 	if !ok {
 		httpStatus = http.StatusInternalServerError
 	}
@@ -73,14 +73,14 @@ func (b *ErrBinder) Bind(c *gin.Context, err error) {
 	c.JSON(httpStatus, ErrResp{ReqId: reqId, Code: ctxErr.Code.Str()})
 }
 
-func trimToProject(path string) string {
+func TrimToProject(path string) string { // Exported
 	projectRoot, _ := os.Getwd()
 	rel, _ := strings.CutPrefix(path, projectRoot)
 
 	return rel
 }
 
-func extractFuncName(fullFunc string) string {
+func ExtractFuncName(fullFunc string) string { // Exported
 	// e.g., input: srv/internal/logic/inter.(*Logic).Login
 	// output: (*Logic).Login
 	if idx := strings.LastIndex(fullFunc, "/"); idx >= 0 {
@@ -90,7 +90,7 @@ func extractFuncName(fullFunc string) string {
 	return fullFunc
 }
 
-func filterCallerInfos(infos []erx.CallerInfo) []erx.CallerInfo {
+func FilterCallerInfos(infos []erx.CallerInfo) []erx.CallerInfo { // Exported
 	projectPrefix, _ := os.Getwd()
 
 	var filtered []erx.CallerInfo
@@ -116,7 +116,7 @@ type CallerInfo struct {
 	Line     int
 }
 
-func getCallStack(callerSkip ...int) (callerInfos []CallerInfo) {
+func GetCallStack(callerSkip ...int) (callerInfos []CallerInfo) { // Exported
 	pc := make([]uintptr, 5)
 
 	skip := 2
