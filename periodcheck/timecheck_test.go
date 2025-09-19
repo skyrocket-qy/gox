@@ -2,29 +2,12 @@ package periodcheck_test
 
 import (
 	"errors"
-	"log"
-	"os"
-	"strings"
 	"testing"
 	"time"
 
 	"github.com/skyrocket-qy/gox/periodcheck"
 	"github.com/stretchr/testify/assert"
 )
-
-// Helper to capture log output.
-func captureOutput(f func()) string {
-	var buf strings.Builder
-	log.SetOutput(&buf)
-
-	defer func() {
-		log.SetOutput(os.Stderr)
-	}()
-
-	f()
-
-	return buf.String()
-}
 
 // Common test runner for TimeCheck functions with 5 parameters.
 func runCommonTimeCheckTests(
@@ -233,7 +216,7 @@ func TestSelfAdaptiveTimeCheck(t *testing.T) {
 }
 
 func TestAbs(t *testing.T) {
-	assert.Equal(t, 5, periodcheck.Abs(5)) // Changed to periodcheck.Abs
+	assert.Equal(t, 5, periodcheck.Abs(5))  // Changed to periodcheck.Abs
 	assert.Equal(t, 5, periodcheck.Abs(-5)) // Changed to periodcheck.Abs
-	assert.Equal(t, 0, periodcheck.Abs(0)) // Changed to periodcheck.Abs
+	assert.Equal(t, 0, periodcheck.Abs(0))  // Changed to periodcheck.Abs
 }
