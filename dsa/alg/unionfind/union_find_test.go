@@ -1,10 +1,46 @@
 package unionfind_test
 
 import (
+	"reflect"
+	"sort"
 	"testing"
 
+	"golang.org/x/exp/constraints"
 	"github.com/skyrocket-qy/gox/dsa/alg/unionfind"
 )
+
+// sortAndCompareGroups is a helper function to sort and compare two slices of groups.
+// It sorts the groups themselves and the elements within each group for consistent comparison.
+func sortAndCompareGroups[T constraints.Ordered](t *testing.T, actual, expected [][]T) bool {
+	// Sort elements within each group
+	for _, group := range actual {
+		sort.Slice(group, func(i, j int) bool {
+			return group[i] < group[j]
+		})
+	}
+	for _, group := range expected {
+		sort.Slice(group, func(i, j int) bool {
+			return group[i] < group[j]
+		})
+	}
+
+	// Sort the groups themselves
+	sort.Slice(actual, func(i, j int) bool {
+		// Compare groups based on their first element after internal sorting
+		if len(actual[i]) == 0 || len(actual[j]) == 0 {
+			return len(actual[i]) < len(actual[j])
+		}
+		return actual[i][0] < actual[j][0]
+	})
+	sort.Slice(expected, func(i, j int) bool {
+		if len(expected[i]) == 0 || len(expected[j]) == 0 {
+			return len(expected[i]) < len(expected[j])
+		}
+		return expected[i][0] < expected[j][0]
+	})
+
+	return reflect.DeepEqual(actual, expected)
+}
 
 func TestFind(t *testing.T) {
 	uf := unionfind.New[int]()
@@ -78,5 +114,112 @@ func TestUnionFindString(t *testing.T) {
 	uf.Union("a", "d")
 	if uf.Find("a") != uf.Find("e") {
 		t.Errorf("Expected uf.Find(\"a\") to be equal to uf.Find(\"e\") after uf.Union(\"a\", \"d\")")
+	}
+}
+
+func TestGroups(t *testing.T) {
+	tests := []struct {
+		name          string
+		setup         func(uf *unionfind.UnionFind[int])
+		expectedGroups [][]int
+	}{
+		{
+			name:          "Empty UnionFind",
+			setup:         func(uf *unionfind.UnionFind[int]) {},
+			expectedGroups: [][]int{},
+		},
+		{
+			name: "Single elements, no unions",
+			setup: func(uf *unionfind.UnionFind[int]) {
+				uf.Find(1)
+				uf.Find(2)
+				uf.Find(3)
+			},
+			expectedGroups: [][]int{{1}, {2}, {3}},
+		},
+		{
+			name: "Two distinct groups",
+			setup: func(uf *unionfind.UnionFind[int]) {
+				uf.Union(1, 2)
+				uf.Union(3, 4)
+				uf.Find(5) // Element 5 is in its own group
+			},
+			expectedGroups: [][]int{{1, 2}, {3, 4}, {5}},
+		},
+		{
+			name: "All elements in one group",
+			setup: func(uf *unionfind.UnionFind[int]) {
+				uf.Union(1, 2)
+				uf.Union(2, 3)
+				uf.Union(3, 4)
+			},
+			expectedGroups: [][]int{{1, 2, 3, 4}},
+		},
+		{
+			name: "Complex groups",
+			setup: func(uf *unionfind.UnionFind[int]) {
+				uf.Union(1, 2)
+				uf.Union(3, 4)
+				uf.Union(1, 3)
+				uf.Union(5, 6)
+				uf.Find(7)
+			},
+			expectedGroups: [][]int{{1, 2, 3, 4}, {5, 6}, {7}},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			uf := unionfind.New[int]()
+			tt.setup(uf)
+			actualGroups := uf.Groups()
+
+			if !sortAndCompareGroups(t, actualGroups, tt.expectedGroups) {
+				t.Errorf("Test %s failed: Expected %v, got %v", tt.name, tt.expectedGroups, actualGroups)
+			}
+		})
+	}
+
+	// Test with string type
+	stringTests := []struct {
+		name          string
+		setup         func(uf *unionfind.UnionFind[string])
+		expectedGroups [][]string
+	}{
+		{
+			name:          "String - Empty UnionFind",
+			setup:         func(uf *unionfind.UnionFind[string]) {},
+			expectedGroups: [][]string{},
+		},
+		{
+			name: "String - Single elements, no unions",
+			setup: func(uf *unionfind.UnionFind[string]) {
+				uf.Find("a")
+				uf.Find("b")
+				uf.Find("c")
+			},
+			expectedGroups: [][]string{{"a"}, {"b"}, {"c"}},
+		},
+		{
+			name: "String - Two distinct groups",
+			setup: func(uf *unionfind.UnionFind[string]) {
+				uf.Union("a", "b")
+				uf.Union("c", "d")
+				uf.Find("e")
+			},
+			expectedGroups: [][]string{{"a", "b"}, {"c", "d"}, {"e"}},
+		},
+	}
+
+	for _, tt := range stringTests {
+		t.Run(tt.name, func(t *testing.T) {
+			uf := unionfind.New[string]()
+			tt.setup(uf)
+			actualGroups := uf.Groups()
+
+			if !sortAndCompareGroups(t, actualGroups, tt.expectedGroups) {
+				t.Errorf("Test %s failed: Expected %v, got %v", tt.name, tt.expectedGroups, actualGroups)
+			}
+		})
 	}
 }
