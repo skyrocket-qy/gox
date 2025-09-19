@@ -39,3 +39,20 @@ func (uf *UnionFind[T]) Union(x, y T) {
 		uf.parents[rootX] = rootY
 	}
 }
+
+func (uf *UnionFind[T]) Groups() [][]T {
+	groups := make(map[T][]T)
+
+	for elem := range uf.parents {
+		root := uf.Find(elem)
+		groups[root] = append(groups[root], elem)
+	}
+
+	result := make([][]T, 0, len(groups))
+
+	for _, group := range groups {
+		result = append(result, group)
+	}
+
+	return result
+}
