@@ -74,7 +74,6 @@ func increaseWithCAS(wg *sync.WaitGroup, num *int32, old int32) {
 	var retryCount int
 
 	for !atomic.CompareAndSwapInt32(num, old, old+1) {
-
 		retryCount++
 
 		time.Sleep(time.Millisecond) // avoid more self cycle
