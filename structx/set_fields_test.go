@@ -1,8 +1,9 @@
-package structx
+package structx_test
 
 import (
 	"testing"
 
+	"github.com/skyrocket-qy/gox/structx"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -22,7 +23,7 @@ func TestSetFields(t *testing.T) {
 			"Age":     30,
 			"Address": "123 Main St",
 		}
-		err := SetFields(s, values)
+		err := structx.SetFields(s, values)
 		assert.NoError(t, err)
 		assert.Equal(t, "John", s.Name)
 		assert.Equal(t, 30, s.Age)
@@ -30,41 +31,41 @@ func TestSetFields(t *testing.T) {
 	})
 
 	t.Run("v is nil", func(t *testing.T) {
-		err := SetFields(nil, nil)
+		err := structx.SetFields(nil, nil)
 		require.Error(t, err)
 	})
 
 	t.Run("v is not a pointer to a struct", func(t *testing.T) {
 		s := testStruct{}
-		err := SetFields(s, nil)
+		err := structx.SetFields(s, nil)
 		require.Error(t, err)
 	})
 
 	t.Run("Field not found", func(t *testing.T) {
 		s := &testStruct{}
 		values := map[string]any{"NonExistent": "value"}
-		err := SetFields(s, values)
+		err := structx.SetFields(s, values)
 		require.Error(t, err)
 	})
 
 	t.Run("Field cannot be set", func(t *testing.T) {
 		s := &testStruct{}
 		values := map[string]any{"unexportedField": true}
-		err := SetFields(s, values)
+		err := structx.SetFields(s, values)
 		require.Error(t, err)
 	})
 
 	t.Run("Type mismatch", func(t *testing.T) {
 		s := &testStruct{}
 		values := map[string]any{"Age": "not an int"}
-		err := SetFields(s, values)
+		err := structx.SetFields(s, values)
 		require.Error(t, err)
 	})
 
 	t.Run("Type conversion works", func(t *testing.T) {
 		s := &testStruct{}
 		values := map[string]any{"Age": int64(30)}
-		err := SetFields(s, values)
+		err := structx.SetFields(s, values)
 		assert.NoError(t, err)
 		assert.Equal(t, 30, s.Age)
 	})

@@ -1,8 +1,10 @@
-package structx
+package structx_test
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/skyrocket-qy/gox/structx"
 )
 
 type Example struct {
@@ -43,7 +45,7 @@ func Test_SetBoolFieldsTrue(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := SetBoolFieldsTrue(tt.input)
+			err := structx.SetBoolFieldsTrue(tt.input)
 			if err != nil {
 				t.Errorf("SetBoolFieldsTrue() error = %v", err)
 
@@ -57,14 +59,14 @@ func Test_SetBoolFieldsTrue(t *testing.T) {
 	}
 
 	t.Run("nil input", func(t *testing.T) {
-		err := SetBoolFieldsTrue(nil)
+		err := structx.SetBoolFieldsTrue(nil)
 		if err == nil {
 			t.Error("SetBoolFieldsTrue() error = nil, want error")
 		}
 	})
 
 	t.Run("not a pointer to a struct", func(t *testing.T) {
-		err := SetBoolFieldsTrue(Example{})
+		err := structx.SetBoolFieldsTrue(Example{})
 		if err == nil {
 			t.Error("SetBoolFieldsTrue() error = nil, want error")
 		}

@@ -1,8 +1,9 @@
-package structx
+package structx_test
 
 import (
 	"testing"
 
+	"github.com/skyrocket-qy/gox/structx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,14 +24,14 @@ type AnotherNestedStruct struct {
 
 func TestDeepNew(t *testing.T) {
 	// Test with a simple struct
-	ptr := DeepNew[SimpleStruct]()
+	ptr := structx.DeepNew[SimpleStruct]()
 	assert.NotNil(t, ptr)
 	assert.IsType(t, &SimpleStruct{}, ptr)
 	assert.Equal(t, 0, ptr.Field1)
 	assert.Empty(t, ptr.Field2)
 
 	// Test with a struct containing nested pointers
-	nestedPtr := DeepNew[NestedPointerStruct]()
+	nestedPtr := structx.DeepNew[NestedPointerStruct]()
 	assert.NotNil(t, nestedPtr)
 	assert.IsType(t, &NestedPointerStruct{}, nestedPtr)
 	assert.NotNil(t, nestedPtr.Nested)  // Nested pointer should be initialized
@@ -45,13 +46,13 @@ func TestDeepNew(t *testing.T) {
 func TestInitFields(t *testing.T) {
 	// Test with a simple struct (no pointers to initialize)
 	simple := SimpleStruct{Field1: 1, Field2: "test"}
-	InitFields(&simple)
+	structx.InitFields(&simple)
 	assert.Equal(t, 1, simple.Field1)
 	assert.Equal(t, "test", simple.Field2)
 
 	// Test with a struct containing nil nested pointers
 	nested := NestedPointerStruct{}
-	InitFields(&nested)
+	structx.InitFields(&nested)
 	assert.NotNil(t, nested.Nested)
 	assert.NotNil(t, nested.Another)
 	assert.IsType(t, &SimpleStruct{}, nested.Nested)
@@ -62,7 +63,7 @@ func TestInitFields(t *testing.T) {
 		Nested:  &SimpleStruct{Field1: 100},
 		Another: &AnotherNestedStruct{Value: true},
 	}
-	InitFields(&initializedNested)
+	structx.InitFields(&initializedNested)
 	assert.Equal(t, 100, initializedNested.Nested.Field1)
 	assert.True(t, initializedNested.Another.Value)
 
@@ -73,19 +74,19 @@ func TestInitFields(t *testing.T) {
 	}
 
 	withNested := StructWithNested{}
-	InitFields(&withNested)
+	structx.InitFields(&withNested)
 	assert.Equal(t, 0, withNested.Nested.Field1)
 
 	// Test with nil input
 	var nilPtr *SimpleStruct
-	InitFields(nilPtr) // Should not panic
+	structx.InitFields(nilPtr) // Should not panic
 
 	// Test with non-pointer input (should not panic, but also not modify)
-	InitFields(SimpleStruct{}) // Should not panic
+	structx.InitFields(SimpleStruct{}) // Should not panic
 
 	// Test with pointer to non-struct (should not panic, but also not modify)
 	intPtr := new(int)
-	InitFields(intPtr) // Should not panic
+	structx.InitFields(intPtr) // Should not panic
 
 	// Test with a more deeply nested struct
 	type DeeplyNested struct {
@@ -93,7 +94,7 @@ func TestInitFields(t *testing.T) {
 	}
 
 	deeplyNested := DeeplyNested{}
-	InitFields(&deeplyNested)
+	structx.InitFields(&deeplyNested)
 	assert.NotNil(t, deeplyNested.Nested)
 	assert.NotNil(t, deeplyNested.Nested.Nested)
 	assert.NotNil(t, deeplyNested.Nested.Another)

@@ -8,17 +8,13 @@ import (
 
 func TestCreateOrReplaceFile(t *testing.T) {
 	// Create a temporary directory for testing
-	tmpDir, err := os.MkdirTemp("", "test")
-	if err != nil {
-		t.Fatalf("Failed to create temp dir: %v", err)
-	}
-	defer os.RemoveAll(tmpDir)
+	tmpDir := t.TempDir()
 
 	// Test case 1: Create a new file
 	filePath := filepath.Join(tmpDir, "testfile.txt")
 	content := "hello world"
 
-	err = CreateOrReplaceFile(filePath, content)
+	err := CreateOrReplaceFile(filePath, content)
 	if err != nil {
 		t.Errorf("Failed to create file: %v", err)
 	}

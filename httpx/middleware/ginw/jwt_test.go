@@ -22,9 +22,9 @@ import (
 
 const testJWTSecret = "test-secret"
 
-func generateTestJWT(issuer string, secret []byte, expiresAt time.Time) (string, error) {
+func generateTestJWT(secret []byte, expiresAt time.Time) (string, error) {
 	claims := &jwt.RegisteredClaims{
-		Issuer:    issuer,
+		Issuer:    "test-user",
 		ExpiresAt: jwt.NewNumericDate(expiresAt),
 	}
 
@@ -69,7 +69,7 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 	})
 
 	t.Run("Valid token", func(t *testing.T) {
-		token, err := generateTestJWT("test-user", []byte(testJWTSecret), time.Now().Add(time.Hour))
+		token, err := generateTestJWT([]byte(testJWTSecret), time.Now().Add(time.Hour))
 		assert.NoError(t, err)
 
 		w := httptest.NewRecorder()
@@ -88,7 +88,6 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 
 	t.Run("Invalid token - bad signature", func(t *testing.T) {
 		token, err := generateTestJWT(
-			"test-user",
 			[]byte("wrong-secret"),
 			time.Now().Add(time.Hour),
 		)
@@ -109,7 +108,6 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 
 	t.Run("Expired token", func(t *testing.T) {
 		token, err := generateTestJWT(
-			"test-user",
 			[]byte(testJWTSecret),
 			time.Now().Add(-time.Hour),
 		)
@@ -142,7 +140,7 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 	})
 
 	t.Run("Malformed Authorization header", func(t *testing.T) {
-		token, err := generateTestJWT("test-user", []byte(testJWTSecret), time.Now().Add(time.Hour))
+		token, err := generateTestJWT([]byte(testJWTSecret), time.Now().Add(time.Hour))
 		assert.NoError(t, err)
 
 		w := httptest.NewRecorder()

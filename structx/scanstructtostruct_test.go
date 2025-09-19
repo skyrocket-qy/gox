@@ -1,9 +1,11 @@
-package structx
+package structx_test
 
 import (
 	"errors"
 	"reflect"
 	"testing"
+
+	"github.com/skyrocket-qy/gox/structx"
 )
 
 // Test Struct Definitions.
@@ -88,8 +90,7 @@ func TestScanStructToStruct(t *testing.T) {
 			),
 		},
 		// {
-		// 	name:        "from substruct is nil pointer",
-		// 	from:        FromStruct{},
+		// 	name:        "from substruct is nil pointer",		// 	from:        FromStruct{},
 		// 	to:          &ToStruct{},
 		// 	expectedErr: errors.New("from substruct is non-nil pointer, key: Nested"),
 		// },
@@ -170,7 +171,7 @@ func TestScanStructToStruct(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			err := ScanStructToStruct(c.from, c.to)
+			err := structx.ScanStructToStruct(c.from, c.to)
 			if c.expectedErr != nil {
 				if err.Error() != c.expectedErr.Error() {
 					t.Fatalf("expected error: %v, got: %v", c.expectedErr, err)
