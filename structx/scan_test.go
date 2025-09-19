@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type ScanTestSimpleFrom struct {
@@ -113,13 +114,13 @@ func TestScan(t *testing.T) {
 	// Test case 7: Nil 'from' input
 	to7 := ScanTestSimpleTo{}
 	err = Scan(nil, &to7)
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.EqualError(t, err, "from is nil")
 
 	// Test case 8: Nil 'to' input
 	from8 := ScanTestSimpleFrom{}
 	err = Scan(&from8, nil)
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.EqualError(t, err, "to is nil")
 
 	// Test case 9: 'from' is a nil pointer
@@ -127,19 +128,19 @@ func TestScan(t *testing.T) {
 
 	to9 := ScanTestSimpleTo{}
 	err = Scan(from9, &to9)
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.EqualError(t, err, "from is a nil pointer")
 
 	// Test case 10: 'from' is not a struct or pointer to struct
 	to10 := ScanTestSimpleTo{}
 	err = Scan(123, &to10)
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.EqualError(t, err, "from must be a struct or pointer of struct, got int")
 
 	// Test case 11: 'to' is not a non-nil pointer to struct
 	from11 := ScanTestSimpleFrom{}
 	err = Scan(&from11, ScanTestSimpleTo{})
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.EqualError(t, err, "to must be a non-nil pointer of struct, got type: struct")
 
 	// Test case 12: Unexported fields (should be skipped)

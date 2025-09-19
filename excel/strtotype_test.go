@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestStrToType(t *testing.T) {
@@ -43,7 +44,7 @@ func TestStrToType(t *testing.T) {
 			case string:
 				got, err := StrToType[string](tt.input)
 				if tt.wantErr {
-					assert.Error(t, err)
+					require.Error(t, err)
 				} else {
 					assert.NoError(t, err)
 					assert.Equal(t, gotType, got)
@@ -51,7 +52,7 @@ func TestStrToType(t *testing.T) {
 			case int:
 				got, err := StrToType[int](tt.input)
 				if tt.wantErr {
-					assert.Error(t, err)
+					require.Error(t, err)
 				} else {
 					assert.NoError(t, err)
 					assert.Equal(t, gotType, got)
@@ -59,7 +60,7 @@ func TestStrToType(t *testing.T) {
 			case float64:
 				got, err := StrToType[float64](tt.input)
 				if tt.wantErr {
-					assert.Error(t, err)
+					require.Error(t, err)
 				} else {
 					assert.NoError(t, err)
 					assert.InDelta(t, gotType, got, 0.000001)
@@ -67,7 +68,7 @@ func TestStrToType(t *testing.T) {
 			case bool:
 				got, err := StrToType[bool](tt.input)
 				if tt.wantErr {
-					assert.Error(t, err)
+					require.Error(t, err)
 				} else {
 					assert.NoError(t, err)
 					assert.Equal(t, gotType, got)
@@ -79,7 +80,7 @@ func TestStrToType(t *testing.T) {
 	// Test unsupported type
 	t.Run("unsupported_type", func(t *testing.T) {
 		_, err := StrToType[complex64]("1+2i")
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Contains(t, err.Error(), "unsupported type")
 	})
 }

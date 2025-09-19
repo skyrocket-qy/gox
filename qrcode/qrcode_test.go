@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGenerateOTPURI(t *testing.T) {
@@ -27,7 +28,7 @@ func TestGenerateQRCode(t *testing.T) {
 
 	// Test with an empty URI (should return an error from qrcode.Encode)
 	png, err = generateQRCode("")
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Nil(t, png)
 	assert.Contains(t, err.Error(), "no data to encode")
 }

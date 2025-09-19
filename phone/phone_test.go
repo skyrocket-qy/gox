@@ -5,6 +5,7 @@ import (
 
 	"github.com/skyrocket-qy/gox/phone"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestParse(t *testing.T) {
@@ -17,19 +18,19 @@ func TestParse(t *testing.T) {
 
 	// Invalid phone number (too short, but parsable by libphonenumber, invalid by IsValidNumber)
 	phoneNumber, err = phone.Parse("+1555")
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Nil(t, phoneNumber)
 	assert.EqualError(t, err, "phone number is not valid: +1555")
 
 	// Invalid phone number (non-numeric, not parsable by libphonenumber)
 	phoneNumber, err = phone.Parse("abc")
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Nil(t, phoneNumber)
 	assert.Contains(t, err.Error(), "the phone number supplied is not a number")
 
 	// Empty string (not parsable by libphonenumber)
 	phoneNumber, err = phone.Parse("")
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Nil(t, phoneNumber)
 	assert.Contains(t, err.Error(), "the phone number supplied is not a number")
 }
@@ -42,7 +43,7 @@ func TestFormatPhone(t *testing.T) {
 
 	// Invalid phone number
 	formattedPhone, err = phone.FormatPhone("123")
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Empty(t, formattedPhone)
 	assert.Contains(t, err.Error(), "invalid country code")
 }
@@ -55,7 +56,7 @@ func TestFormatPhoneToCountryCode(t *testing.T) {
 
 	// Invalid phone number
 	countryCode, err = phone.FormatPhoneToCountryCode("123")
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Empty(t, countryCode)
 	assert.Contains(t, err.Error(), "invalid country code")
 }
@@ -68,7 +69,7 @@ func TestFormatPhoneToSignificantNumber(t *testing.T) {
 
 	// Invalid phone number
 	significantNumber, err = phone.FormatPhoneToSignificantNumber("123")
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Empty(t, significantNumber)
 	assert.Contains(t, err.Error(), "invalid country code")
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/go-redis/redismock/v9"
 	"github.com/skyrocket-qy/gox/probfilter/bloomfilter"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAdd(t *testing.T) {
@@ -52,7 +53,7 @@ func TestExists_Error(t *testing.T) {
 	mock.ExpectDo("BF.EXISTS", key, value).SetErr(errors.New("redis error"))
 
 	exists, err := bloomfilter.Exists(ctx, db, key, value) // Added bloomfilter.
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.False(t, exists)
 	assert.NoError(t, mock.ExpectationsWereMet())
 }
@@ -66,7 +67,7 @@ func TestExists_UnexpectedType(t *testing.T) {
 	mock.ExpectDo("BF.EXISTS", key, value).SetVal("not_an_int")
 
 	exists, err := bloomfilter.Exists(ctx, db, key, value) // Already had bloomfilter.
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.False(t, exists)
 	assert.Contains(t, err.Error(), "unexpected type for BF.EXISTS result")
 	assert.NoError(t, mock.ExpectationsWereMet())
@@ -96,6 +97,6 @@ func TestReserve_Error(t *testing.T) {
 	mock.ExpectDo("BF.RESERVE", key, errorRate, capacity).SetErr(errors.New("redis error"))
 
 	err := bloomfilter.Reserve(ctx, db, key, errorRate, capacity) // Added bloomfilter.
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.NoError(t, mock.ExpectationsWereMet())
 }

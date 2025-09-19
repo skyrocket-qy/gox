@@ -8,6 +8,7 @@ import (
 	"github.com/go-redis/redismock/v9"
 	"github.com/skyrocket-qy/gox/probfilter/hyperloglog"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAdd(t *testing.T) {
@@ -23,7 +24,7 @@ func TestAdd(t *testing.T) {
 	mock.ExpectDo("PFADD", "mykey", "a", "b", "c").SetErr(errors.New("add failed"))
 
 	_, err = hyperloglog.Add(ctx, db, "mykey", "a", "b", "c") // Added hyperloglog.
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	mock.ExpectDo("PFADD", "mykey", "a", "b", "c").SetVal("not an int")
 
@@ -45,7 +46,7 @@ func TestCount(t *testing.T) {
 	mock.ExpectDo("PFCOUNT", "key1", "key2").SetErr(errors.New("count failed"))
 
 	_, err = hyperloglog.Count(ctx, db, "key1", "key2") // Added hyperloglog.
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	mock.ExpectDo("PFCOUNT", "key1", "key2").SetVal("not an int")
 
@@ -66,5 +67,5 @@ func TestMerge(t *testing.T) {
 	mock.ExpectDo("PFMERGE", "dest", "key1", "key2").SetErr(errors.New("merge failed"))
 
 	err = hyperloglog.Merge(ctx, db, "dest", "key1", "key2") // Added hyperloglog.
-	assert.Error(t, err)
+	require.Error(t, err)
 }

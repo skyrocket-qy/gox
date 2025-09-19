@@ -5,6 +5,7 @@ import (
 
 	"github.com/skyrocket-qy/gox/excel"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestToExcel1D(t *testing.T) {
@@ -58,7 +59,7 @@ func TestToExcel1D(t *testing.T) {
 			if !tc.IsErr {
 				assert.NoError(t, err)
 			} else {
-				assert.Error(t, err)
+				require.Error(t, err)
 			}
 
 			assert.Equal(t, tc.wantKey, keyName)
@@ -116,7 +117,7 @@ func TestToColsList(t *testing.T) {
 			got, err := excel.ToColsList[string, int](tc.table)
 
 			if tc.isErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
 				assert.NoError(t, err)
 				assert.Equal(t, tc.want, got)
@@ -189,7 +190,7 @@ func TestToExcelGroup(t *testing.T) {
 			keys, data, err := excel.ToExcelGroup[string](tc.table, tc.pattern)
 
 			if tc.wantErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 
 				return
 			}
@@ -270,7 +271,7 @@ func TestToExcel2D(t *testing.T) {
 			rowKeys, colKeys, data, err := excel.ToExcel2D[string, string, int](tc.table)
 
 			if tc.wantErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 
 				return
 			}
@@ -342,7 +343,7 @@ func TestToColsList_KeyConversionError(t *testing.T) {
 		{"1", "2"},
 	}
 	_, err := excel.ToColsList[int, int](table)
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestToExcelGroup_KeyConversionError(t *testing.T) {
@@ -352,5 +353,5 @@ func TestToExcelGroup_KeyConversionError(t *testing.T) {
 	}
 	pattern := `^group\d+|^bad-group-key`
 	_, _, err := excel.ToExcelGroup[int](table, pattern)
-	assert.Error(t, err)
+	require.Error(t, err)
 }

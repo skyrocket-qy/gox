@@ -7,6 +7,7 @@ import (
 
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestIsNil(t *testing.T) {
@@ -133,12 +134,12 @@ func TestGetField(t *testing.T) {
 
 	// Test non-existing field
 	_, err = GetField[string](&s, "NonExistent")
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Contains(t, err.Error(), "no such field")
 
 	// Test type mismatch
 	_, err = GetField[int](&s, "Name")
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Contains(t, err.Error(), "assert field type fail")
 }
 
@@ -165,7 +166,7 @@ func TestCallMethod(t *testing.T) {
 
 	// Test calling a non-existent method
 	_, err = CallMethod(&s, "NonExistentMethod", []reflect.Value{})
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Contains(t, err.Error(), "method is not exist")
 
 	// Test calling a method with wrong number of arguments
@@ -174,7 +175,7 @@ func TestCallMethod(t *testing.T) {
 		"SetName",
 		[]reflect.Value{reflect.ValueOf("one"), reflect.ValueOf("two")},
 	)
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Contains(t, err.Error(), "the method arguments is out of index")
 
 	// Test calling a method with wrong argument type (reflect.Call will panic, so we expect an
@@ -182,7 +183,7 @@ func TestCallMethod(t *testing.T) {
 	// which is then recovered by our IsNil.
 	// For CallField, the error comes from NumIn() check.
 	_, err = CallMethod(&s, "SetName", []reflect.Value{reflect.ValueOf(123)})
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Contains(t, err.Error(), "failed to call method")
 }
 
@@ -239,14 +240,14 @@ func TestGetMap(t *testing.T) {
 		FieldB: AnotherType{X: 100},
 	}
 	_, err = GetMap[int](&s4) // Expecting int, but FieldA is string
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Contains(t, err.Error(), "assert field type fail: FieldA")
 
 	// Test with nil input
 	var nilStruct *OuterStruct
 
 	_, err = GetMap[any](nilStruct)
-	assert.Error(t, err) // reflections.ItemsDeep returns error for nil input
+	require.Error(t, err) // reflections.ItemsDeep returns error for nil input
 }
 
 func TestGetFunctionName(t *testing.T) {

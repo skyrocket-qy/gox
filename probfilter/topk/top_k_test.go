@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-redis/redismock/v9"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestReserve(t *testing.T) {
@@ -23,7 +24,7 @@ func TestReserve(t *testing.T) {
 		SetErr(errors.New("reserve failed"))
 
 	err = Reserve(ctx, db, "mykey", 10, 100, 99, 1000)
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestAdd(t *testing.T) {
@@ -39,17 +40,17 @@ func TestAdd(t *testing.T) {
 	mock.ExpectDo("TOPK.ADD", "mykey", "item1", "item2").SetErr(errors.New("add failed"))
 
 	_, err = Add(ctx, db, "mykey", "item1", "item2")
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	mock.ExpectDo("TOPK.ADD", "mykey", "item1", "item2").SetVal("not an array")
 
 	_, err = Add(ctx, db, "mykey", "item1", "item2")
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	mock.ExpectDo("TOPK.ADD", "mykey", "item1", "item2").SetVal([]any{123})
 
 	_, err = Add(ctx, db, "mykey", "item1", "item2")
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestQuery(t *testing.T) {
@@ -65,17 +66,17 @@ func TestQuery(t *testing.T) {
 	mock.ExpectDo("TOPK.QUERY", "mykey", "item1", "item2").SetErr(errors.New("query failed"))
 
 	_, err = Query(ctx, db, "mykey", "item1", "item2")
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	mock.ExpectDo("TOPK.QUERY", "mykey", "item1", "item2").SetVal("not an array")
 
 	_, err = Query(ctx, db, "mykey", "item1", "item2")
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	mock.ExpectDo("TOPK.QUERY", "mykey", "item1", "item2").SetVal([]any{"not an int"})
 
 	_, err = Query(ctx, db, "mykey", "item1", "item2")
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestCount(t *testing.T) {
@@ -91,17 +92,17 @@ func TestCount(t *testing.T) {
 	mock.ExpectDo("TOPK.COUNT", "mykey", "item1", "item2").SetErr(errors.New("count failed"))
 
 	_, err = Count(ctx, db, "mykey", "item1", "item2")
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	mock.ExpectDo("TOPK.COUNT", "mykey", "item1", "item2").SetVal("not an array")
 
 	_, err = Count(ctx, db, "mykey", "item1", "item2")
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	mock.ExpectDo("TOPK.COUNT", "mykey", "item1", "item2").SetVal([]any{"not an int"})
 
 	_, err = Count(ctx, db, "mykey", "item1", "item2")
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestList(t *testing.T) {
@@ -117,17 +118,17 @@ func TestList(t *testing.T) {
 	mock.ExpectDo("TOPK.LIST", "mykey").SetErr(errors.New("list failed"))
 
 	_, err = List(ctx, db, "mykey")
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	mock.ExpectDo("TOPK.LIST", "mykey").SetVal("not an array")
 
 	_, err = List(ctx, db, "mykey")
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	mock.ExpectDo("TOPK.LIST", "mykey").SetVal([]any{123})
 
 	_, err = List(ctx, db, "mykey")
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestInfo(t *testing.T) {
@@ -152,15 +153,15 @@ func TestInfo(t *testing.T) {
 	mock.ExpectDo("TOPK.INFO", "mykey").SetErr(errors.New("info failed"))
 
 	_, err = Info(ctx, db, "mykey")
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	mock.ExpectDo("TOPK.INFO", "mykey").SetVal("not an array")
 
 	_, err = Info(ctx, db, "mykey")
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	mock.ExpectDo("TOPK.INFO", "mykey").SetVal([]any{"wrong length"})
 
 	_, err = Info(ctx, db, "mykey")
-	assert.Error(t, err)
+	require.Error(t, err)
 }

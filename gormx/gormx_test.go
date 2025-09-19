@@ -8,6 +8,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/skyrocket-qy/gox/gormx"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -41,7 +42,7 @@ func TestCheckExist(t *testing.T) {
 			WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
 
 		err := gormx.CheckExist(gormDB, &User{}, "name = ?", "test")
-		assert.Error(t, err)
+		require.Error(t, err)
 	})
 
 	t.Run("record does not exist", func(t *testing.T) {
@@ -59,7 +60,7 @@ func TestCheckExist(t *testing.T) {
 			WillReturnError(errors.New("db error"))
 
 		err := gormx.CheckExist(gormDB, &User{}, "name = ?", "test")
-		assert.Error(t, err)
+		require.Error(t, err)
 	})
 }
 

@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-redis/redismock/v9"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCreate(t *testing.T) {
@@ -21,7 +22,7 @@ func TestCreate(t *testing.T) {
 	mock.ExpectDo("TDIGEST.CREATE", "mykey", 100.0).SetErr(errors.New("create failed"))
 
 	err = Create(ctx, db, "mykey", 100.0)
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestAdd(t *testing.T) {
@@ -38,7 +39,7 @@ func TestAdd(t *testing.T) {
 		SetErr(errors.New("add failed"))
 
 	err = Add(ctx, db, "mykey", items)
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestMerge(t *testing.T) {
@@ -53,7 +54,7 @@ func TestMerge(t *testing.T) {
 	mock.ExpectDo("TDIGEST.MERGE", "destkey", "s1", "s2").SetErr(errors.New("merge failed"))
 
 	err = Merge(ctx, db, "destkey", "s1", "s2")
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestMin(t *testing.T) {
@@ -69,12 +70,12 @@ func TestMin(t *testing.T) {
 	mock.ExpectDo("TDIGEST.MIN", "mykey").SetErr(errors.New("min failed"))
 
 	_, err = Min(ctx, db, "mykey")
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	mock.ExpectDo("TDIGEST.MIN", "mykey").SetVal("not a float")
 
 	_, err = Min(ctx, db, "mykey")
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestMax(t *testing.T) {
@@ -90,12 +91,12 @@ func TestMax(t *testing.T) {
 	mock.ExpectDo("TDIGEST.MAX", "mykey").SetErr(errors.New("max failed"))
 
 	_, err = Max(ctx, db, "mykey")
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	mock.ExpectDo("TDIGEST.MAX", "mykey").SetVal("not a float")
 
 	_, err = Max(ctx, db, "mykey")
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestQuantile(t *testing.T) {
@@ -111,12 +112,12 @@ func TestQuantile(t *testing.T) {
 	mock.ExpectDo("TDIGEST.QUANTILE", "mykey", 0.5).SetErr(errors.New("quantile failed"))
 
 	_, err = Quantile(ctx, db, "mykey", 0.5)
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	mock.ExpectDo("TDIGEST.QUANTILE", "mykey", 0.5).SetVal("not a float")
 
 	_, err = Quantile(ctx, db, "mykey", 0.5)
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestCDF(t *testing.T) {
@@ -132,10 +133,10 @@ func TestCDF(t *testing.T) {
 	mock.ExpectDo("TDIGEST.CDF", "mykey", 10.0).SetErr(errors.New("cdf failed"))
 
 	_, err = CDF(ctx, db, "mykey", 10.0)
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	mock.ExpectDo("TDIGEST.CDF", "mykey", 10.0).SetVal("not a float")
 
 	_, err = CDF(ctx, db, "mykey", 10.0)
-	assert.Error(t, err)
+	require.Error(t, err)
 }

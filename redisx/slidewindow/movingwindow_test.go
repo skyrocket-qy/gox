@@ -11,6 +11,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/skyrocket-qy/gox/redisx/slidewindow"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // MockClock implements the Clock interface for testing.
@@ -86,7 +87,7 @@ func TestMovingWindowLimiter_Allow(t *testing.T) {
 	mockClock.NowFunc = func() time.Time { return time.Unix(0, currentNow) }
 
 	allowed, err = limiter.Allow(ctx, key, limit, window)
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.False(t, allowed)
 	assert.Contains(t, err.Error(), "redis ZRemRangeByScore error")
 
@@ -102,7 +103,7 @@ func TestMovingWindowLimiter_Allow(t *testing.T) {
 	mockClock.NowFunc = func() time.Time { return time.Unix(0, currentNow) }
 
 	allowed, err = limiter.Allow(ctx, key, limit, window)
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.False(t, allowed)
 	assert.Contains(t, err.Error(), "redis zcard error")
 

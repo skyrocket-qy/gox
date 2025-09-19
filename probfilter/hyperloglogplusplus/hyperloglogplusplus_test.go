@@ -8,6 +8,7 @@ import (
 
 	"github.com/skyrocket-qy/gox/probfilter/hyperloglogplusplus"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // a simple hash function for testing.
@@ -25,10 +26,10 @@ func (s stringHash) Sum32() uint32 {
 
 func TestNew(t *testing.T) {
 	_, err := hyperloglogplusplus.New(3)
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	_, err = hyperloglogplusplus.New(17)
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	hll, err := hyperloglogplusplus.New(14)
 	assert.NoError(t, err)
@@ -94,7 +95,7 @@ func TestMerge(t *testing.T) {
 	}
 
 	err := hll1.Merge(hll3)
-	assert.Error(t, err, "Expected error when merging HLLs with different precisions")
+	require.Error(t, err, "Expected error when merging HLLs with different precisions")
 
 	err = hll1.Merge(hll2)
 	assert.NoError(t, err)
@@ -125,7 +126,7 @@ func TestGobDecodeError(t *testing.T) {
 
 	// Test with a corrupted buffer that causes an error in the first Decode
 	err := hll.GobDecode([]byte{0x01, 0x02, 0x03})
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	// Test with a buffer that causes an error in the second Decode
 	var buf bytes.Buffer
@@ -134,7 +135,7 @@ func TestGobDecodeError(t *testing.T) {
 	enc.Encode([]uint8{1, 2, 3}) // reg
 
 	err = hll.GobDecode(buf.Bytes())
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	// Test with a buffer that causes an error in the third Decode
 	buf.Reset()
@@ -142,5 +143,5 @@ func TestGobDecodeError(t *testing.T) {
 	enc.Encode(uint32(16384))    // m
 
 	err = hll.GobDecode(buf.Bytes())
-	assert.Error(t, err)
+	require.Error(t, err)
 }

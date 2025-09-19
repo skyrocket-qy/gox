@@ -10,6 +10,7 @@ import (
 
 	"github.com/skyrocket-qy/gox/lifecyclex"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSimpleLifecycle(t *testing.T) {
@@ -200,6 +201,6 @@ func TestLifecycleParallel_Error(t *testing.T) {
 	lc.Add(appD, closer(appD, nil))
 
 	err := lc.Shutdown(context.Background())
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.ErrorIs(t, err, testErr)
 }
