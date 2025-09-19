@@ -12,7 +12,7 @@ var BaseNums []int
 
 func init() {
 	BaseNums = make([]int, N)
-	for i := 0; i < N; i++ {
+	for i := range N {
 		BaseNums[i] = i
 	}
 }
@@ -21,7 +21,8 @@ func BenchmarkInsertPermutation(b *testing.B) {
 	nums := make([]int, N)
 	copy(nums, BaseNums)
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+
+	for range b.N {
 		permutation.InsertPermutation(nums)
 	}
 }
@@ -30,7 +31,8 @@ func BenchmarkBackTrackPermutation(b *testing.B) {
 	nums := make([]int, N)
 	copy(nums, BaseNums)
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+
+	for range b.N {
 		permutation.BackTrackPermutation(nums)
 	}
 }
@@ -39,7 +41,8 @@ func BenchmarkSwapPermutation(b *testing.B) {
 	nums := make([]int, N)
 	copy(nums, BaseNums)
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+
+	for range b.N {
 		permutation.SwapPermutation(nums)
 	}
 }
@@ -48,7 +51,8 @@ func BenchmarkHeapPermutation(b *testing.B) {
 	nums := make([]int, N)
 	copy(nums, BaseNums)
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+
+	for range b.N {
 		permutation.HeapPermutation(nums)
 	}
 }

@@ -169,7 +169,9 @@ func SelfAdaptiveTimeCheck(
 		log.Printf("Current status is %d, waiting for %d\n", curStatus, targetStatus)
 
 		if preDiff == 0 {
-			preDiff, preInterval = time.Duration(Abs(curStatus-targetStatus)), startInterval // Changed abs to Abs
+			preDiff, preInterval = time.Duration(
+				Abs(curStatus-targetStatus),
+			), startInterval // Changed abs to Abs
 			time.Sleep(startInterval)
 		} else {
 			diff := time.Duration(Abs(curStatus - targetStatus)) // Changed abs to Abs

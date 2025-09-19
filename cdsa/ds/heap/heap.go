@@ -14,13 +14,13 @@ type Heap[T any] struct {
 // The less function determines the heap's order:
 // - For a min-heap, less(a, b) should return true if a < b.
 // - For a max-heap, less(a, b) should return true if a > b.
-func New[T any](eles []T, less func(T, T) bool) *Heap[T] {
+func New[T any](eels []T, less func(T, T) bool) *Heap[T] {
 	h := &Heap[T]{
-		data: make([]T, 1, len(eles)+1),
+		data: make([]T, 1, len(eels)+1),
 		less: less,
 	}
 
-	h.data = append(h.data, eles...)
+	h.data = append(h.data, eels...)
 	for i := (len(h.data) - 1) / 2; i > 0; i-- {
 		h.down(i)
 	}
@@ -32,6 +32,7 @@ func New[T any](eles []T, less func(T, T) bool) *Heap[T] {
 func (h *Heap[T]) Len() int {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
+
 	return len(h.data) - 1
 }
 
@@ -47,6 +48,7 @@ func (h *Heap[T]) swap(i, j int) {
 func (h *Heap[T]) Push(e T) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
+
 	h.data = append(h.data, e)
 	h.up(h.len())
 }
@@ -58,6 +60,7 @@ func (h *Heap[T]) Pop() T {
 
 	if h.len() == 0 {
 		var zeroValue T
+
 		return zeroValue // Or panic, depending on desired behavior for empty heap
 	}
 
@@ -66,6 +69,7 @@ func (h *Heap[T]) Pop() T {
 	h.data[1] = h.data[n]
 	h.data = h.data[:n] // Shrink the slice
 	h.down(1)
+
 	return res
 }
 
@@ -80,6 +84,7 @@ func (h *Heap[T]) down(i int) {
 		if j+1 <= h.len() && h.less(h.data[j+1], h.data[j]) {
 			j++
 		}
+
 		if h.less(h.data[j], h.data[i]) {
 			h.swap(i, j)
 		} else {

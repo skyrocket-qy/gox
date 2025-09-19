@@ -36,7 +36,7 @@ func Bench(fn func(), repeat int, baseOutputFile string) error {
 	reg := regexp.MustCompile("[^a-zA-Z0-9]+")
 
 	// Create the 'tmp' directory if it doesn't exist
-	if err := os.MkdirAll("tmp", 0755); err != nil {
+	if err := os.MkdirAll("tmp", 0o755); err != nil {
 		return err
 	}
 
@@ -44,7 +44,7 @@ func Bench(fn func(), repeat int, baseOutputFile string) error {
 		ext := filepath.Ext(baseOutputFile)
 		baseName := baseOutputFile[:len(baseOutputFile)-len(ext)]
 		sanitizedSeriesName := reg.ReplaceAllString(data.Name, "_")
-		outputFile := filepath.Join("tmp", baseName + "_" + sanitizedSeriesName + ext)
+		outputFile := filepath.Join("tmp", baseName+"_"+sanitizedSeriesName+ext)
 
 		if err := WriteChartToFile(outputFile, x, data); err != nil {
 			// Continue to generate other charts even if one fails
@@ -63,7 +63,7 @@ func Bench(fn func(), repeat int, baseOutputFile string) error {
 func WriteResultsToFile(baseOutputFile string, datas []LineData) error {
 	ext := filepath.Ext(baseOutputFile)
 	baseName := baseOutputFile[:len(baseOutputFile)-len(ext)]
-	outputFile := filepath.Join("tmp", baseName + "_results.json")
+	outputFile := filepath.Join("tmp", baseName+"_results.json")
 
 	file, err := os.Create(outputFile)
 	if err != nil {

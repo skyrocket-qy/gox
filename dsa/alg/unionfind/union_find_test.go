@@ -1,23 +1,24 @@
 package unionfind_test
 
 import (
+	"cmp"
 	"reflect"
 	"sort"
 	"testing"
 
-	"golang.org/x/exp/constraints"
 	"github.com/skyrocket-qy/gox/dsa/alg/unionfind"
 )
 
 // sortAndCompareGroups is a helper function to sort and compare two slices of groups.
 // It sorts the groups themselves and the elements within each group for consistent comparison.
-func sortAndCompareGroups[T constraints.Ordered](t *testing.T, actual, expected [][]T) bool {
+func sortAndCompareGroups[T cmp.Ordered](t *testing.T, actual, expected [][]T) bool {
 	// Sort elements within each group
 	for _, group := range actual {
 		sort.Slice(group, func(i, j int) bool {
 			return group[i] < group[j]
 		})
 	}
+
 	for _, group := range expected {
 		sort.Slice(group, func(i, j int) bool {
 			return group[i] < group[j]
@@ -30,12 +31,14 @@ func sortAndCompareGroups[T constraints.Ordered](t *testing.T, actual, expected 
 		if len(actual[i]) == 0 || len(actual[j]) == 0 {
 			return len(actual[i]) < len(actual[j])
 		}
+
 		return actual[i][0] < actual[j][0]
 	})
 	sort.Slice(expected, func(i, j int) bool {
 		if len(expected[i]) == 0 || len(expected[j]) == 0 {
 			return len(expected[i]) < len(expected[j])
 		}
+
 		return expected[i][0] < expected[j][0]
 	})
 
@@ -97,35 +100,45 @@ func TestUnionFindString(t *testing.T) {
 	uf := unionfind.New[string]()
 
 	uf.Union("a", "b")
+
 	if uf.Find("a") != uf.Find("b") {
-		t.Errorf("Expected uf.Find(\"a\") to be equal to uf.Find(\"b\") after uf.Union(\"a\", \"b\")")
+		t.Errorf(
+			"Expected uf.Find(\"a\") to be equal to uf.Find(\"b\") after uf.Union(\"a\", \"b\")",
+		)
 	}
 
 	uf.Union("b", "c")
+
 	if uf.Find("a") != uf.Find("c") {
-		t.Errorf("Expected uf.Find(\"a\") to be equal to uf.Find(\"c\") after uf.Union(\"b\", \"c\")")
+		t.Errorf(
+			"Expected uf.Find(\"a\") to be equal to uf.Find(\"c\") after uf.Union(\"b\", \"c\")",
+		)
 	}
 
 	uf.Union("d", "e")
+
 	if uf.Find("a") == uf.Find("d") {
 		t.Errorf("Expected uf.Find(\"a\") to not be equal to uf.Find(\"d\")")
 	}
 
 	uf.Union("a", "d")
+
 	if uf.Find("a") != uf.Find("e") {
-		t.Errorf("Expected uf.Find(\"a\") to be equal to uf.Find(\"e\") after uf.Union(\"a\", \"d\")")
+		t.Errorf(
+			"Expected uf.Find(\"a\") to be equal to uf.Find(\"e\") after uf.Union(\"a\", \"d\")",
+		)
 	}
 }
 
 func TestGroups(t *testing.T) {
 	tests := []struct {
-		name          string
-		setup         func(uf *unionfind.UnionFind[int])
+		name           string
+		setup          func(uf *unionfind.UnionFind[int])
 		expectedGroups [][]int
 	}{
 		{
-			name:          "Empty UnionFind",
-			setup:         func(uf *unionfind.UnionFind[int]) {},
+			name:           "Empty UnionFind",
+			setup:          func(uf *unionfind.UnionFind[int]) {},
 			expectedGroups: [][]int{},
 		},
 		{
@@ -175,20 +188,25 @@ func TestGroups(t *testing.T) {
 			actualGroups := uf.Groups()
 
 			if !sortAndCompareGroups(t, actualGroups, tt.expectedGroups) {
-				t.Errorf("Test %s failed: Expected %v, got %v", tt.name, tt.expectedGroups, actualGroups)
+				t.Errorf(
+					"Test %s failed: Expected %v, got %v",
+					tt.name,
+					tt.expectedGroups,
+					actualGroups,
+				)
 			}
 		})
 	}
 
 	// Test with string type
 	stringTests := []struct {
-		name          string
-		setup         func(uf *unionfind.UnionFind[string])
+		name           string
+		setup          func(uf *unionfind.UnionFind[string])
 		expectedGroups [][]string
 	}{
 		{
-			name:          "String - Empty UnionFind",
-			setup:         func(uf *unionfind.UnionFind[string]) {},
+			name:           "String - Empty UnionFind",
+			setup:          func(uf *unionfind.UnionFind[string]) {},
 			expectedGroups: [][]string{},
 		},
 		{
@@ -218,7 +236,12 @@ func TestGroups(t *testing.T) {
 			actualGroups := uf.Groups()
 
 			if !sortAndCompareGroups(t, actualGroups, tt.expectedGroups) {
-				t.Errorf("Test %s failed: Expected %v, got %v", tt.name, tt.expectedGroups, actualGroups)
+				t.Errorf(
+					"Test %s failed: Expected %v, got %v",
+					tt.name,
+					tt.expectedGroups,
+					actualGroups,
+				)
 			}
 		})
 	}

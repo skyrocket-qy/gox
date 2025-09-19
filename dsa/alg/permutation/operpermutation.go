@@ -13,15 +13,18 @@ func OperInsertPermutation[T any](nums []T, oper func([]T)) {
 		return
 	}
 
-	var insert func(currentPerm []T, remainingNums []T)
-	insert = func(currentPerm []T, remainingNums []T) {
+	var insert func(currentPerm, remainingNums []T)
+
+	insert = func(currentPerm, remainingNums []T) {
 		if len(remainingNums) == 0 {
 			oper(currentPerm)
+
 			return
 		}
 
 		num := remainingNums[0]
 		rest := remainingNums[1:]
+
 		for i := 0; i <= len(currentPerm); i++ {
 			newPerm := make([]T, 0, len(currentPerm)+1)
 			newPerm = append(newPerm, currentPerm[:i]...)
@@ -51,9 +54,11 @@ func OperBackTrackPermutation[T any](nums []T, oper func([]T)) {
 	used := make([]bool, len(nums))
 
 	var backTrack func()
+
 	backTrack = func() {
 		if len(path) == len(nums) {
 			oper(path)
+
 			return
 		}
 
@@ -61,9 +66,13 @@ func OperBackTrackPermutation[T any](nums []T, oper func([]T)) {
 			if used[i] {
 				continue
 			}
+
 			used[i] = true
+
 			path = append(path, num)
+
 			backTrack()
+
 			path = path[:len(path)-1]
 			used[i] = false
 		}
@@ -91,9 +100,11 @@ func OperSwapPermutation[T any](nums []T, oper func([]T)) {
 	p := append([]T(nil), nums...)
 
 	var upset func(begin int)
+
 	upset = func(begin int) {
 		if begin == len(p) {
 			oper(p)
+
 			return
 		}
 
@@ -118,20 +129,23 @@ func OperHeapPermutation[T any](nums []T, oper func([]T)) {
 	p := append([]T(nil), nums...)
 
 	var generate func(k int)
+
 	generate = func(k int) {
 		if k == 1 {
 			oper(p)
+
 			return
 		}
 
 		generate(k - 1)
 
-		for i := 0; i < k-1; i++ {
+		for i := range k - 1 {
 			if k%2 == 0 {
 				p[i], p[k-1] = p[k-1], p[i]
 			} else {
 				p[0], p[k-1] = p[k-1], p[0]
 			}
+
 			generate(k - 1)
 		}
 	}

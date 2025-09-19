@@ -1,22 +1,23 @@
 package permutation_test
 
 import (
+	"cmp"
 	"reflect"
 	"sort"
 	"testing"
 
-	"golang.org/x/exp/constraints"
 	"github.com/skyrocket-qy/gox/dsa/alg/permutation"
 )
 
-// Helper function to sort a slice of integer slices for consistent comparison
-func sortPermutations[T constraints.Ordered](perms [][]T) {
+// Helper function to sort a slice of integer slices for consistent comparison.
+func sortPermutations[T cmp.Ordered](perms [][]T) {
 	sort.Slice(perms, func(i, j int) bool {
 		for k := 0; k < len(perms[i]) && k < len(perms[j]); k++ {
 			if perms[i][k] != perms[j][k] {
 				return perms[i][k] < perms[j][k]
 			}
 		}
+
 		return len(perms[i]) < len(perms[j])
 	})
 }
@@ -64,7 +65,12 @@ func TestOperInsertPermutation(t *testing.T) {
 			sortPermutations(tt.expected)
 
 			if !reflect.DeepEqual(actualPerms, tt.expected) {
-				t.Errorf("OperInsertPermutation(%v) got %v, want %v", tt.input, actualPerms, tt.expected)
+				t.Errorf(
+					"OperInsertPermutation(%v) got %v, want %v",
+					tt.input,
+					actualPerms,
+					tt.expected,
+				)
 			}
 		})
 	}
@@ -81,9 +87,16 @@ func TestOperInsertPermutation(t *testing.T) {
 			expected: [][]string{{"a", "b"}, {"b", "a"}},
 		},
 		{
-			name:     "String - Three elements",
-			input:    []string{"a", "b", "c"},
-			expected: [][]string{{"a", "b", "c"}, {"a", "c", "b"}, {"b", "a", "c"}, {"b", "c", "a"}, {"c", "a", "b"}, {"c", "b", "a"}},
+			name:  "String - Three elements",
+			input: []string{"a", "b", "c"},
+			expected: [][]string{
+				{"a", "b", "c"},
+				{"a", "c", "b"},
+				{"b", "a", "c"},
+				{"b", "c", "a"},
+				{"c", "a", "b"},
+				{"c", "b", "a"},
+			},
 		},
 	}
 
@@ -102,7 +115,12 @@ func TestOperInsertPermutation(t *testing.T) {
 			sortPermutations(tt.expected)
 
 			if !reflect.DeepEqual(actualPerms, tt.expected) {
-				t.Errorf("OperInsertPermutation(%v) got %v, want %v", tt.input, actualPerms, tt.expected)
+				t.Errorf(
+					"OperInsertPermutation(%v) got %v, want %v",
+					tt.input,
+					actualPerms,
+					tt.expected,
+				)
 			}
 		})
 	}
@@ -151,7 +169,12 @@ func TestOperBackTrackPermutation(t *testing.T) {
 			sortPermutations(tt.expected)
 
 			if !reflect.DeepEqual(actualPerms, tt.expected) {
-				t.Errorf("OperBackTrackPermutation(%v) got %v, want %v", tt.input, actualPerms, tt.expected)
+				t.Errorf(
+					"OperBackTrackPermutation(%v) got %v, want %v",
+					tt.input,
+					actualPerms,
+					tt.expected,
+				)
 			}
 		})
 	}
@@ -168,9 +191,16 @@ func TestOperBackTrackPermutation(t *testing.T) {
 			expected: [][]string{{"a", "b"}, {"b", "a"}},
 		},
 		{
-			name:     "String - Three elements",
-			input:    []string{"a", "b", "c"},
-			expected: [][]string{{"a", "b", "c"}, {"a", "c", "b"}, {"b", "a", "c"}, {"b", "c", "a"}, {"c", "a", "b"}, {"c", "b", "a"}},
+			name:  "String - Three elements",
+			input: []string{"a", "b", "c"},
+			expected: [][]string{
+				{"a", "b", "c"},
+				{"a", "c", "b"},
+				{"b", "a", "c"},
+				{"b", "c", "a"},
+				{"c", "a", "b"},
+				{"c", "b", "a"},
+			},
 		},
 	}
 
@@ -189,11 +219,17 @@ func TestOperBackTrackPermutation(t *testing.T) {
 			sortPermutations(tt.expected)
 
 			if !reflect.DeepEqual(actualPerms, tt.expected) {
-				t.Errorf("OperBackTrackPermutation(%v) got %v, want %v", tt.input, actualPerms, tt.expected)
+				t.Errorf(
+					"OperBackTrackPermutation(%v) got %v, want %v",
+					tt.input,
+					actualPerms,
+					tt.expected,
+				)
 			}
 		})
 	}
 }
+
 func TestOperSwapPermutation(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -237,7 +273,12 @@ func TestOperSwapPermutation(t *testing.T) {
 			sortPermutations(tt.expected)
 
 			if !reflect.DeepEqual(actualPerms, tt.expected) {
-				t.Errorf("OperSwapPermutation(%v) got %v, want %v", tt.input, actualPerms, tt.expected)
+				t.Errorf(
+					"OperSwapPermutation(%v) got %v, want %v",
+					tt.input,
+					actualPerms,
+					tt.expected,
+				)
 			}
 		})
 	}
@@ -254,9 +295,16 @@ func TestOperSwapPermutation(t *testing.T) {
 			expected: [][]string{{"a", "b"}, {"b", "a"}},
 		},
 		{
-			name:     "String - Three elements",
-			input:    []string{"a", "b", "c"},
-			expected: [][]string{{"a", "b", "c"}, {"a", "c", "b"}, {"b", "a", "c"}, {"b", "c", "a"}, {"c", "a", "b"}, {"c", "b", "a"}},
+			name:  "String - Three elements",
+			input: []string{"a", "b", "c"},
+			expected: [][]string{
+				{"a", "b", "c"},
+				{"a", "c", "b"},
+				{"b", "a", "c"},
+				{"b", "c", "a"},
+				{"c", "a", "b"},
+				{"c", "b", "a"},
+			},
 		},
 	}
 
@@ -275,11 +323,17 @@ func TestOperSwapPermutation(t *testing.T) {
 			sortPermutations(tt.expected)
 
 			if !reflect.DeepEqual(actualPerms, tt.expected) {
-				t.Errorf("OperSwapPermutation(%v) got %v, want %v", tt.input, actualPerms, tt.expected)
+				t.Errorf(
+					"OperSwapPermutation(%v) got %v, want %v",
+					tt.input,
+					actualPerms,
+					tt.expected,
+				)
 			}
 		})
 	}
 }
+
 func TestOperHeapPermutation(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -323,7 +377,12 @@ func TestOperHeapPermutation(t *testing.T) {
 			sortPermutations(tt.expected)
 
 			if !reflect.DeepEqual(actualPerms, tt.expected) {
-				t.Errorf("OperHeapPermutation(%v) got %v, want %v", tt.input, actualPerms, tt.expected)
+				t.Errorf(
+					"OperHeapPermutation(%v) got %v, want %v",
+					tt.input,
+					actualPerms,
+					tt.expected,
+				)
 			}
 		})
 	}
@@ -340,9 +399,16 @@ func TestOperHeapPermutation(t *testing.T) {
 			expected: [][]string{{"a", "b"}, {"b", "a"}},
 		},
 		{
-			name:     "String - Three elements",
-			input:    []string{"a", "b", "c"},
-			expected: [][]string{{"a", "b", "c"}, {"a", "c", "b"}, {"b", "a", "c"}, {"b", "c", "a"}, {"c", "a", "b"}, {"c", "b", "a"}},
+			name:  "String - Three elements",
+			input: []string{"a", "b", "c"},
+			expected: [][]string{
+				{"a", "b", "c"},
+				{"a", "c", "b"},
+				{"b", "a", "c"},
+				{"b", "c", "a"},
+				{"c", "a", "b"},
+				{"c", "b", "a"},
+			},
 		},
 	}
 
@@ -361,7 +427,12 @@ func TestOperHeapPermutation(t *testing.T) {
 			sortPermutations(tt.expected)
 
 			if !reflect.DeepEqual(actualPerms, tt.expected) {
-				t.Errorf("OperHeapPermutation(%v) got %v, want %v", tt.input, actualPerms, tt.expected)
+				t.Errorf(
+					"OperHeapPermutation(%v) got %v, want %v",
+					tt.input,
+					actualPerms,
+					tt.expected,
+				)
 			}
 		})
 	}

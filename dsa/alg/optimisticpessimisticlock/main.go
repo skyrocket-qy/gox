@@ -16,6 +16,7 @@ func main() {
 	testIncrease(increase)
 
 	fmt.Println("Increase with lock")
+
 	l := &Locker{
 		M: sync.Mutex{},
 	}
@@ -36,7 +37,8 @@ func testIncrease(increaseFunc func(wg *sync.WaitGroup, num *int32, old int32)) 
 	wg.Add(count)
 
 	curTime := time.Now()
-	for index := 0; index < int(count); index++ {
+
+	for index := range count {
 		go increaseFunc(&wg, &num, int32(index))
 	}
 
@@ -47,29 +49,34 @@ func testIncrease(increaseFunc func(wg *sync.WaitGroup, num *int32, old int32)) 
 
 func increase(wg *sync.WaitGroup, num *int32, old int32) {
 	defer wg.Done()
+
 	*num++
 }
 
 func (l *Locker) increaseWithLock(wg *sync.WaitGroup, num *int32, old int32) {
 	defer wg.Done()
+
 	l.M.Lock()
 	defer l.M.Unlock()
+
 	*num++
 }
 
 func increaseWithAtomic(wg *sync.WaitGroup, num *int32, old int32) {
 	defer wg.Done()
+
 	atomic.AddInt32(num, 1)
 }
 
 func increaseWithCAS(wg *sync.WaitGroup, num *int32, old int32) {
 	defer wg.Done()
+
 	var retryCount int
-	for {
-		if atomic.CompareAndSwapInt32(num, old, old+1) {
-			break
-		}
+
+	for !atomic.CompareAndSwapInt32(num, old, old+1) {
+
 		retryCount++
+
 		time.Sleep(time.Millisecond) // avoid more self cycle
 	}
 

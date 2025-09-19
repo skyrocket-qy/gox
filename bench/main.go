@@ -28,12 +28,15 @@ const t = 100000000
 
 func numbers() <-chan int {
 	ch := make(chan int, 1024)
+
 	go func() {
 		defer close(ch) // close when done
-		for i := 0; i < t; i++ {
+
+		for i := range t {
 			ch <- i // "yield return i"
 		}
 	}()
+
 	return ch
 }
 
@@ -42,14 +45,16 @@ func benchNumbersWithChannel() {
 	for v := range numbers() {
 		sum += v
 	}
+
 	fmt.Println(sum)
 }
 
 func tradit() []int {
 	res := []int{}
-	for i := 0; i < t; i++ {
+	for i := range t {
 		res = append(res, i)
 	}
+
 	return res
 }
 
@@ -58,19 +63,23 @@ func benchSliceAppend() {
 	for v := range tradit() {
 		sum += v
 	}
+
 	fmt.Println(sum)
 }
 
 func CallbackLoop(f func(v int)) []int {
 	res := []int{}
-	for i := 0; i < t; i++ {
+
+	for i := range t {
 		f(i)
 	}
+
 	return res
 }
 
 func benchCallbackLoop() {
 	sum := 0
+
 	CallbackLoop(func(v int) {
 		sum += v
 	})

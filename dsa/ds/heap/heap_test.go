@@ -25,12 +25,15 @@ func TestMinHeap(t *testing.T) {
 	if h.Pop() != 1 {
 		t.Errorf("Expected 1, got %d", h.Pop())
 	}
+
 	if h.Pop() != 2 {
 		t.Errorf("Expected 2, got %d", h.Pop())
 	}
+
 	if h.Pop() != 3 {
 		t.Errorf("Expected 3, got %d", h.Pop())
 	}
+
 	if h.Len() != 0 {
 		t.Errorf("Expected length 0, got %d", h.Len())
 	}
@@ -53,12 +56,15 @@ func TestMaxHeap(t *testing.T) {
 	if h.Pop() != 3 {
 		t.Errorf("Expected 3, got %d", h.Pop())
 	}
+
 	if h.Pop() != 2 {
 		t.Errorf("Expected 2, got %d", h.Pop())
 	}
+
 	if h.Pop() != 1 {
 		t.Errorf("Expected 1, got %d", h.Pop())
 	}
+
 	if h.Len() != 0 {
 		t.Errorf("Expected length 0, got %d", h.Len())
 	}
@@ -78,6 +84,7 @@ func TestHeapWithInitialElements(t *testing.T) {
 			t.Errorf("Expected %d, got %d", val, h.Pop())
 		}
 	}
+
 	if h.Len() != 0 {
 		t.Errorf("Expected length 0, got %d", h.Len())
 	}
@@ -98,6 +105,7 @@ func (h *IntHeap) Pop() any {
 	n := len(old)
 	x := old[n-1]
 	*h = old[0 : n-1]
+
 	return x
 }
 
@@ -113,13 +121,14 @@ var testData []int
 // It's called once to ensure all benchmarks run on the exact same data.
 func init() {
 	rng := rand.New(rand.NewSource(42)) // Fixed seed for reproducible benchmarks
+
 	testData = make([]int, benchmarkSize)
-	for i := 0; i < benchmarkSize; i++ {
+	for i := range benchmarkSize {
 		testData[i] = rng.Int()
 	}
 }
 
-// less function for both heaps
+// less function for both heaps.
 var lessFunc = func(a, b int) bool { return a < b }
 
 // ============================================================================
@@ -131,13 +140,13 @@ var lessFunc = func(a, b int) bool { return a < b }
 // This is where we expect to see the biggest difference.
 
 func BenchmarkCustomHeap_Init(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		_ = heapx.New(testData, lessFunc)
 	}
 }
 
 func BenchmarkStdHeap_Init(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		dataCopy := make(IntHeap, benchmarkSize)
 		copy(dataCopy, testData)
 		heap.Init(&dataCopy)
@@ -149,8 +158,10 @@ func BenchmarkStdHeap_Init(b *testing.B) {
 
 func BenchmarkCustomHeap_Push(b *testing.B) {
 	h := heapx.New(testData, lessFunc)
+
 	b.ResetTimer() // Start timing after the heap is already built
-	for i := 0; i < b.N; i++ {
+
+	for i := range b.N {
 		h.Push(i)
 	}
 }
@@ -161,7 +172,8 @@ func BenchmarkStdHeap_Push(b *testing.B) {
 	h := &dataCopy
 	heap.Init(h)
 	b.ResetTimer() // Start timing after the heap is already built
-	for i := 0; i < b.N; i++ {
+
+	for i := range b.N {
 		heap.Push(h, i)
 	}
 }
@@ -171,8 +183,10 @@ func BenchmarkStdHeap_Push(b *testing.B) {
 
 func BenchmarkCustomHeap_Pop(b *testing.B) {
 	h := heapx.New(testData, lessFunc)
+
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+
+	for i := range b.N {
 		// To prevent the heap from emptying, we push an element back.
 		// This keeps the benchmark focused on the Pop() operation
 		// on a consistently-sized heap.
@@ -187,7 +201,8 @@ func BenchmarkStdHeap_Pop(b *testing.B) {
 	h := &dataCopy
 	heap.Init(h)
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+
+	for i := range b.N {
 		heap.Pop(h)
 		heap.Push(h, i)
 	}

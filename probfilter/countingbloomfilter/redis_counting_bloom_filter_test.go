@@ -46,13 +46,23 @@ func TestExists(t *testing.T) {
 
 	mock.ExpectDo("BF.EXISTS", "mykey", "item1").SetVal(int64(1))
 
-	exists, err := countingbloomfilter.Exists(ctx, db, "mykey", "item1") // Added countingbloomfilter.
+	exists, err := countingbloomfilter.Exists(
+		ctx,
+		db,
+		"mykey",
+		"item1",
+	) // Added countingbloomfilter.
 	assert.NoError(t, err)
 	assert.True(t, exists)
 
 	mock.ExpectDo("BF.EXISTS", "mykey", "item2").SetVal(int64(0))
 
-	exists, err = countingbloomfilter.Exists(ctx, db, "mykey", "item2") // Already had countingbloomfilter.
+	exists, err = countingbloomfilter.Exists(
+		ctx,
+		db,
+		"mykey",
+		"item2",
+	) // Already had countingbloomfilter.
 	assert.NoError(t, err)
 	assert.False(t, exists)
 
@@ -71,7 +81,12 @@ func TestRemove(t *testing.T) {
 	ctx := context.Background()
 	db, _ := redismock.NewClientMock()
 
-	removed, err := countingbloomfilter.Remove(ctx, db, "mykey", "item1") // Added countingbloomfilter.
+	removed, err := countingbloomfilter.Remove(
+		ctx,
+		db,
+		"mykey",
+		"item1",
+	) // Added countingbloomfilter.
 	assert.Error(t, err)
 	assert.False(t, removed)
 	assert.Equal(

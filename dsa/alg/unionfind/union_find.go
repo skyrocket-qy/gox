@@ -2,7 +2,8 @@ package unionfind
 
 /* @tags: union find,group */
 
-// UnionFind is a data structure that keeps track of a set of elements partitioned into a number of disjoint (non-overlapping) subsets.
+// UnionFind is a data structure that keeps track of a set of elements partitioned into a number of
+// disjoint (non-overlapping) subsets.
 type UnionFind[T comparable] struct {
 	parents map[T]T
 	sizes   map[T]int // use to flatten
@@ -42,6 +43,7 @@ func (uf *UnionFind[T]) Union(x, y T) {
 		if uf.sizes[rootX] < uf.sizes[rootY] {
 			rootX, rootY = rootY, rootX
 		}
+
 		uf.parents[rootX] = rootY
 		uf.sizes[rootX] += uf.sizes[rootY]
 	}

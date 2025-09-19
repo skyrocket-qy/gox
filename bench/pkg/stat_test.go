@@ -107,9 +107,11 @@ func percentile(data []int64, p float64) float64 {
 	if len(data) == 0 {
 		return 0
 	}
+
 	if p <= 0 {
 		return float64(data[0])
 	}
+
 	if p >= 100 {
 		return float64(data[len(data)-1])
 	}

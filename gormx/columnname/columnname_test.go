@@ -79,7 +79,8 @@ func TestGetColumns(t *testing.T) {
 		AddRow("id", nil, false, "int", nil, "int(11)", "PRI", "auto_increment", "", nil, nil, nil).
 		AddRow("name", nil, true, "varchar", 255, "varchar(255)", "", "", "", nil, nil, nil)
 
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = ? AND table_name = ? ORDER BY ORDINAL_POSITION")).WithArgs("test", "users").
+	mock.ExpectQuery(regexp.QuoteMeta("SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = ? AND table_name = ? ORDER BY ORDINAL_POSITION")).
+		WithArgs("test", "users").
 		WillReturnRows(rows)
 
 	columns, err := columnname.GetColumns(gormDB, "users")
