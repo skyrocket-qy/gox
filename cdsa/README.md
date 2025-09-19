@@ -1,6 +1,5 @@
 # Concurrent DSA
 
-
 Here are the implementations under dsa/ that would be valuable to implement in a concurrent version:
 
   Algorithms (`dsa/alg/`)
