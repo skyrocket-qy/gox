@@ -20,24 +20,26 @@ type Node struct {
 type SkipList struct {
 	header *Node // Pointer to the header node
 	level  int   // Current maximum level of the skip list
+	rand   *rand.Rand
 }
 
 // NewSkipList creates and initializes a new SkipList.
 func NewSkipList() *SkipList {
-	rand.Seed(time.Now().UnixNano())
-
+	source := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(source) //nolint:gosec
 	header := &Node{value: 0, levels: make([]*Node, maxLevel)}
 
 	return &SkipList{
 		header: header,
 		level:  0,
+		rand:   r,
 	}
 }
 
 // randomLevel generates a random level for a new node.
 func (sl *SkipList) randomLevel() int {
 	lvl := 0
-	for rand.Float64() < probability && lvl < maxLevel-1 {
+	for sl.rand.Float64() < probability && lvl < maxLevel-1 {
 		lvl++
 	}
 
