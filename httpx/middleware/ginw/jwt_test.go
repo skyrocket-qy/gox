@@ -17,6 +17,7 @@ import (
 	"github.com/skyrocket-qy/gox/httpx"
 	"github.com/skyrocket-qy/gox/httpx/middleware/ginw"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const testJWTSecret = "test-secret"
@@ -176,7 +177,7 @@ func TestParseJWT(t *testing.T) {
 		tokenString := unsignedToken + "." + signature
 
 		_, err = ginw.ParseJWT(tokenString, []byte(testJWTSecret))
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Contains(t, err.Error(), "unexpected signing method")
 	})
 }

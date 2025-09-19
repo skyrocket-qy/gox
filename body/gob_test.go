@@ -5,6 +5,7 @@ import (
 
 	"github.com/skyrocket-qy/gox/body"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type GobTestStruct struct {
@@ -57,7 +58,7 @@ func TestGobEncoding(t *testing.T) {
 		err := body.GobDecode(invalidBytes, &decoded)
 
 		// Assert
-		assert.Error(t, err)
+		require.Error(t, err)
 	})
 
 	t.Run("should return an error when encoding an invalid type", func(t *testing.T) {
@@ -69,7 +70,7 @@ func TestGobEncoding(t *testing.T) {
 		_, err := body.GobEncode(ch)
 
 		// Assert
-		assert.Error(t, err)
+		require.Error(t, err)
 	})
 
 	t.Run("should return an error when decoding into a non-pointer", func(t *testing.T) {
@@ -84,6 +85,6 @@ func TestGobEncoding(t *testing.T) {
 		err := body.GobDecode(encodedBytes, decoded)
 
 		// Assert
-		assert.Error(t, err)
+		require.Error(t, err)
 	})
 }

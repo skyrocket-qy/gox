@@ -7,6 +7,7 @@ import (
 
 	"github.com/skyrocket-qy/gox/periodcheck"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // Common test runner for TimeCheck functions with 5 parameters.
@@ -63,7 +64,7 @@ func runCommonTimeCheckTests(
 			1*time.Millisecond,
 			10*time.Millisecond,
 		)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.EqualError(t, err, "timeout")
 		assert.GreaterOrEqual(t, callCount, 2)
 	})
@@ -84,7 +85,7 @@ func runCommonTimeCheckTests(
 			1*time.Millisecond,
 			100*time.Millisecond,
 		)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Equal(t, expectedErr, err)
 	})
 }
@@ -146,7 +147,7 @@ func runCommonTimeCheckTestsWithMaxInterval(
 			10*time.Millisecond,
 			10*time.Millisecond,
 		)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.EqualError(t, err, "timeout")
 		assert.GreaterOrEqual(t, callCount, 2)
 	})
@@ -168,7 +169,7 @@ func runCommonTimeCheckTestsWithMaxInterval(
 			10*time.Millisecond,
 			100*time.Millisecond,
 		)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Equal(t, expectedErr, err)
 	})
 }

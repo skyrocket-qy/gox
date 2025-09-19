@@ -11,6 +11,7 @@ import (
 	"github.com/skyrocket-qy/gox/httpx/middleware/connectw"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 // MockMovingWindowLimiter is a mock implementation of redisx.MovingWindowLimiterInterface for
@@ -90,7 +91,7 @@ func TestThrottle_UnaryInterceptor(t *testing.T) {
 			Once()
 
 		_, err := interceptor(mockHandler)(context.Background(), connect.NewRequest(&struct{}{}))
-		assert.Error(t, err)
+		require.Error(t, err)
 		connectErr := &connect.Error{}
 		assert.ErrorAs(t, err, &connectErr)
 		assert.Equal(t, connect.CodeResourceExhausted, connectErr.Code())
@@ -105,7 +106,7 @@ func TestThrottle_UnaryInterceptor(t *testing.T) {
 			Once()
 
 		_, err := interceptor(mockHandler)(context.Background(), connect.NewRequest(&struct{}{}))
-		assert.Error(t, err)
+		require.Error(t, err)
 		connectErr := &connect.Error{}
 		assert.ErrorAs(t, err, &connectErr)
 		assert.Equal(t, connect.CodeInternal, connectErr.Code())

@@ -10,6 +10,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/skyrocket-qy/gox/httpx/middleware/connectw"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAuthInterceptor_WrapAuth(t *testing.T) {
@@ -32,7 +33,7 @@ func TestAuthInterceptor_WrapAuth(t *testing.T) {
 	t.Run("Missing Authorization Header", func(t *testing.T) {
 		req := connect.NewRequest(&struct{}{})
 		_, err := interceptor.WrapUnary(next)(context.Background(), req)
-		assert.Error(t, err)
+		require.Error(t, err)
 		connectErr := &connect.Error{}
 		ok := errors.As(err, &connectErr)
 		assert.True(t, ok)
@@ -45,7 +46,7 @@ func TestAuthInterceptor_WrapAuth(t *testing.T) {
 		req := connect.NewRequest(&struct{}{})
 		req.Header().Set("Authorization", "Bearer invalid_token")
 		_, err := interceptor.WrapUnary(next)(context.Background(), req)
-		assert.Error(t, err)
+		require.Error(t, err)
 		connectErr := &connect.Error{}
 		ok := errors.As(err, &connectErr)
 		assert.True(t, ok)
@@ -95,7 +96,7 @@ func TestAuthInterceptor_WrapAuth(t *testing.T) {
 		req.Header().Set("Authorization", "Bearer "+tokenString)
 
 		_, err := interceptor.WrapUnary(next)(context.Background(), req)
-		assert.Error(t, err)
+		require.Error(t, err)
 		connectErr := &connect.Error{}
 		ok := errors.As(err, &connectErr)
 		assert.True(t, ok)
@@ -116,7 +117,7 @@ func TestAuthInterceptor_WrapAuth(t *testing.T) {
 		req.Header().Set("Authorization", "Bearer "+tokenString)
 
 		_, err := interceptor.WrapUnary(next)(context.Background(), req)
-		assert.Error(t, err)
+		require.Error(t, err)
 		connectErr := &connect.Error{}
 		ok := errors.As(err, &connectErr)
 		assert.True(t, ok)
@@ -137,7 +138,7 @@ func TestAuthInterceptor_WrapAuth(t *testing.T) {
 		req.Header().Set("Authorization", "Bearer "+tokenString)
 
 		_, err := interceptor.WrapUnary(next)(context.Background(), req)
-		assert.Error(t, err)
+		require.Error(t, err)
 		connectErr := &connect.Error{}
 		ok := errors.As(err, &connectErr)
 		assert.True(t, ok)
@@ -166,7 +167,7 @@ func TestParseJWT(t *testing.T) {
 	// Test Case 2: Invalid token string
 	t.Run("Invalid Token String", func(t *testing.T) {
 		_, err := connectw.ParseJWT("invalid_token_string", secret)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Contains(t, err.Error(), "token is malformed")
 	})
 
@@ -180,7 +181,7 @@ func TestParseJWT(t *testing.T) {
 		tokenString, _ := token.SignedString(secret)
 
 		_, err := connectw.ParseJWT(tokenString, secret)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Contains(t, err.Error(), "token is expired")
 	})
 
@@ -194,7 +195,7 @@ func TestParseJWT(t *testing.T) {
 		tokenString, _ := token.SignedString([]byte("wrong_secret"))
 
 		_, err := connectw.ParseJWT(tokenString, secret)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Contains(t, err.Error(), "signature is invalid")
 	})
 
@@ -208,7 +209,7 @@ func TestParseJWT(t *testing.T) {
 		tokenString, _ := token.SignedString(jwt.UnsafeAllowNoneSignatureType)
 
 		_, err := connectw.ParseJWT(tokenString, secret)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Contains(t, err.Error(), "unexpected signing method")
 	})
 }

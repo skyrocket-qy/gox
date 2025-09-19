@@ -8,6 +8,7 @@ import (
 	"github.com/go-redis/redismock/v9"
 	"github.com/skyrocket-qy/gox/probfilter/countingbloomfilter"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestReserve(t *testing.T) {
@@ -22,7 +23,7 @@ func TestReserve(t *testing.T) {
 	mock.ExpectDo("BF.RESERVE", "mykey", 0.01, int64(1000)).SetErr(errors.New("reserve failed"))
 
 	err = countingbloomfilter.Reserve(ctx, db, "mykey", 0.01, 1000) // Added countingbloomfilter.
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestAdd(t *testing.T) {
@@ -37,7 +38,7 @@ func TestAdd(t *testing.T) {
 	mock.ExpectDo("BF.ADD", "mykey", "item1").SetErr(errors.New("add failed"))
 
 	err = countingbloomfilter.Add(ctx, db, "mykey", "item1") // Added countingbloomfilter.
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestExists(t *testing.T) {
@@ -69,12 +70,12 @@ func TestExists(t *testing.T) {
 	mock.ExpectDo("BF.EXISTS", "mykey", "item3").SetErr(errors.New("exists failed"))
 
 	_, err = countingbloomfilter.Exists(ctx, db, "mykey", "item3") // Added countingbloomfilter.
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	mock.ExpectDo("BF.EXISTS", "mykey", "item4").SetVal("not an int")
 
 	_, err = countingbloomfilter.Exists(ctx, db, "mykey", "item4") // Added countingbloomfilter.
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestRemove(t *testing.T) {
@@ -87,7 +88,7 @@ func TestRemove(t *testing.T) {
 		"mykey",
 		"item1",
 	) // Added countingbloomfilter.
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.False(t, removed)
 	assert.Equal(
 		t,
