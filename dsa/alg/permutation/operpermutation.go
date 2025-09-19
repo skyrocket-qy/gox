@@ -8,13 +8,13 @@ Stage3: Insert 3 based on stage 2.
 This is a recursive implementation of the insertion algorithm. It calls the `oper`
 function for each permutation found, avoiding the need to store all permutations in memory.
 */
-func OperInsertPermutation(nums []int, oper func([]int)) {
+func OperInsertPermutation[T any](nums []T, oper func([]T)) {
 	if len(nums) == 0 {
 		return
 	}
 
-	var insert func(currentPerm []int, remainingNums []int)
-	insert = func(currentPerm []int, remainingNums []int) {
+	var insert func(currentPerm []T, remainingNums []T)
+	insert = func(currentPerm []T, remainingNums []T) {
 		if len(remainingNums) == 0 {
 			oper(currentPerm)
 			return
@@ -23,7 +23,7 @@ func OperInsertPermutation(nums []int, oper func([]int)) {
 		num := remainingNums[0]
 		rest := remainingNums[1:]
 		for i := 0; i <= len(currentPerm); i++ {
-			newPerm := make([]int, 0, len(currentPerm)+1)
+			newPerm := make([]T, 0, len(currentPerm)+1)
 			newPerm = append(newPerm, currentPerm[:i]...)
 			newPerm = append(newPerm, num)
 			newPerm = append(newPerm, currentPerm[i:]...)
@@ -31,7 +31,7 @@ func OperInsertPermutation(nums []int, oper func([]int)) {
 		}
 	}
 
-	insert([]int{}, nums)
+	insert([]T{}, nums)
 }
 
 /*
@@ -42,12 +42,12 @@ Stage3: [123][132]   [213][231]    [312][321].
 This version uses a callback `oper` to process each permutation, avoiding storing them.
 It uses a boolean `used` slice for O(1) tracking of elements.
 */
-func OperBackTrackPermutation(nums []int, oper func([]int)) {
+func OperBackTrackPermutation[T any](nums []T, oper func([]T)) {
 	if len(nums) == 0 {
 		return
 	}
 
-	path := make([]int, 0, len(nums))
+	path := make([]T, 0, len(nums))
 	used := make([]bool, len(nums))
 
 	var backTrack func()
@@ -83,12 +83,12 @@ After that again swap the previously swapped values to initiate backtracking.
 This version uses a callback `oper` to process each permutation. It works on a copy
 of the input to avoid side effects.
 */
-func OperSwapPermutation(nums []int, oper func([]int)) {
+func OperSwapPermutation[T any](nums []T, oper func([]T)) {
 	if len(nums) == 0 {
 		return
 	}
 
-	p := append([]int(nil), nums...)
+	p := append([]T(nil), nums...)
 
 	var upset func(begin int)
 	upset = func(begin int) {
@@ -110,12 +110,12 @@ func OperSwapPermutation(nums []int, oper func([]int)) {
 // HeapPermutation generates all permutations of the given slice using Heap's algorithm.
 // This version uses a callback `oper` to process each permutation and works on a copy
 // of the input to avoid side effects.
-func OperHeapPermutation(nums []int, oper func([]int)) {
+func OperHeapPermutation[T any](nums []T, oper func([]T)) {
 	if len(nums) == 0 {
 		return
 	}
 
-	p := append([]int(nil), nums...)
+	p := append([]T(nil), nums...)
 
 	var generate func(k int)
 	generate = func(k int) {
