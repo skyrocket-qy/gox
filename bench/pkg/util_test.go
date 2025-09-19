@@ -1,14 +1,16 @@
-package pkg
+package pkg_test
 
 import (
 	"os"
 	"testing"
 	"time"
+
+	"github.com/skyrocket-qy/gox/bench/pkg"
 )
 
 func TestMeasureTime(t *testing.T) {
 	sleepDuration := 10 * time.Millisecond
-	elapsed := MeasureTime(func() {
+	elapsed := pkg.MeasureTime(func() {
 		time.Sleep(sleepDuration)
 	})
 
@@ -33,7 +35,7 @@ func TestMeasureTime(t *testing.T) {
 
 func TestProfileFunc(t *testing.T) {
 	// Test without CPU profiling
-	result, err := ProfileFunc(func() { time.Sleep(1 * time.Millisecond) }, false, "", 1)
+	result, err := pkg.ProfileFunc(func() { time.Sleep(1 * time.Millisecond) }, false, "", 1)
 	if err != nil {
 		t.Fatalf("ProfileFunc failed without CPU profiling: %v", err)
 	}
@@ -55,7 +57,7 @@ func TestProfileFunc(t *testing.T) {
 
 	tmpfile.Close() // Close the file so ProfileFunc can create it.
 
-	result2, err := ProfileFunc(
+	result2, err := pkg.ProfileFunc(
 		func() { time.Sleep(1 * time.Millisecond) },
 		true,
 		tmpfile.Name(),

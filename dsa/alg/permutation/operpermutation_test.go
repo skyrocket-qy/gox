@@ -1,4 +1,4 @@
-package permutation
+package permutation_test
 
 import (
 	"reflect"
@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"golang.org/x/exp/constraints"
+	"github.com/skyrocket-qy/gox/dsa/alg/permutation"
 )
 
 // Helper function to sort a slice of integer slices for consistent comparison
@@ -57,7 +58,7 @@ func TestOperInsertPermutation(t *testing.T) {
 				actualPerms = append(actualPerms, temp)
 			}
 
-			OperInsertPermutation[int](tt.input, oper)
+			permutation.OperInsertPermutation[int](tt.input, oper)
 
 			sortPermutations(actualPerms)
 			sortPermutations(tt.expected)
@@ -95,7 +96,7 @@ func TestOperInsertPermutation(t *testing.T) {
 				actualPerms = append(actualPerms, temp)
 			}
 
-			OperInsertPermutation[string](tt.input, oper)
+			permutation.OperInsertPermutation[string](tt.input, oper)
 
 			sortPermutations(actualPerms)
 			sortPermutations(tt.expected)
@@ -144,7 +145,7 @@ func TestOperBackTrackPermutation(t *testing.T) {
 				actualPerms = append(actualPerms, temp)
 			}
 
-			OperBackTrackPermutation[int](tt.input, oper)
+			permutation.OperBackTrackPermutation[int](tt.input, oper)
 
 			sortPermutations(actualPerms)
 			sortPermutations(tt.expected)
@@ -182,7 +183,7 @@ func TestOperBackTrackPermutation(t *testing.T) {
 				actualPerms = append(actualPerms, temp)
 			}
 
-			OperBackTrackPermutation[string](tt.input, oper)
+			permutation.OperBackTrackPermutation[string](tt.input, oper)
 
 			sortPermutations(actualPerms)
 			sortPermutations(tt.expected)
@@ -230,7 +231,7 @@ func TestOperSwapPermutation(t *testing.T) {
 				actualPerms = append(actualPerms, temp)
 			}
 
-			OperSwapPermutation[int](tt.input, oper)
+			permutation.OperSwapPermutation[int](tt.input, oper)
 
 			sortPermutations(actualPerms)
 			sortPermutations(tt.expected)
@@ -268,7 +269,7 @@ func TestOperSwapPermutation(t *testing.T) {
 				actualPerms = append(actualPerms, temp)
 			}
 
-			OperSwapPermutation[string](tt.input, oper)
+			permutation.OperSwapPermutation[string](tt.input, oper)
 
 			sortPermutations(actualPerms)
 			sortPermutations(tt.expected)
@@ -316,7 +317,7 @@ func TestOperHeapPermutation(t *testing.T) {
 				actualPerms = append(actualPerms, temp)
 			}
 
-			OperHeapPermutation[int](tt.input, oper)
+			permutation.OperHeapPermutation[int](tt.input, oper)
 
 			sortPermutations(actualPerms)
 			sortPermutations(tt.expected)
@@ -354,7 +355,7 @@ func TestOperHeapPermutation(t *testing.T) {
 				actualPerms = append(actualPerms, temp)
 			}
 
-			OperHeapPermutation[string](tt.input, oper)
+			permutation.OperHeapPermutation[string](tt.input, oper)
 
 			sortPermutations(actualPerms)
 			sortPermutations(tt.expected)

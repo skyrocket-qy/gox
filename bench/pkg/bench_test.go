@@ -1,9 +1,20 @@
-package pkg
+package pkg_test
 
 import (
 	"reflect"
 	"testing"
 )
+
+func toInterfaceSlice[T any](slice []T) []any {
+	if slice == nil {
+		return nil
+	}
+	result := make([]any, len(slice))
+	for i, v := range slice {
+		result[i] = v
+	}
+	return result
+}
 
 func TestToInterfaceSlice(t *testing.T) {
 	// Test with []int

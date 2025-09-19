@@ -1,9 +1,11 @@
-package pkg
+package pkg_test
 
 import (
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/skyrocket-qy/gox/bench/pkg"
 )
 
 var blackHole []byte
@@ -17,7 +19,7 @@ func dummyFunc() {
 }
 
 func TestCollectTimings(t *testing.T) {
-	timings := CollectTimings(dummyFunc, 5)
+	timings := pkg.CollectTimings(dummyFunc, 5)
 	if len(timings) != 5 {
 		t.Fatalf("Expected 5 timings, got %d", len(timings))
 	}
@@ -30,7 +32,7 @@ func TestCollectTimings(t *testing.T) {
 }
 
 func TestCollectMems(t *testing.T) {
-	mems := CollectMems(dummyFunc, 3)
+	mems := pkg.CollectMems(dummyFunc, 3)
 	if len(mems) != 3 {
 		t.Fatalf("Expected 3 memory readings, got %d", len(mems))
 	}
@@ -42,7 +44,7 @@ func TestCollectMems(t *testing.T) {
 func TestCollectNumGCs(t *testing.T) {
 	// It's hard to deterministically trigger a GC, so we'll just check
 	// that the function runs and returns the correct number of samples.
-	gcs := CollectNumGCs(func() {
+	gcs := pkg.CollectNumGCs(func() {
 		// A more allocation-heavy function might trigger GC, but it's not guaranteed.
 		_ = make([]byte, 1024*1024) // 1MB
 	}, 2)
@@ -52,7 +54,7 @@ func TestCollectNumGCs(t *testing.T) {
 }
 
 func TestCollectAllocs(t *testing.T) {
-	allocs := CollectAllocs(dummyFunc, 4)
+	allocs := pkg.CollectAllocs(dummyFunc, 4)
 	if len(allocs) != 4 {
 		t.Fatalf("Expected 4 allocation counts, got %d", len(allocs))
 	}
@@ -67,7 +69,7 @@ func TestCollectAllocs(t *testing.T) {
 func TestCollectPauseNs(t *testing.T) {
 	// Similar to GC, it's hard to test this deterministically.
 	// We'll just ensure it runs and returns the right number of data points.
-	pauses := CollectPauseNs(dummyFunc, 5)
+	pauses := pkg.CollectPauseNs(dummyFunc, 5)
 	if len(pauses) != 5 {
 		t.Fatalf("Expected 5 pause readings, got %d", len(pauses))
 	}
@@ -75,7 +77,7 @@ func TestCollectPauseNs(t *testing.T) {
 
 func TestCollectGoroutines(t *testing.T) {
 	// Test with a function that doesn't spawn goroutines
-	counts1 := CollectGoroutines(dummyFunc, 3)
+	counts1 := pkg.CollectGoroutines(dummyFunc, 3)
 	if len(counts1) != 3 {
 		t.Fatalf("Expected 3 goroutine counts, got %d", len(counts1))
 	}
@@ -91,7 +93,7 @@ func TestCollectGoroutines(t *testing.T) {
 	}
 
 	// Test with a function that does spawn a goroutine
-	counts2 := CollectGoroutines(func() {
+	counts2 := pkg.CollectGoroutines(func() {
 		ch := make(chan bool)
 
 		go func() {
@@ -140,34 +142,34 @@ func TestCollectorsWithNoop(t *testing.T) {
 	noop := func() {}
 	repeat := 3
 
-	if len(CollectTimings(noop, repeat)) != repeat {
+	if len(pkg.CollectTimings(noop, repeat)) != repeat {
 		t.Error("CollectTimings wrong length")
 	}
 
-	if len(CollectMems(noop, repeat)) != repeat {
+	if len(pkg.CollectMems(noop, repeat)) != repeat {
 		t.Error("CollectMems wrong length")
 	}
 
-	if len(CollectNumGCs(noop, repeat)) != repeat {
+	if len(pkg.CollectNumGCs(noop, repeat)) != repeat {
 		t.Error("CollectNumGCs wrong length")
 	}
 
-	if len(CollectAllocs(noop, repeat)) != repeat {
+	if len(pkg.CollectAllocs(noop, repeat)) != repeat {
 		t.Error("CollectAllocs wrong length")
 	}
 
-	if len(CollectPauseNs(noop, repeat)) != repeat {
+	if len(pkg.CollectPauseNs(noop, repeat)) != repeat {
 		t.Error("CollectPauseNs wrong length")
 	}
 
-	if len(CollectGoroutines(noop, repeat)) != repeat {
+	if len(pkg.CollectGoroutines(noop, repeat)) != repeat {
 		t.Error("CollectGoroutines wrong length")
 	}
 }
 
 // A more reliable goroutine test.
 func TestCollectGoroutinesReliable(t *testing.T) {
-	counts := CollectGoroutines(func() {
+	counts := pkg.CollectGoroutines(func() {
 		var wg sync.WaitGroup
 		wg.Add(1)
 
