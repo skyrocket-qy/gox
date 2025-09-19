@@ -1,8 +1,9 @@
-package excel
+package excel_test
 
 import (
 	"testing"
 
+	"github.com/skyrocket-qy/gox/excel"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -52,7 +53,7 @@ func TestToExcel1D(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			keyName, valName, data, err := ToExcel1D[string, int](tc.table)
+			keyName, valName, data, err := excel.ToExcel1D[string, int](tc.table)
 
 			if !tc.IsErr {
 				assert.NoError(t, err)
@@ -112,7 +113,7 @@ func TestToColsList(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			got, err := ToColsList[string, int](tc.table)
+			got, err := excel.ToColsList[string, int](tc.table)
 
 			if tc.isErr {
 				assert.Error(t, err)
@@ -185,7 +186,7 @@ func TestToExcelGroup(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			keys, data, err := ToExcelGroup[string](tc.table, tc.pattern)
+			keys, data, err := excel.ToExcelGroup[string](tc.table, tc.pattern)
 
 			if tc.wantErr {
 				assert.Error(t, err)
@@ -234,7 +235,7 @@ func TestToExcel2D(t *testing.T) {
 		{
 			name: "not enough columns in header",
 			table: [][]string{
-				{""},
+				{"", "col1", "col2"},
 				{"row1", "1"},
 			},
 			wantErr: true,
@@ -266,7 +267,7 @@ func TestToExcel2D(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			rowKeys, colKeys, data, err := ToExcel2D[string, string, int](tc.table)
+			rowKeys, colKeys, data, err := excel.ToExcel2D[string, string, int](tc.table)
 
 			if tc.wantErr {
 				assert.Error(t, err)
@@ -329,7 +330,7 @@ func TestGetGroup(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			got := GetGroup(tc.table, tc.left, tc.right)
+			got := excel.GetGroup(tc.table, tc.left, tc.right)
 			assert.Equal(t, tc.want, got)
 		})
 	}
@@ -340,7 +341,7 @@ func TestToColsList_KeyConversionError(t *testing.T) {
 		{"col1", "bad-key"},
 		{"1", "2"},
 	}
-	_, err := ToColsList[int, int](table)
+	_, err := excel.ToColsList[int, int](table)
 	assert.Error(t, err)
 }
 
@@ -350,6 +351,6 @@ func TestToExcelGroup_KeyConversionError(t *testing.T) {
 		{"", "row1", "1", "3", "", "row1", "5"},
 	}
 	pattern := `^group\d+|^bad-group-key`
-	_, _, err := ToExcelGroup[int](table, pattern)
+	_, _, err := excel.ToExcelGroup[int](table, pattern)
 	assert.Error(t, err)
 }

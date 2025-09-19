@@ -1,4 +1,4 @@
-package body
+package body_test
 
 import (
 	"bytes"
@@ -6,21 +6,22 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/skyrocket-qy/gox/body"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/protobuf/proto"
 )
 
 func TestEncodeDecode(t *testing.T) {
-	original := &TestMessage{
+	original := &body.TestMessage{
 		Id:    "test-id",
 		Value: 12345,
 	}
 
-	encoded, err := Encode(original)
+	encoded, err := body.Encode(original)
 	assert.NoError(t, err)
 	assert.NotNil(t, encoded)
 
-	decoded, err := Decode[*TestMessage](encoded)
+	decoded, err := body.Decode[*body.TestMessage](encoded)
 	assert.NoError(t, err)
 	assert.NotNil(t, decoded)
 
@@ -28,13 +29,13 @@ func TestEncodeDecode(t *testing.T) {
 }
 
 func TestEncode_NilMessageError(t *testing.T) {
-	_, err := Encode(nil)
+	_, err := body.Encode(nil)
 	assert.Error(t, err)
 }
 
 func TestDecode_GzipError(t *testing.T) {
 	invalidGzipData := []byte("not a gzip file")
-	_, err := Decode[*TestMessage](invalidGzipData)
+	_, err := body.Decode[*body.TestMessage](invalidGzipData)
 	assert.Error(t, err)
 }
 
@@ -46,7 +47,7 @@ func TestDecode_UnmarshalError(t *testing.T) {
 	assert.NoError(t, err)
 	gz.Close()
 
-	_, err = Decode[*TestMessage](buf.Bytes())
+	_, err = body.Decode[*body.TestMessage](buf.Bytes())
 	assert.Error(t, err)
 }
 
@@ -57,12 +58,12 @@ func (e *errorWriter) Write(p []byte) (n int, err error) {
 }
 
 func TestEncode_GzipWriteError(t *testing.T) {
-	original := &TestMessage{
+	original := &body.TestMessage{
 		Id:    "test-id",
 		Value: 12345,
 	}
 
-	err := EncodeWithWriter(original, &errorWriter{})
+	err := body.EncodeWithWriter(original, &errorWriter{})
 	assert.Error(t, err)
 }
 
@@ -81,7 +82,7 @@ func TestDecode_CorruptedGzipError(t *testing.T) {
 	// Corrupt it by truncating it
 	corruptedData := validData[:len(validData)-5]
 
-	_, err = Decode[*TestMessage](corruptedData)
+	_, err = body.Decode[*body.TestMessage](corruptedData)
 	assert.Error(t, err)
 }
 
@@ -101,12 +102,12 @@ func (fc *failingCloser) Write(p []byte) (n int, err error) {
 }
 
 func TestEncode_GzipCloseError(t *testing.T) {
-	original := &TestMessage{
+	original := &body.TestMessage{
 		Id:    "test-id",
 		Value: 12345,
 	}
 
-	err := EncodeWithWriter(original, &failingCloser{})
+	err := body.EncodeWithWriter(original, &failingCloser{})
 	assert.Error(t, err)
 }
 
@@ -129,7 +130,7 @@ func (erc *errorReaderCloser) Close() error {
 }
 
 func TestDecode_GzipCloseError(t *testing.T) {
-	original := &TestMessage{Id: "test"}
+	original := &body.TestMessage{Id: "test"}
 	encoded, err := proto.Marshal(original)
 	assert.NoError(t, err)
 
@@ -154,19 +155,19 @@ func TestDecode_GzipCloseError(t *testing.T) {
 		corruptedData[len(corruptedData)-1-i] = 0
 	}
 
-	_, err = Decode[*TestMessage](corruptedData)
+	_, err = body.Decode[*body.TestMessage](corruptedData)
 	assert.Error(t, err)
 }
 
 func TestDecode_NilTargetError(t *testing.T) {
-	encoded, err := Encode(&TestMessage{Id: "test"})
+	encoded, err := body.Encode(&body.TestMessage{Id: "test"})
 	assert.NoError(t, err)
 
 	// This should cause a panic, not an error.
 	// The code checks `if typ == nil`, but `typ` will not be nil here.
 	// `reflect.TypeOf(nilMsg)` is `*body.TestMessage`.
 	// To make `typ` nil, we need to pass a nil interface.
-	_, err = Decode[proto.Message](encoded)
+	_, err = body.Decode[proto.Message](encoded)
 	assert.Error(t, err)
 	assert.Equal(t, "target type must be a pointer to a proto message", err.Error())
 }
