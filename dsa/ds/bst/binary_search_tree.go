@@ -1,3 +1,3 @@
-package binarysearchtree
+package bst
 
 /* @tags: binary search tree,tree */
