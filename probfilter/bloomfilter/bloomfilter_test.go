@@ -1,4 +1,4 @@
-package bloomfilter
+package bloomfilter_test
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/go-redis/redismock/v9"
+	"github.com/skyrocket-qy/gox/probfilter/bloomfilter"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,7 +18,7 @@ func TestAdd(t *testing.T) {
 
 	mock.ExpectDo("BF.ADD", key, value).SetVal(int64(1))
 
-	err := Add(ctx, db, key, value)
+	err := bloomfilter.Add(ctx, db, key, value) // Added bloomfilter.
 	assert.NoError(t, err)
 	assert.NoError(t, mock.ExpectationsWereMet())
 }
@@ -30,13 +31,13 @@ func TestExists(t *testing.T) {
 
 	mock.ExpectDo("BF.EXISTS", key, value).SetVal(int64(1))
 
-	exists, err := Exists(ctx, db, key, value)
+	exists, err := bloomfilter.Exists(ctx, db, key, value) // Added bloomfilter.
 	assert.NoError(t, err)
 	assert.True(t, exists)
 	assert.NoError(t, mock.ExpectationsWereMet())
 
 	mock.ExpectDo("BF.EXISTS", key, "non_existent_value").SetVal(int64(0))
-	exists, err = Exists(ctx, db, key, "non_existent_value")
+	exists, err = bloomfilter.Exists(ctx, db, key, "non_existent_value") // Added bloomfilter.
 	assert.NoError(t, err)
 	assert.False(t, exists)
 	assert.NoError(t, mock.ExpectationsWereMet())
@@ -50,7 +51,7 @@ func TestExists_Error(t *testing.T) {
 
 	mock.ExpectDo("BF.EXISTS", key, value).SetErr(errors.New("redis error"))
 
-	exists, err := Exists(ctx, db, key, value)
+	exists, err := bloomfilter.Exists(ctx, db, key, value) // Added bloomfilter.
 	assert.Error(t, err)
 	assert.False(t, exists)
 	assert.NoError(t, mock.ExpectationsWereMet())
@@ -64,7 +65,7 @@ func TestExists_UnexpectedType(t *testing.T) {
 
 	mock.ExpectDo("BF.EXISTS", key, value).SetVal("not_an_int")
 
-	exists, err := Exists(ctx, db, key, value)
+	exists, err := bloomfilter.Exists(ctx, db, key, value) // Already had bloomfilter.
 	assert.Error(t, err)
 	assert.False(t, exists)
 	assert.Contains(t, err.Error(), "unexpected type for BF.EXISTS result")
@@ -80,7 +81,7 @@ func TestReserve(t *testing.T) {
 
 	mock.ExpectDo("BF.RESERVE", key, errorRate, capacity).SetVal("OK")
 
-	err := Reserve(ctx, db, key, errorRate, capacity)
+	err := bloomfilter.Reserve(ctx, db, key, errorRate, capacity) // Added bloomfilter.
 	assert.NoError(t, err)
 	assert.NoError(t, mock.ExpectationsWereMet())
 }
@@ -94,7 +95,7 @@ func TestReserve_Error(t *testing.T) {
 
 	mock.ExpectDo("BF.RESERVE", key, errorRate, capacity).SetErr(errors.New("redis error"))
 
-	err := Reserve(ctx, db, key, errorRate, capacity)
+	err := bloomfilter.Reserve(ctx, db, key, errorRate, capacity) // Added bloomfilter.
 	assert.Error(t, err)
 	assert.NoError(t, mock.ExpectationsWereMet())
 }

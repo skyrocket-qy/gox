@@ -1,4 +1,4 @@
-package countingbloomfilter
+package countingbloomfilter_test
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/go-redis/redismock/v9"
+	"github.com/skyrocket-qy/gox/probfilter/countingbloomfilter"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,12 +16,12 @@ func TestReserve(t *testing.T) {
 
 	mock.ExpectDo("BF.RESERVE", "mykey", 0.01, int64(1000)).SetVal("OK")
 
-	err := Reserve(ctx, db, "mykey", 0.01, 1000)
+	err := countingbloomfilter.Reserve(ctx, db, "mykey", 0.01, 1000) // Added countingbloomfilter.
 	assert.NoError(t, err)
 
 	mock.ExpectDo("BF.RESERVE", "mykey", 0.01, int64(1000)).SetErr(errors.New("reserve failed"))
 
-	err = Reserve(ctx, db, "mykey", 0.01, 1000)
+	err = countingbloomfilter.Reserve(ctx, db, "mykey", 0.01, 1000) // Added countingbloomfilter.
 	assert.Error(t, err)
 }
 
@@ -30,12 +31,12 @@ func TestAdd(t *testing.T) {
 
 	mock.ExpectDo("BF.ADD", "mykey", "item1").SetVal("OK")
 
-	err := Add(ctx, db, "mykey", "item1")
+	err := countingbloomfilter.Add(ctx, db, "mykey", "item1") // Added countingbloomfilter.
 	assert.NoError(t, err)
 
 	mock.ExpectDo("BF.ADD", "mykey", "item1").SetErr(errors.New("add failed"))
 
-	err = Add(ctx, db, "mykey", "item1")
+	err = countingbloomfilter.Add(ctx, db, "mykey", "item1") // Added countingbloomfilter.
 	assert.Error(t, err)
 }
 
@@ -45,24 +46,24 @@ func TestExists(t *testing.T) {
 
 	mock.ExpectDo("BF.EXISTS", "mykey", "item1").SetVal(int64(1))
 
-	exists, err := Exists(ctx, db, "mykey", "item1")
+	exists, err := countingbloomfilter.Exists(ctx, db, "mykey", "item1") // Added countingbloomfilter.
 	assert.NoError(t, err)
 	assert.True(t, exists)
 
 	mock.ExpectDo("BF.EXISTS", "mykey", "item2").SetVal(int64(0))
 
-	exists, err = Exists(ctx, db, "mykey", "item2")
+	exists, err = countingbloomfilter.Exists(ctx, db, "mykey", "item2") // Already had countingbloomfilter.
 	assert.NoError(t, err)
 	assert.False(t, exists)
 
 	mock.ExpectDo("BF.EXISTS", "mykey", "item3").SetErr(errors.New("exists failed"))
 
-	_, err = Exists(ctx, db, "mykey", "item3")
+	_, err = countingbloomfilter.Exists(ctx, db, "mykey", "item3") // Added countingbloomfilter.
 	assert.Error(t, err)
 
 	mock.ExpectDo("BF.EXISTS", "mykey", "item4").SetVal("not an int")
 
-	_, err = Exists(ctx, db, "mykey", "item4")
+	_, err = countingbloomfilter.Exists(ctx, db, "mykey", "item4") // Added countingbloomfilter.
 	assert.Error(t, err)
 }
 
@@ -70,7 +71,7 @@ func TestRemove(t *testing.T) {
 	ctx := context.Background()
 	db, _ := redismock.NewClientMock()
 
-	removed, err := Remove(ctx, db, "mykey", "item1")
+	removed, err := countingbloomfilter.Remove(ctx, db, "mykey", "item1") // Added countingbloomfilter.
 	assert.Error(t, err)
 	assert.False(t, removed)
 	assert.Equal(
