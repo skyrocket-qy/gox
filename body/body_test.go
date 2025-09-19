@@ -7,48 +7,56 @@ import (
 	"testing"
 
 	"github.com/skyrocket-qy/gox/body"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/proto"
 )
 
 func TestEncodeDecode(t *testing.T) {
+	t.Parallel()
+
 	original := &body.TestMessage{
 		Id:    "test-id",
 		Value: 12345,
 	}
 
 	encoded, err := body.Encode(original)
-	assert.NoError(t, err)
-	assert.NotNil(t, encoded)
+	require.NoError(t, err)
+	require.NotNil(t, encoded)
 
 	decoded, err := body.Decode[*body.TestMessage](encoded)
-	assert.NoError(t, err)
-	assert.NotNil(t, decoded)
+	require.NoError(t, err)
+	require.NotNil(t, decoded)
 
-	assert.True(t, proto.Equal(original, decoded), "original and decoded messages should be equal")
+	require.True(t, proto.Equal(original, decoded), "original and decoded messages should be equal")
 }
 
 func TestEncode_NilMessageError(t *testing.T) {
+	t.Parallel()
+
 	_, err := body.Encode(nil)
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestDecode_GzipError(t *testing.T) {
+	t.Parallel()
+
 	invalidGzipData := []byte("not a gzip file")
 	_, err := body.Decode[*body.TestMessage](invalidGzipData)
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestDecode_UnmarshalError(t *testing.T) {
+	t.Parallel()
+
 	var buf bytes.Buffer
 
 	gz := gzip.NewWriter(&buf)
 	_, err := gz.Write([]byte("invalid protobuf data"))
-	assert.NoError(t, err)
-	gz.Close()
+	require.NoError(t, err)
+	require.NoError(t, gz.Close())
 
 	_, err = body.Decode[*body.TestMessage](buf.Bytes())
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 type errorWriter struct{}
@@ -58,24 +66,27 @@ func (e *errorWriter) Write(p []byte) (n int, err error) {
 }
 
 func TestEncode_GzipWriteError(t *testing.T) {
+	t.Parallel()
+
 	original := &body.TestMessage{
 		Id:    "test-id",
 		Value: 12345,
 	}
 
 	err := body.EncodeWithWriter(original, &errorWriter{})
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestDecode_CorruptedGzipError(t *testing.T) {
+	t.Parallel()
 	// Create a valid compressed stream
 	var buf bytes.Buffer
 
 	gz := gzip.NewWriter(&buf)
 	_, err := gz.Write([]byte("some data"))
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	err = gz.Close()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	validData := buf.Bytes()
 
@@ -83,7 +94,7 @@ func TestDecode_CorruptedGzipError(t *testing.T) {
 	corruptedData := validData[:len(validData)-5]
 
 	_, err = body.Decode[*body.TestMessage](corruptedData)
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 // failingCloser is a writer that fails on the second write,
@@ -102,23 +113,25 @@ func (fc *failingCloser) Write(p []byte) (n int, err error) {
 }
 
 func TestEncode_GzipCloseError(t *testing.T) {
+	t.Parallel()
+
 	original := &body.TestMessage{
 		Id:    "test-id",
 		Value: 12345,
 	}
 
 	err := body.EncodeWithWriter(original, &failingCloser{})
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestDecode_NonPointerError(t *testing.T) {
+	t.Parallel()
 	// This is expected to fail because TestMessage is a pointer receiver type.
 	// To test this, we would need a proto message type that is not a pointer receiver.
 	// We will skip this test for now as it is not possible to create such a type with the current
 	// generated code.
-	t.Skip(
-		"Skipping test for non-pointer error because it is not possible to create a non-pointer proto message with the current generated code.",
-	)
+	t.Skip("Skipping test for non-pointer error: " +
+		"cannot create a non-pointer proto message with current generated code.")
 }
 
 type errorReaderCloser struct {
@@ -130,16 +143,18 @@ func (erc *errorReaderCloser) Close() error {
 }
 
 func TestDecode_GzipCloseError(t *testing.T) {
+	t.Parallel()
+
 	original := &body.TestMessage{Id: "test"}
 	encoded, err := proto.Marshal(original)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	var buf bytes.Buffer
 
 	gz := gzip.NewWriter(&buf)
 	_, err = gz.Write(encoded)
-	assert.NoError(t, err)
-	gz.Close()
+	require.NoError(t, err)
+	require.NoError(t, gz.Close())
 
 	// We need to create a custom reader that returns an error on Close.
 	// However, the Decode function takes a byte slice, not a reader.
@@ -156,18 +171,20 @@ func TestDecode_GzipCloseError(t *testing.T) {
 	}
 
 	_, err = body.Decode[*body.TestMessage](corruptedData)
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestDecode_NilTargetError(t *testing.T) {
+	t.Parallel()
+
 	encoded, err := body.Encode(&body.TestMessage{Id: "test"})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// This should cause a panic, not an error.
 	// The code checks `if typ == nil`, but `typ` will not be nil here.
 	// `reflect.TypeOf(nilMsg)` is `*body.TestMessage`.
 	// To make `typ` nil, we need to pass a nil interface.
 	_, err = body.Decode[proto.Message](encoded)
-	assert.Error(t, err)
-	assert.Equal(t, "target type must be a pointer to a proto message", err.Error())
+	require.Error(t, err)
+	require.Equal(t, "target type must be a pointer to a proto message", err.Error())
 }
