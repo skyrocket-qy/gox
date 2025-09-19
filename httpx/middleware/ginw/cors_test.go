@@ -12,6 +12,7 @@ import (
 )
 
 func testCorsRequest(t *testing.T, method string, handler gin.HandlerFunc) {
+	t.Helper()
 	r := gin.New()
 	r.Use(ginw.Cors())
 

@@ -12,6 +12,7 @@ import (
 // sortAndCompareGroups is a helper function to sort and compare two slices of groups.
 // It sorts the groups themselves and the elements within each group for consistent comparison.
 func sortAndCompareGroups[T cmp.Ordered](t *testing.T, actual, expected [][]T) bool {
+	t.Helper()
 	// Sort elements within each group
 	for _, group := range actual {
 		sort.Slice(group, func(i, j int) bool {

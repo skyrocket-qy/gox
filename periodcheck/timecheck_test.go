@@ -20,6 +20,7 @@ func runCommonTimeCheckTests(
 	) error,
 	expectedConditionMetCallCount int,
 ) {
+	t.Helper()
 	t.Run("ConditionMet", func(t *testing.T) {
 		callCount := 0
 		getCurrentStatus := func() (int, error) {
@@ -101,6 +102,7 @@ func runCommonTimeCheckTestsWithMaxInterval(
 	) error,
 	expectedConditionMetCallCount int,
 ) {
+	t.Helper()
 	t.Run("ConditionMet", func(t *testing.T) {
 		callCount := 0
 		getCurrentStatus := func() (int, error) {

@@ -70,6 +70,7 @@ func TestTopoSortDfs(t *testing.T) {
 
 // isValidTopoSort checks if a given sequence is a valid topological sort of a graph.
 func isValidTopoSort(t *testing.T, graph map[int][]int, seq []int) {
+	t.Helper()
 	assert.True(t, isValidTopoSortHelper(graph, seq))
 }
 

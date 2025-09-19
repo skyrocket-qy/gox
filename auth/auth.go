@@ -12,7 +12,7 @@ func Hash(password string, salt []byte) (hashedPassword []byte) {
 }
 
 func Equal(password string, salt, hashedPassword []byte) bool {
-	return bytes.Equal(Hash(password, salt), []byte(hashedPassword))
+	return bytes.Equal(Hash(password, salt), hashedPassword)
 }
 
 func GenSalt() (salt []byte, err error) {

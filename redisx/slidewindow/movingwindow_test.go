@@ -51,7 +51,7 @@ func TestMovingWindowLimiter_Allow(t *testing.T) {
 		mock.ExpectZAdd(key, redis.Z{Score: float64(currentNow), Member: currentNow}).SetVal(1)
 		mock.ExpectExpire(key, window).SetVal(true)
 
-		mock.ExpectZCard(key).SetVal(int64(i + 1))
+		mock.ExpectZCard(key).SetVal(i + 1)
 
 		// Update mock clock for each iteration
 		mockClock.NowFunc = func() time.Time { return time.Unix(0, currentNow) }
