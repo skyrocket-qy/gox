@@ -14,7 +14,7 @@ func SetFields(v any, values map[string]any) error {
 		return errors.New("v must not be nil")
 	}
 
-	if !isNonNilPointerOfStruct(v) {
+	if !IsNonNilPointerOfStruct(v) {
 		return errors.New("v must be a non-nil pointer to a struct")
 	}
 

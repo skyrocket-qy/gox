@@ -37,7 +37,7 @@ func Scan(from, to any) error {
 		)
 	}
 
-	if !isNonNilPointerOfStruct(to) {
+	if !IsNonNilPointerOfStruct(to) {
 		return fmt.Errorf(
 			"to must be a non-nil pointer of struct, got type: %s",
 			reflect.TypeOf(to).Kind().String(),

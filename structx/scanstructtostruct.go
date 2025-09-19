@@ -30,7 +30,7 @@ func ScanStructToStruct(from, to any) error {
 		return errors.New("from must be a struct or pointer of struct")
 	}
 
-	if !isNonNilPointerOfStruct(to) {
+	if !IsNonNilPointerOfStruct(to) {
 		return fmt.Errorf(
 			"to must be a non-nil pointer of struct, got type: %s",
 			reflect.TypeOf(to).Kind().String(),

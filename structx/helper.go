@@ -5,7 +5,7 @@ import (
 	"reflect"
 )
 
-func getElem(v any) reflect.Value {
+func GetElem(v any) reflect.Value {
 	val := reflect.ValueOf(v)
 	if val.Kind() == reflect.Ptr {
 		return val.Elem()
@@ -29,18 +29,18 @@ func PrintStructInfo(s any) {
 		return
 	}
 
-	printFields(t, v)
+	PrintFields(t, v)
 }
 
-// printFields prints the fields of a struct.
-func printFields(t reflect.Type, v reflect.Value) {
+// PrintFields prints the fields of a struct.
+func PrintFields(t reflect.Type, v reflect.Value) {
 	for i := range t.NumField() {
 		field := t.Field(i)
 		value := v.Field(i)
 		fieldName := field.Name
 
-		if isEmbedded(field) {
-			printFields(field.Type, value)
+		if IsEmbedded(field) {
+			PrintFields(field.Type, value)
 
 			continue
 		}
@@ -52,11 +52,11 @@ func printFields(t reflect.Type, v reflect.Value) {
 	}
 }
 
-func isEmbedded(field reflect.StructField) bool {
+func IsEmbedded(field reflect.StructField) bool {
 	return field.Anonymous
 }
 
-func isNonNilPointerOfStruct(v any) bool {
+func IsNonNilPointerOfStruct(v any) bool {
 	val := reflect.ValueOf(v)
 	if val.Kind() != reflect.Ptr {
 		return false

@@ -10,7 +10,7 @@ func DeepNew[V any]() *V {
 }
 
 func InitFields(v any) {
-	if !isNonNilPointerOfStruct(v) {
+	if !IsNonNilPointerOfStruct(v) {
 		return
 	}
 

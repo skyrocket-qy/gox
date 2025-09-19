@@ -141,7 +141,7 @@ func tryJobExecution(
 	renewalCtx, cancelRenewal := context.WithCancel(ctx)
 	defer cancelRenewal()
 
-	go renewLock(renewalCtx, rdb, lockKey, lockTTL)
+	go RenewLock(renewalCtx, rdb, lockKey, lockTTL)
 
 	// Execute the actual job.
 	jobErr = job()
@@ -169,7 +169,7 @@ func tryJobExecution(
 }
 
 // renewLock periodically extends the lock's TTL until the context is canceled.
-func renewLock(ctx context.Context, rdb *redis.Client, key string, ttl time.Duration) {
+func RenewLock(ctx context.Context, rdb *redis.Client, key string, ttl time.Duration) {
 	// Renew at a fraction of the TTL to ensure it doesn't expire.
 	ticker := time.NewTicker(ttl / 2)
 	defer ticker.Stop()

@@ -14,7 +14,7 @@ func commonScanHelper(from, to reflect.Value) {
 		toFieldType := to.Type().Field(i)
 
 		toField := to.Field(i)
-		if isEmbedded(toFieldType) {
+		if IsEmbedded(toFieldType) {
 			commonScanHelper(from, toField)
 		}
 
@@ -40,7 +40,7 @@ func commonScanHelper(from, to reflect.Value) {
 		switch toKind {
 		case reflect.Struct:
 			if fromField.Type().Kind() == reflect.Ptr {
-				if getElem(fromField).Type().Kind() == reflect.Struct {
+				if GetElem(fromField).Type().Kind() == reflect.Struct {
 					commonScanHelper(fromField.Elem(), toField)
 				}
 			}

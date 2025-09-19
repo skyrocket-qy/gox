@@ -1,4 +1,4 @@
-package redisx
+package redisx_test
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redismock/v9"
+	"github.com/skyrocket-qy/gox/redisx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,12 +23,12 @@ func TestExecuteExactlyOnce_SuccessFirstTry(t *testing.T) {
 	mock.ExpectSetNX(lockKey, 1, lockTTL).SetVal(true)
 	mock.ExpectGet(statusKey).RedisNil()
 	mock.ExpectTxPipeline()
-	mock.ExpectSet(statusKey, JobStatusCompleted, 30*24*time.Hour).SetVal("OK")
+	mock.ExpectSet(statusKey, redisx.JobStatusCompleted, 30*24*time.Hour).SetVal("OK")
 	mock.ExpectDel(lockKey).SetVal(1)
 	mock.ExpectTxPipelineExec()
 	mock.ExpectDel(lockKey).SetVal(0)
 
-	err := ExecuteExactlyOnce(context.Background(), db, baseKey, lockTTL, job)
+	err := redisx.ExecuteExactlyOnce(context.Background(), db, baseKey, lockTTL, job)
 	if err != nil {
 		t.Errorf("ExecuteExactlyOnce returned an error: %v", err)
 	}
@@ -46,7 +47,7 @@ func TestExecuteExactlyOnce_ContextCanceled(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	err := ExecuteExactlyOnce(ctx, db, baseKey, lockTTL, job)
+	err := redisx.ExecuteExactlyOnce(ctx, db, baseKey, lockTTL, job)
 	if !errors.Is(err, context.Canceled) {
 		t.Errorf("Expected context.Canceled error, got %v", err)
 	}
@@ -75,7 +76,7 @@ func TestExecuteExactlyOnce_ContextCanceledDuringJobRetry(t *testing.T) {
 		cancel()
 	}()
 
-	err := ExecuteExactlyOnce(ctx, db, baseKey, lockTTL, job)
+	err := redisx.ExecuteExactlyOnce(ctx, db, baseKey, lockTTL, job)
 	assert.ErrorIs(t, err, context.Canceled)
 }
 
@@ -98,7 +99,7 @@ func TestExecuteExactlyOnce_ContextCanceledDuringLockPoll(t *testing.T) {
 		cancel()
 	}()
 
-	err := ExecuteExactlyOnce(ctx, db, baseKey, lockTTL, job)
+	err := redisx.ExecuteExactlyOnce(ctx, db, baseKey, lockTTL, job)
 	assert.ErrorIs(t, err, context.Canceled)
 }
 
@@ -113,12 +114,12 @@ func TestExecuteExactlyOnce_RedisFailsOnSetNX(t *testing.T) {
 	mock.ExpectSetNX(lockKey, 1, lockTTL).SetVal(true)
 	mock.ExpectGet("job:status:" + baseKey).RedisNil()
 	mock.ExpectTxPipeline()
-	mock.ExpectSet("job:status:"+baseKey, JobStatusCompleted, 30*24*time.Hour).SetVal("OK")
+	mock.ExpectSet("job:status:"+baseKey, redisx.JobStatusCompleted, 30*24*time.Hour).SetVal("OK")
 	mock.ExpectDel(lockKey).SetVal(1)
 	mock.ExpectTxPipelineExec()
 	mock.ExpectDel(lockKey).SetVal(0)
 
-	err := ExecuteExactlyOnce(context.Background(), db, baseKey, lockTTL, job)
+	err := redisx.ExecuteExactlyOnce(context.Background(), db, baseKey, lockTTL, job)
 	if err != nil {
 		t.Errorf("ExecuteExactlyOnce returned an error: %v", err)
 	}
@@ -143,12 +144,12 @@ func TestExecuteExactlyOnce_RedisFailsOnGet(t *testing.T) {
 	mock.ExpectSetNX(lockKey, 1, lockTTL).SetVal(true)
 	mock.ExpectGet(statusKey).RedisNil()
 	mock.ExpectTxPipeline()
-	mock.ExpectSet(statusKey, JobStatusCompleted, 30*24*time.Hour).SetVal("OK")
+	mock.ExpectSet(statusKey, redisx.JobStatusCompleted, 30*24*time.Hour).SetVal("OK")
 	mock.ExpectDel(lockKey).SetVal(1)
 	mock.ExpectTxPipelineExec()
 	mock.ExpectDel(lockKey).SetVal(0)
 
-	err := ExecuteExactlyOnce(context.Background(), db, baseKey, lockTTL, job)
+	err := redisx.ExecuteExactlyOnce(context.Background(), db, baseKey, lockTTL, job)
 	if err != nil {
 		t.Errorf("ExecuteExactlyOnce returned an error: %v", err)
 	}
@@ -169,7 +170,7 @@ func TestExecuteExactlyOnce_RedisFailsOnTx(t *testing.T) {
 	mock.ExpectSetNX(lockKey, 1, lockTTL).SetVal(true)
 	mock.ExpectGet(statusKey).RedisNil()
 	mock.ExpectTxPipeline()
-	mock.ExpectSet(statusKey, JobStatusCompleted, 30*24*time.Hour).SetVal("OK")
+	mock.ExpectSet(statusKey, redisx.JobStatusCompleted, 30*24*time.Hour).SetVal("OK")
 	mock.ExpectDel(lockKey).SetVal(1)
 	mock.ExpectTxPipelineExec().SetErr(errors.New("redis error"))
 	mock.ExpectDel(lockKey).SetVal(1) // from defer
@@ -177,12 +178,12 @@ func TestExecuteExactlyOnce_RedisFailsOnTx(t *testing.T) {
 	mock.ExpectSetNX(lockKey, 1, lockTTL).SetVal(true)
 	mock.ExpectGet(statusKey).RedisNil()
 	mock.ExpectTxPipeline()
-	mock.ExpectSet(statusKey, JobStatusCompleted, 30*24*time.Hour).SetVal("OK")
+	mock.ExpectSet(statusKey, redisx.JobStatusCompleted, 30*24*time.Hour).SetVal("OK")
 	mock.ExpectDel(lockKey).SetVal(1)
 	mock.ExpectTxPipelineExec()
 	mock.ExpectDel(lockKey).SetVal(0)
 
-	err := ExecuteExactlyOnce(context.Background(), db, baseKey, lockTTL, job)
+	err := redisx.ExecuteExactlyOnce(context.Background(), db, baseKey, lockTTL, job)
 	if err != nil {
 		t.Errorf("ExecuteExactlyOnce returned an error: %v", err)
 	}
@@ -209,12 +210,12 @@ func TestExecuteExactlyOnce_DeferDelFails(t *testing.T) {
 	mock.ExpectSetNX(lockKey, 1, lockTTL).SetVal(true)
 	mock.ExpectGet(statusKey).RedisNil()
 	mock.ExpectTxPipeline()
-	mock.ExpectSet(statusKey, JobStatusCompleted, 30*24*time.Hour).SetVal("OK")
+	mock.ExpectSet(statusKey, redisx.JobStatusCompleted, 30*24*time.Hour).SetVal("OK")
 	mock.ExpectDel(lockKey).SetVal(1)
 	mock.ExpectTxPipelineExec()
 	mock.ExpectDel(lockKey).SetVal(0)
 
-	err := ExecuteExactlyOnce(context.Background(), db, baseKey, lockTTL, job)
+	err := redisx.ExecuteExactlyOnce(context.Background(), db, baseKey, lockTTL, job)
 	assert.NoError(t, err)
 
 	assert.NoError(t, mock.ExpectationsWereMet())
@@ -231,7 +232,7 @@ func TestRenewLock(t *testing.T) {
 	mock.ExpectPExpire(key, ttl).SetVal(true)
 	mock.ExpectPExpire(key, ttl).SetVal(true)
 
-	go renewLock(ctx, db, key, ttl)
+	go redisx.RenewLock(ctx, db, key, ttl)
 
 	time.Sleep(250 * time.Millisecond)
 
@@ -267,12 +268,12 @@ func TestExecuteExactlyOnce_JobFailsThenSucceeds(t *testing.T) {
 	mock.ExpectSetNX(lockKey, 1, lockTTL).SetVal(true)
 	mock.ExpectGet(statusKey).RedisNil()
 	mock.ExpectTxPipeline()
-	mock.ExpectSet(statusKey, JobStatusCompleted, 30*24*time.Hour).SetVal("OK")
+	mock.ExpectSet(statusKey, redisx.JobStatusCompleted, 30*24*time.Hour).SetVal("OK")
 	mock.ExpectDel(lockKey).SetVal(1)
 	mock.ExpectTxPipelineExec()
 	mock.ExpectDel(lockKey).SetVal(0)
 
-	err := ExecuteExactlyOnce(context.Background(), db, baseKey, lockTTL, job)
+	err := redisx.ExecuteExactlyOnce(context.Background(), db, baseKey, lockTTL, job)
 	if err != nil {
 		t.Errorf("ExecuteExactlyOnce returned an error: %v", err)
 	}
@@ -298,12 +299,12 @@ func TestExecuteExactlyOnce_LockHeld(t *testing.T) {
 	mock.ExpectSetNX(lockKey, 1, lockTTL).SetVal(true)
 	mock.ExpectGet(statusKey).RedisNil()
 	mock.ExpectTxPipeline()
-	mock.ExpectSet(statusKey, JobStatusCompleted, 30*24*time.Hour).SetVal("OK")
+	mock.ExpectSet(statusKey, redisx.JobStatusCompleted, 30*24*time.Hour).SetVal("OK")
 	mock.ExpectDel(lockKey).SetVal(1)
 	mock.ExpectTxPipelineExec()
 	mock.ExpectDel(lockKey).SetVal(0)
 
-	err := ExecuteExactlyOnce(context.Background(), db, baseKey, lockTTL, job)
+	err := redisx.ExecuteExactlyOnce(context.Background(), db, baseKey, lockTTL, job)
 	if err != nil {
 		t.Errorf("ExecuteExactlyOnce returned an error: %v", err)
 	}
@@ -327,10 +328,10 @@ func TestExecuteExactlyOnce_JobAlreadyCompleted(t *testing.T) {
 	}
 
 	mock.ExpectSetNX(lockKey, 1, lockTTL).SetVal(true)
-	mock.ExpectGet(statusKey).SetVal(JobStatusCompleted)
+	mock.ExpectGet(statusKey).SetVal(redisx.JobStatusCompleted)
 	mock.ExpectDel(lockKey).SetVal(1)
 
-	err := ExecuteExactlyOnce(context.Background(), db, baseKey, lockTTL, job)
+	err := redisx.ExecuteExactlyOnce(context.Background(), db, baseKey, lockTTL, job)
 	if err != nil {
 		t.Errorf("ExecuteExactlyOnce returned an error: %v", err)
 	}
