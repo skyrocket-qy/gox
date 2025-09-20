@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	ope "github.com/skyrocket-qy/gox/gormx/lib/operator"
-	"github.com/skyrocket-qy/gox/gormx/lib/where"
+	wh "github.com/skyrocket-qy/gox/gormx/lib/where"
 )
 
 func TestB(t *testing.T) {

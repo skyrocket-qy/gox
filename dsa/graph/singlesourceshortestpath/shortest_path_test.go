@@ -1,7 +1,9 @@
-package singlesourceshortestpath
+package singlesourceshortestpath_test
 
 import (
 	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/graph/singlesourceshortestpath"
 )
 
 func TestDijkstraAlgorithm(t *testing.T) {
@@ -21,7 +23,7 @@ func TestDijkstraAlgorithm(t *testing.T) {
 	end := 2
 	expected := 7
 
-	result := DijkstraAlgorithm(graph, start, end)
+	result := singlesourceshortestpath.DijkstraAlgorithm(graph, start, end)
 	if result != expected {
 		t.Errorf("DijkstraAlgorithm() = %d; want %d", result, expected)
 	}
@@ -39,7 +41,7 @@ func TestLabelSettingAlgorithm(t *testing.T) {
 	end := 2
 	expected := 7
 
-	result := LabelSettingAlgorithm(graph, start, end)
+	result := singlesourceshortestpath.LabelSettingAlgorithm(graph, start, end)
 	if result != expected {
 		t.Errorf("LabelSettingAlgorithm() = %d; want %d", result, expected)
 	}
