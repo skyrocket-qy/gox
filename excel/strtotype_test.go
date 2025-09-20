@@ -1,8 +1,9 @@
-package excel
+package excel_test
 
 import (
 	"testing"
 
+	"github.com/skyrocket-qy/gox/excel"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -42,7 +43,7 @@ func TestStrToType(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			switch gotType := tt.want.(type) {
 			case string:
-				got, err := StrToType[string](tt.input)
+				got, err := excel.StrToType[string](tt.input)
 				if tt.wantErr {
 					require.Error(t, err)
 				} else {
@@ -50,7 +51,7 @@ func TestStrToType(t *testing.T) {
 					assert.Equal(t, gotType, got)
 				}
 			case int:
-				got, err := StrToType[int](tt.input)
+				got, err := excel.StrToType[int](tt.input)
 				if tt.wantErr {
 					require.Error(t, err)
 				} else {
@@ -58,7 +59,7 @@ func TestStrToType(t *testing.T) {
 					assert.Equal(t, gotType, got)
 				}
 			case float64:
-				got, err := StrToType[float64](tt.input)
+				got, err := excel.StrToType[float64](tt.input)
 				if tt.wantErr {
 					require.Error(t, err)
 				} else {
@@ -66,7 +67,7 @@ func TestStrToType(t *testing.T) {
 					assert.InDelta(t, gotType, got, 0.000001)
 				}
 			case bool:
-				got, err := StrToType[bool](tt.input)
+				got, err := excel.StrToType[bool](tt.input)
 				if tt.wantErr {
 					require.Error(t, err)
 				} else {
@@ -79,7 +80,7 @@ func TestStrToType(t *testing.T) {
 
 	// Test unsupported type
 	t.Run("unsupported_type", func(t *testing.T) {
-		_, err := StrToType[complex64]("1+2i")
+		_, err := excel.StrToType[complex64]("1+2i")
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "unsupported type")
 	})

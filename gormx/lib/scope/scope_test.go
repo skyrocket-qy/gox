@@ -1,8 +1,9 @@
-package scope
+package scope_test
 
 import (
 	"testing"
 
+	"github.com/skyrocket-qy/gox/gormx/lib/scope"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -49,8 +50,8 @@ func TestApplyPager(t *testing.T) {
 	t.Run("pager", func(t *testing.T) {
 		var users []User
 
-		pager := &Pager{Number: 2, Size: 1}
-		err := db.Scopes(ApplyPager(pager)).Find(&users).Error
+		pager := &scope.Pager{Number: 2, Size: 1}
+		err := db.Scopes(scope.ApplyPager(pager)).Find(&users).Error
 		assert.NoError(t, err)
 		assert.Len(t, users, 1)
 		assert.Equal(t, "Bob", users[0].Name)
@@ -59,7 +60,7 @@ func TestApplyPager(t *testing.T) {
 	t.Run("nil pager", func(t *testing.T) {
 		var users []User
 
-		err := db.Scopes(ApplyPager(nil)).Find(&users).Error
+		err := db.Scopes(scope.ApplyPager(nil)).Find(&users).Error
 		assert.NoError(t, err)
 		assert.Len(t, users, 3)
 	})
@@ -71,10 +72,10 @@ func TestApplySorter(t *testing.T) {
 	t.Run("single sorter", func(t *testing.T) {
 		var users []User
 
-		sorters := []Sorter{
+		sorters := []scope.Sorter{
 			{Field: "age", Asc: false},
 		}
-		err := db.Scopes(ApplySorter(sorters)).Find(&users).Error
+		err := db.Scopes(scope.ApplySorter(sorters)).Find(&users).Error
 		assert.NoError(t, err)
 		assert.Len(t, users, 3)
 		assert.Equal(t, "Charlie", users[0].Name)
@@ -83,11 +84,11 @@ func TestApplySorter(t *testing.T) {
 	t.Run("multiple sorters", func(t *testing.T) {
 		var users []User
 
-		sorters := []Sorter{
+		sorters := []scope.Sorter{
 			{Field: "age", Asc: true},
 			{Field: "name", Asc: false},
 		}
-		err := db.Scopes(ApplySorter(sorters)).Find(&users).Error
+		err := db.Scopes(scope.ApplySorter(sorters)).Find(&users).Error
 		assert.NoError(t, err)
 		assert.Len(t, users, 3)
 		assert.Equal(t, "Alice", users[0].Name)
@@ -96,8 +97,8 @@ func TestApplySorter(t *testing.T) {
 	t.Run("default sorter", func(t *testing.T) {
 		var users []User
 
-		defaultSorter := Sorter{Field: "name", Asc: true}
-		err := db.Scopes(ApplySorter([]Sorter{}, defaultSorter)).Find(&users).Error
+		defaultSorter := scope.Sorter{Field: "name", Asc: true}
+		err := db.Scopes(scope.ApplySorter([]scope.Sorter{}, defaultSorter)).Find(&users).Error
 		assert.NoError(t, err)
 		assert.Len(t, users, 3)
 		assert.Equal(t, "Alice", users[0].Name)
@@ -106,14 +107,14 @@ func TestApplySorter(t *testing.T) {
 	t.Run("no sorter", func(t *testing.T) {
 		var users []User
 
-		err := db.Scopes(ApplySorter([]Sorter{})).Find(&users).Error
+		err := db.Scopes(scope.ApplySorter([]scope.Sorter{})).Find(&users).Error
 		assert.NoError(t, err)
 		assert.Len(t, users, 3)
 	})
 }
 
 func TestToPascalCase(t *testing.T) {
-	assert.Equal(t, "HelloWorld", ToPascalCase("helloWorld"))
-	assert.Equal(t, "H", ToPascalCase("h"))
-	assert.Empty(t, ToPascalCase(""))
+	assert.Equal(t, "HelloWorld", scope.ToPascalCase("helloWorld"))
+	assert.Equal(t, "H", scope.ToPascalCase("h"))
+	assert.Empty(t, scope.ToPascalCase(""))
 }

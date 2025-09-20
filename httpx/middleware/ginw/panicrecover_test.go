@@ -1,4 +1,4 @@
-package ginw
+package ginw_test
 
 import (
 	"context"
@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
+	"github.com/skyrocket-qy/gox/httpx/middleware/ginw"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -25,7 +26,7 @@ func TestPanicRecover(t *testing.T) {
 
 	t.Run("recovers from panic", func(t *testing.T) {
 		r := gin.New()
-		r.Use(PanicRecover())
+		r.Use(ginw.PanicRecover())
 		r.GET("/panic", func(c *gin.Context) {
 			panic("test panic")
 		})
@@ -39,7 +40,7 @@ func TestPanicRecover(t *testing.T) {
 
 	t.Run("does not interfere with normal request", func(t *testing.T) {
 		r := gin.New()
-		r.Use(PanicRecover())
+		r.Use(ginw.PanicRecover())
 		r.GET("/normal", func(c *gin.Context) {
 			c.String(http.StatusOK, "ok")
 		})

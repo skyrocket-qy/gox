@@ -1,9 +1,11 @@
-package utils
+package utils_test
 
 import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/skyrocket-qy/gox/gormx/utils"
 )
 
 func TestCreateOrReplaceFile(t *testing.T) {
@@ -14,7 +16,7 @@ func TestCreateOrReplaceFile(t *testing.T) {
 	filePath := filepath.Join(tmpDir, "testfile.txt")
 	content := "hello world"
 
-	err := CreateOrReplaceFile(filePath, content)
+	err := utils.CreateOrReplaceFile(filePath, content)
 	if err != nil {
 		t.Errorf("Failed to create file: %v", err)
 	}
@@ -32,7 +34,7 @@ func TestCreateOrReplaceFile(t *testing.T) {
 	// Test case 2: Replace an existing file
 	newContent := "hello again"
 
-	err = CreateOrReplaceFile(filePath, newContent)
+	err = utils.CreateOrReplaceFile(filePath, newContent)
 	if err != nil {
 		t.Errorf("Failed to replace file: %v", err)
 	}
@@ -57,7 +59,7 @@ func TestCreateOrReplaceFile(t *testing.T) {
 
 	filePathInReadOnlyDir := filepath.Join(readOnlyDir, "testfile.txt")
 
-	err = CreateOrReplaceFile(filePathInReadOnlyDir, content)
+	err = utils.CreateOrReplaceFile(filePathInReadOnlyDir, content)
 	if err == nil {
 		t.Errorf("Expected an error when writing to a read-only directory, but got nil")
 	}
@@ -75,7 +77,7 @@ func TestCreateOrReplaceFile(t *testing.T) {
 		t.Fatalf("Failed to create file in dir: %v", err)
 	}
 
-	err = CreateOrReplaceFile(dirPath, content)
+	err = utils.CreateOrReplaceFile(dirPath, content)
 	if err == nil {
 		t.Errorf("Expected an error when path is a non-empty directory, but got nil")
 	}

@@ -1,9 +1,10 @@
-package wh
+package wh_test
 
 import (
 	"testing"
 
 	ope "github.com/skyrocket-qy/gox/gormx/lib/operator"
+	"github.com/skyrocket-qy/gox/gormx/lib/where"
 )
 
 func TestB(t *testing.T) {
@@ -35,7 +36,7 @@ func TestB(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := B(tt.args.field, tt.args.oper); got != tt.want {
+			if got := wh.B(tt.args.field, tt.args.oper); got != tt.want {
 				t.Errorf("B() = %v, want %v", got, tt.want)
 			}
 		})
@@ -66,7 +67,7 @@ func TestBSub(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := BSub(tt.args.field, tt.args.oper); got != tt.want {
+			if got := wh.BSub(tt.args.field, tt.args.oper); got != tt.want {
 				t.Errorf("BSub() = %v, want %v", got, tt.want)
 			}
 		})
@@ -91,7 +92,7 @@ func TestDesc(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Desc(tt.args.column); got != tt.want {
+			if got := wh.Desc(tt.args.column); got != tt.want {
 				t.Errorf("Desc() = %v, want %v", got, tt.want)
 			}
 		})
@@ -116,7 +117,7 @@ func TestAsc(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Asc(tt.args.column); got != tt.want {
+			if got := wh.Asc(tt.args.column); got != tt.want {
 				t.Errorf("Asc() = %v, want %v", got, tt.want)
 			}
 		})
