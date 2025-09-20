@@ -1,4 +1,4 @@
-package qrcode
+package qrcode_test
 
 import (
 	"context"
@@ -7,12 +7,13 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/skyrocket-qy/gox/qrcode"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestGenerateOTPURI(t *testing.T) {
-	uri, err := generateOTPURI()
+	uri, err := qrcode.GenerateOTPURI()
 	assert.NoError(t, err)
 	assert.Contains(t, uri, "otpauth://totp/MyApp:user@example.com")
 	assert.Contains(t, uri, "secret=")
@@ -21,13 +22,13 @@ func TestGenerateOTPURI(t *testing.T) {
 func TestGenerateQRCode(t *testing.T) {
 	// Test with a valid URI
 	uri := "otpauth://totp/Test:test@example.com?secret=ABCDEF1234567890&issuer=Test"
-	png, err := generateQRCode(uri)
+	png, err := qrcode.GenerateQRCode(uri)
 	assert.NoError(t, err)
 	assert.NotNil(t, png)
 	assert.NotEmpty(t, png)
 
 	// Test with an empty URI (should return an error from qrcode.Encode)
-	png, err = generateQRCode("")
+	png, err = qrcode.GenerateQRCode("")
 	require.Error(t, err)
 	assert.Nil(t, png)
 	assert.Contains(t, err.Error(), "no data to encode")
@@ -40,7 +41,7 @@ func TestHandler(t *testing.T) {
 		assert.NoError(t, err)
 
 		rr := httptest.NewRecorder()
-		handler := http.HandlerFunc(Handler)
+		handler := http.HandlerFunc(qrcode.Handler)
 
 		handler.ServeHTTP(rr, req)
 
@@ -71,7 +72,7 @@ func TestHandler_WriteError(t *testing.T) {
 	assert.NoError(t, err)
 
 	rr := &errorResponseWriter{}
-	handler := http.HandlerFunc(Handler)
+	handler := http.HandlerFunc(qrcode.Handler)
 
 	handler.ServeHTTP(rr, req)
 	// We can't assert much here, as the error is not returned.
@@ -80,38 +81,38 @@ func TestHandler_WriteError(t *testing.T) {
 
 func TestHandler_Errors(t *testing.T) {
 	// Backup the original functions
-	originalGenerateOTPURI := generateOTPURI
-	originalGenerateQRCode := generateQRCode
+	originalGenerateOTPURI := qrcode.GenerateOTPURI
+	originalGenerateQRCode := qrcode.GenerateQRCode
 
 	defer func() {
-		generateOTPURI = originalGenerateOTPURI
-		generateQRCode = originalGenerateQRCode
+		qrcode.GenerateOTPURI = originalGenerateOTPURI
+		qrcode.GenerateQRCode = originalGenerateQRCode
 	}()
 
 	t.Run("GenerateOTPURI fails", func(t *testing.T) {
-		generateOTPURI = func() (string, error) {
+		qrcode.GenerateOTPURI = func() (string, error) {
 			return "", errors.New("otp error")
 		}
 
 		req, _ := http.NewRequest(http.MethodGet, "/qrcode", nil)
 		rr := httptest.NewRecorder()
-		Handler(rr, req)
+		qrcode.Handler(rr, req)
 
 		assert.Equal(t, http.StatusInternalServerError, rr.Code)
 		assert.Equal(t, "Failed to generate OTP URI\n", rr.Body.String())
 	})
 
 	t.Run("GenerateQRCode fails", func(t *testing.T) {
-		generateOTPURI = func() (string, error) {
+		qrcode.GenerateOTPURI = func() (string, error) {
 			return "test", nil
 		}
-		generateQRCode = func(uri string) ([]byte, error) {
+		qrcode.GenerateQRCode = func(uri string) ([]byte, error) {
 			return nil, errors.New("qrcode error")
 		}
 
 		req, _ := http.NewRequest(http.MethodGet, "/qrcode", nil)
 		rr := httptest.NewRecorder()
-		Handler(rr, req)
+		qrcode.Handler(rr, req)
 
 		assert.Equal(t, http.StatusInternalServerError, rr.Code)
 		assert.Equal(t, "Failed to generate QR code\n", rr.Body.String())

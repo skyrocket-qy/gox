@@ -7,7 +7,7 @@ import (
 	"github.com/skip2/go-qrcode"
 )
 
-var generateOTPURI = func() (string, error) {
+var GenerateOTPURI = func() (string, error) {
 	key, err := totp.Generate(totp.GenerateOpts{
 		Issuer:      "MyApp",
 		AccountName: "user@example.com",
@@ -19,7 +19,7 @@ var generateOTPURI = func() (string, error) {
 	return key.URL(), nil
 }
 
-var generateQRCode = func(uri string) ([]byte, error) {
+var GenerateQRCode = func(uri string) ([]byte, error) {
 	var png []byte
 
 	png, err := qrcode.Encode(uri, qrcode.Medium, 256)
@@ -31,14 +31,14 @@ var generateQRCode = func(uri string) ([]byte, error) {
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-	uri, err := generateOTPURI()
+	uri, err := GenerateOTPURI()
 	if err != nil {
 		http.Error(w, "Failed to generate OTP URI", http.StatusInternalServerError)
 
 		return
 	}
 
-	png, err := generateQRCode(uri)
+	png, err := GenerateQRCode(uri)
 	if err != nil {
 		http.Error(w, "Failed to generate QR code", http.StatusInternalServerError)
 
