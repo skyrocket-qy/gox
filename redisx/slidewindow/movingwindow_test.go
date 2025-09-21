@@ -58,7 +58,7 @@ func TestMovingWindowLimiter_Allow(t *testing.T) {
 		mockClock.NowFunc = func() time.Time { return time.Unix(0, currentNow) }
 
 		allowed, err := limiter.Allow(ctx, key, limit, window)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.True(t, allowed)
 	}
 
@@ -75,7 +75,7 @@ func TestMovingWindowLimiter_Allow(t *testing.T) {
 	mockClock.NowFunc = func() time.Time { return time.Unix(0, currentNow) }
 
 	allowed, err := limiter.Allow(ctx, key, limit, window)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.False(t, allowed)
 
 	// Test case 3: Error during Redis pipeline execution (mocking ZRemRangeByScore error)
@@ -108,5 +108,5 @@ func TestMovingWindowLimiter_Allow(t *testing.T) {
 	assert.Contains(t, err.Error(), "redis zcard error")
 
 	// Ensure all expectations were met
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.NoError(t, mock.ExpectationsWereMet())
 }

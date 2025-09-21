@@ -126,11 +126,11 @@ func TestGetField(t *testing.T) {
 
 	// Test existing field
 	name, err := refletx.GetField[string](&s, "Name")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "test", *name)
 
 	value, err := refletx.GetField[int](&s, "Value")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, 10, *value)
 
 	// Test non-existing field
@@ -149,13 +149,13 @@ func TestCallMethod(t *testing.T) {
 
 	// Test calling a method with no arguments and a return value
 	out, err := refletx.CallMethod(&s, "GetName", []reflect.Value{})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Len(t, out, 1)
 	assert.Equal(t, "initial", out[0].String())
 
 	// Test calling a method with arguments and no return value
 	out, err = refletx.CallMethod(&s, "SetName", []reflect.Value{reflect.ValueOf("new name")})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Empty(t, out) // SetName has no return values
 	assert.Equal(t, "new name", s.Name)
 
@@ -165,7 +165,7 @@ func TestCallMethod(t *testing.T) {
 		"Sum",
 		[]reflect.Value{reflect.ValueOf(5), reflect.ValueOf(7)},
 	)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Len(t, out, 1)
 	assert.Equal(t, 12, int(out[0].Int()))
 
@@ -208,7 +208,7 @@ func TestGetMap(t *testing.T) {
 	// Test with a simple struct
 	s1 := OuterStruct{Field1: "value1", Field2: 10}
 	m1, err := refletx.GetMap[any](&s1)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "value1", m1["Field1"])
 	assert.Equal(t, 10, m1["Field2"])
 
@@ -218,7 +218,7 @@ func TestGetMap(t *testing.T) {
 		Field3: InnerStruct{ID: 1, Name: "inner"},
 	}
 	m2, err := refletx.GetMap[any](&s2)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "value1", m2["Field1"])
 	assert.Equal(t, InnerStruct{ID: 1, Name: "inner"}, m2["Field3"])
 
@@ -228,7 +228,7 @@ func TestGetMap(t *testing.T) {
 		Field4: &InnerStruct{ID: 2, Name: "inner_ptr"},
 	}
 	m3, err := refletx.GetMap[any](&s3)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "value1", m3["Field1"])
 	assert.Equal(t, &InnerStruct{ID: 2, Name: "inner_ptr"}, m3["Field4"])
 
@@ -304,7 +304,7 @@ func TestGetCallerName(t *testing.T) {
 
 func TestGetCurrentCallerShortName(t *testing.T) {
 	name := refletx.GetCurrentCallerShortName()
-	assert.Equal(t, "TestGetCurrentCallerShortName", name)
+	require.Equal(t, "TestGetCurrentCallerShortName", name)
 }
 
 func TestGetCurrentCallerFullName(t *testing.T) {
