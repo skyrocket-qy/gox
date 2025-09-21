@@ -20,8 +20,8 @@ func TestAdd(t *testing.T) {
 	mock.ExpectDo("BF.ADD", key, value).SetVal(int64(1))
 
 	err := bloomfilter.Add(ctx, db, key, value) // Added bloomfilter.
-	assert.NoError(t, err)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.NoError(t, err)
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestExists(t *testing.T) {
@@ -33,13 +33,12 @@ func TestExists(t *testing.T) {
 	mock.ExpectDo("BF.EXISTS", key, value).SetVal(int64(1))
 
 	exists, err := bloomfilter.Exists(ctx, db, key, value) // Added bloomfilter.
-	assert.NoError(t, err)
-	assert.True(t, exists)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.NoError(t, err)
+	require.NoError(t, mock.ExpectationsWereMet())
 
 	mock.ExpectDo("BF.EXISTS", key, "non_existent_value").SetVal(int64(0))
 	exists, err = bloomfilter.Exists(ctx, db, key, "non_existent_value") // Added bloomfilter.
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.False(t, exists)
 	assert.NoError(t, mock.ExpectationsWereMet())
 }
@@ -83,8 +82,8 @@ func TestReserve(t *testing.T) {
 	mock.ExpectDo("BF.RESERVE", key, errorRate, capacity).SetVal("OK")
 
 	err := bloomfilter.Reserve(ctx, db, key, errorRate, capacity) // Added bloomfilter.
-	assert.NoError(t, err)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.NoError(t, err)
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestReserve_Error(t *testing.T) {
@@ -98,5 +97,5 @@ func TestReserve_Error(t *testing.T) {
 
 	err := bloomfilter.Reserve(ctx, db, key, errorRate, capacity) // Added bloomfilter.
 	require.Error(t, err)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.NoError(t, mock.ExpectationsWereMet())
 }

@@ -32,7 +32,7 @@ func TestNew(t *testing.T) {
 	require.Error(t, err)
 
 	hll, err := hyperloglogplusplus.New(14)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, hll)
 }
 
@@ -98,7 +98,7 @@ func TestMerge(t *testing.T) {
 	require.Error(t, err, "Expected error when merging HLLs with different precisions")
 
 	err = hll1.Merge(hll2)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	count := hll1.Count()
 	errorMargin := float64(100000) * 0.1
@@ -112,11 +112,11 @@ func TestGobEncodeDecode(t *testing.T) {
 	}
 
 	buf, err := hll.GobEncode()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	hll2 := &hyperloglogplusplus.HyperLogLog{}
 	err = hll2.GobDecode(buf)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	assert.Equal(t, hll.Count(), hll2.Count())
 }

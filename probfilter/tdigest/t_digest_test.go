@@ -18,7 +18,7 @@ func TestCreate(t *testing.T) {
 	mock.ExpectDo("TDIGEST.CREATE", "mykey", 100.0).SetVal("OK")
 
 	err := tdigest.Create(ctx, db, "mykey", 100.0)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	mock.ExpectDo("TDIGEST.CREATE", "mykey", 100.0).SetErr(errors.New("create failed"))
 
@@ -34,7 +34,7 @@ func TestAdd(t *testing.T) {
 	mock.ExpectDo("TDIGEST.ADD", "mykey", 1.0, int64(10), 2.0, int64(20)).SetVal("OK")
 
 	err := tdigest.Add(ctx, db, "mykey", items)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	mock.ExpectDo("TDIGEST.ADD", "mykey", 1.0, int64(10), 2.0, int64(20)).
 		SetErr(errors.New("add failed"))
@@ -50,7 +50,7 @@ func TestMerge(t *testing.T) {
 	mock.ExpectDo("TDIGEST.MERGE", "destkey", "s1", "s2").SetVal("OK")
 
 	err := tdigest.Merge(ctx, db, "destkey", "s1", "s2")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	mock.ExpectDo("TDIGEST.MERGE", "destkey", "s1", "s2").SetErr(errors.New("merge failed"))
 
@@ -65,8 +65,8 @@ func TestMin(t *testing.T) {
 	mock.ExpectDo("TDIGEST.MIN", "mykey").SetVal(1.23)
 
 	val, err := tdigest.Min(ctx, db, "mykey")
-	assert.NoError(t, err)
-	assert.Equal(t, 1.23, val)
+	require.NoError(t, err)
+	assert.InEpsilon(t, 1.23, val, 0.00001)
 
 	mock.ExpectDo("TDIGEST.MIN", "mykey").SetErr(errors.New("min failed"))
 
@@ -86,8 +86,8 @@ func TestMax(t *testing.T) {
 	mock.ExpectDo("TDIGEST.MAX", "mykey").SetVal(4.56)
 
 	val, err := tdigest.Max(ctx, db, "mykey")
-	assert.NoError(t, err)
-	assert.Equal(t, 4.56, val)
+	require.NoError(t, err)
+	assert.InEpsilon(t, 4.56, val, 0.00001)
 
 	mock.ExpectDo("TDIGEST.MAX", "mykey").SetErr(errors.New("max failed"))
 
@@ -107,8 +107,8 @@ func TestQuantile(t *testing.T) {
 	mock.ExpectDo("TDIGEST.QUANTILE", "mykey", 0.5).SetVal(7.89)
 
 	val, err := tdigest.Quantile(ctx, db, "mykey", 0.5)
-	assert.NoError(t, err)
-	assert.Equal(t, 7.89, val)
+	require.NoError(t, err)
+	assert.InEpsilon(t, 7.89, val, 0.00001)
 
 	mock.ExpectDo("TDIGEST.QUANTILE", "mykey", 0.5).SetErr(errors.New("quantile failed"))
 
@@ -128,7 +128,7 @@ func TestCDF(t *testing.T) {
 	mock.ExpectDo("TDIGEST.CDF", "mykey", 10.0).SetVal(0.99)
 
 	val, err := tdigest.CDF(ctx, db, "mykey", 10.0)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.InDelta(t, 0.99, val, 0.00001)
 
 	mock.ExpectDo("TDIGEST.CDF", "mykey", 10.0).SetErr(errors.New("cdf failed"))

@@ -18,7 +18,7 @@ func TestAdd(t *testing.T) {
 	mock.ExpectDo("PFADD", "mykey", "a", "b", "c").SetVal(int64(1))
 
 	val, err := hyperloglog.Add(ctx, db, "mykey", "a", "b", "c") // Added hyperloglog.
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, int64(1), val)
 
 	mock.ExpectDo("PFADD", "mykey", "a", "b", "c").SetErr(errors.New("add failed"))
@@ -29,7 +29,7 @@ func TestAdd(t *testing.T) {
 	mock.ExpectDo("PFADD", "mykey", "a", "b", "c").SetVal("not an int")
 
 	val, err = hyperloglog.Add(ctx, db, "mykey", "a", "b", "c") // Added hyperloglog.
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, int64(0), val)
 }
 
@@ -40,7 +40,7 @@ func TestCount(t *testing.T) {
 	mock.ExpectDo("PFCOUNT", "key1", "key2").SetVal(int64(12345))
 
 	count, err := hyperloglog.Count(ctx, db, "key1", "key2") // Added hyperloglog.
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, int64(12345), count)
 
 	mock.ExpectDo("PFCOUNT", "key1", "key2").SetErr(errors.New("count failed"))
@@ -51,7 +51,7 @@ func TestCount(t *testing.T) {
 	mock.ExpectDo("PFCOUNT", "key1", "key2").SetVal("not an int")
 
 	count, err = hyperloglog.Count(ctx, db, "key1", "key2") // Already had hyperloglog.
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, int64(0), count)
 }
 
@@ -62,7 +62,7 @@ func TestMerge(t *testing.T) {
 	mock.ExpectDo("PFMERGE", "dest", "key1", "key2").SetVal("OK")
 
 	err := hyperloglog.Merge(ctx, db, "dest", "key1", "key2") // Added hyperloglog.
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	mock.ExpectDo("PFMERGE", "dest", "key1", "key2").SetErr(errors.New("merge failed"))
 

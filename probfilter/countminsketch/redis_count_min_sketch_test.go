@@ -18,7 +18,7 @@ func TestInitByDim(t *testing.T) {
 	mock.ExpectDo("CMS.INITBYDIM", "mykey", int64(100), int64(5)).SetVal("OK")
 
 	err := countminsketch.InitByDim(ctx, db, "mykey", 100, 5)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	mock.ExpectDo("CMS.INITBYDIM", "mykey", int64(100), int64(5)).SetErr(errors.New("init failed"))
 
@@ -33,7 +33,7 @@ func TestInitByProb(t *testing.T) {
 	mock.ExpectDo("CMS.INITBYPROB", "mykey", 0.01, 0.001).SetVal("OK")
 
 	err := countminsketch.InitByProb(ctx, db, "mykey", 0.01, 0.001)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	mock.ExpectDo("CMS.INITBYPROB", "mykey", 0.01, 0.001).SetErr(errors.New("init failed"))
 
@@ -48,7 +48,7 @@ func TestIncrBy(t *testing.T) {
 	mock.ExpectDo("CMS.INCRBY", "mykey", "item1", int64(10)).SetVal([]any{int64(10)})
 
 	counts, err := countminsketch.IncrBy(ctx, db, "mykey", "item1", 10)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, []int64{10}, counts)
 
 	mock.ExpectDo("CMS.INCRBY", "mykey", "item1", int64(10)).SetErr(errors.New("incrby failed"))
@@ -74,7 +74,7 @@ func TestQuery(t *testing.T) {
 	mock.ExpectDo("CMS.QUERY", "mykey", "item1").SetVal([]any{int64(10)})
 
 	count, err := countminsketch.Query(ctx, db, "mykey", "item1")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, int64(10), count)
 
 	mock.ExpectDo("CMS.QUERY", "mykey", "item1").SetErr(errors.New("query failed"))
@@ -105,7 +105,7 @@ func TestMerge(t *testing.T) {
 	sourceKeys := []string{"s1", "s2"}
 	mock.ExpectDo("CMS.MERGE", "destkey", len(sourceKeys), "s1", "s2").SetVal("OK")
 	err := countminsketch.Merge(ctx, db, "destkey", sourceKeys)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	mock.ExpectDo("CMS.MERGE", "destkey", len(sourceKeys), "s1", "s2").
 		SetErr(errors.New("merge failed"))

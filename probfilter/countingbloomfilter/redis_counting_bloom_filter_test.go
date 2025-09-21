@@ -18,7 +18,7 @@ func TestReserve(t *testing.T) {
 	mock.ExpectDo("BF.RESERVE", "mykey", 0.01, int64(1000)).SetVal("OK")
 
 	err := countingbloomfilter.Reserve(ctx, db, "mykey", 0.01, 1000) // Added countingbloomfilter.
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	mock.ExpectDo("BF.RESERVE", "mykey", 0.01, int64(1000)).SetErr(errors.New("reserve failed"))
 
@@ -33,7 +33,7 @@ func TestAdd(t *testing.T) {
 	mock.ExpectDo("BF.ADD", "mykey", "item1").SetVal("OK")
 
 	err := countingbloomfilter.Add(ctx, db, "mykey", "item1") // Added countingbloomfilter.
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	mock.ExpectDo("BF.ADD", "mykey", "item1").SetErr(errors.New("add failed"))
 
@@ -53,7 +53,7 @@ func TestExists(t *testing.T) {
 		"mykey",
 		"item1",
 	) // Added countingbloomfilter.
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.True(t, exists)
 
 	mock.ExpectDo("BF.EXISTS", "mykey", "item2").SetVal(int64(0))
@@ -64,7 +64,7 @@ func TestExists(t *testing.T) {
 		"mykey",
 		"item2",
 	) // Already had countingbloomfilter.
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.False(t, exists)
 
 	mock.ExpectDo("BF.EXISTS", "mykey", "item3").SetErr(errors.New("exists failed"))
