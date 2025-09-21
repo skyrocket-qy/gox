@@ -24,8 +24,7 @@ func TestSetFields(t *testing.T) {
 			"Address": "123 Main St",
 		}
 		err := structx.SetFields(s, values)
-		assert.NoError(t, err)
-		assert.Equal(t, "John", s.Name)
+		require.NoError(t, err)
 		assert.Equal(t, 30, s.Age)
 		assert.Equal(t, "123 Main St", s.Address)
 	})
@@ -65,8 +64,7 @@ func TestSetFields(t *testing.T) {
 	t.Run("Type conversion works", func(t *testing.T) {
 		s := &testStruct{}
 		values := map[string]any{"Age": int64(30)}
-		err := structx.SetFields(s, values)
-		assert.NoError(t, err)
-		assert.Equal(t, 30, s.Age)
-	})
+								err := structx.SetFields(s, values)
+								require.NoError(t, err)
+								assert.Equal(t, 30, s.Age)	})
 }

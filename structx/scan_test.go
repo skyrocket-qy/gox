@@ -45,7 +45,7 @@ func TestScan(t *testing.T) {
 	from1 := ScanTestSimpleFrom{IntField: 1, StringField: "hello", BoolField: true}
 	to1 := ScanTestSimpleTo{}
 	err := structx.Scan(&from1, &to1)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, from1.IntField, to1.IntField)
 	assert.Equal(t, from1.StringField, to1.StringField)
 	assert.Equal(t, from1.BoolField, to1.BoolField)
@@ -63,7 +63,7 @@ func TestScan(t *testing.T) {
 	}
 	to2 := ScanTestSimpleTo{}
 	err = structx.Scan(&from2, &to2)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, from2.IntField, to2.IntField)
 
 	// Test case 3: Destination has extra fields
@@ -76,7 +76,7 @@ func TestScan(t *testing.T) {
 	from3 := ScanTestSimpleFrom{IntField: 3}
 	to3 := ScanTestExtraTo{}
 	err = structx.Scan(&from3, &to3)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, from3.IntField, to3.IntField)
 
 	// Test case 4: Embedded structs
@@ -86,7 +86,7 @@ func TestScan(t *testing.T) {
 	}
 	to4 := ScanTestParentTo{}
 	err = structx.Scan(&from4, &to4)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, from4.EmbeddedInt, to4.EmbeddedInt) // Accessing embedded field directly
 	assert.Equal(t, from4.ParentString, to4.ParentString)
 
@@ -98,7 +98,7 @@ func TestScan(t *testing.T) {
 	from5 := ScanTestFromInt{Value: 5}
 	to5 := ScanTestToString{}
 	err = structx.Scan(&from5, &to5)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "5", to5.Value)
 
 	// Test case 6: Type conversion (bool to string)
@@ -109,41 +109,36 @@ func TestScan(t *testing.T) {
 	from6 := ScanTestFromBool{Value: true}
 	to6 := ScanTestToStringBool{}
 	err = structx.Scan(&from6, &to6)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "true", to6.Value)
 
 	// Test case 7: Nil 'from' input
 	to7 := ScanTestSimpleTo{}
 	err = structx.Scan(nil, &to7)
 	require.Error(t, err)
-	assert.EqualError(t, err, "from is nil")
-
+	        require.EqualError(t, err, "from is nil")
 	// Test case 8: Nil 'to' input
 	from8 := ScanTestSimpleFrom{}
 	err = structx.Scan(&from8, nil)
 	require.Error(t, err)
-	assert.EqualError(t, err, "to is nil")
-
+	        require.EqualError(t, err, "to is nil")
 	// Test case 9: 'from' is a nil pointer
 	var from9 *ScanTestSimpleFrom
 
 	to9 := ScanTestSimpleTo{}
 	err = structx.Scan(from9, &to9)
 	require.Error(t, err)
-	assert.EqualError(t, err, "from is a nil pointer")
-
+	        require.EqualError(t, err, "from is a nil pointer")
 	// Test case 10: 'from' is not a struct or pointer to struct
 	to10 := ScanTestSimpleTo{}
 	err = structx.Scan(123, &to10)
 	require.Error(t, err)
-	assert.EqualError(t, err, "from must be a struct or pointer of struct, got int")
-
+	        require.EqualError(t, err, "from must be a struct or pointer of struct, got int")
 	// Test case 11: 'to' is not a non-nil pointer to struct
 	from11 := ScanTestSimpleFrom{}
 	err = structx.Scan(&from11, ScanTestSimpleTo{})
 	require.Error(t, err)
-	assert.EqualError(t, err, "to must be a non-nil pointer of struct, got type: struct")
-
+	        require.EqualError(t, err, "to must be a non-nil pointer of struct, got type: struct")
 	// Test case 12: Unexported fields (should be skipped)
 	type ScanTestUnexportedFrom struct{ unexported int }
 
@@ -152,7 +147,7 @@ func TestScan(t *testing.T) {
 	from12 := ScanTestUnexportedFrom{unexported: 10}
 	to12 := ScanTestUnexportedTo{}
 	err = structx.Scan(&from12, &to12)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, 0, to12.unexported) // Should remain zero
 
 	// Test case 13: Nested struct with pointer in 'from' and value in 'to'
@@ -163,7 +158,7 @@ func TestScan(t *testing.T) {
 	from13 := ScanTestFromNestedPtr{Nested: &ScanTestSimpleFrom{IntField: 13}}
 	to13 := ScanTestToNestedVal{}
 	err = structx.Scan(&from13, &to13)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, 13, to13.Nested.IntField)
 
 	// Test case 14: Nested struct with value in 'from' and pointer in 'to'
@@ -174,7 +169,7 @@ func TestScan(t *testing.T) {
 	from14 := ScanTestFromNestedVal{Nested: ScanTestSimpleFrom{IntField: 14}}
 	to14 := ScanTestToNestedPtr{Nested: &ScanTestSimpleTo{}}
 	err = structx.Scan(&from14, &to14)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, 14, to14.Nested.IntField)
 
 	// Test case 15: Nested struct with nil pointer in 'from'
@@ -185,6 +180,6 @@ func TestScan(t *testing.T) {
 	from15 := ScanTestFromNestedNilPtr{Nested: nil}
 	to15 := ScanTestToNestedValNil{}
 	err = structx.Scan(&from15, &to15)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, 0, to15.Nested.IntField) // Should remain zero
 }
