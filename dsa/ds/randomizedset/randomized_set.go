@@ -18,36 +18,36 @@ func Constructor() RandomizedSet {
 	}
 }
 
-func (this *RandomizedSet) Insert(val int) bool {
-	if _, ok := this.mp[val]; ok {
+func (rs *RandomizedSet) Insert(val int) bool {
+	if _, ok := rs.mp[val]; ok {
 		return false
 	}
 
-	this.sl = append(this.sl, val)
-	this.mp[val] = len(this.sl) - 1
+	rs.sl = append(rs.sl, val)
+	rs.mp[val] = len(rs.sl) - 1
 
 	return true
 }
 
-func (this *RandomizedSet) Remove(val int) bool {
-	if _, ok := this.mp[val]; !ok {
+func (rs *RandomizedSet) Remove(val int) bool {
+	if _, ok := rs.mp[val]; !ok {
 		return false
 	}
 
-	this.sl[this.mp[val]], this.sl[len(this.sl)-1] = this.sl[len(this.sl)-1], this.sl[this.mp[val]]
+	rs.sl[rs.mp[val]], rs.sl[len(rs.sl)-1] = rs.sl[len(rs.sl)-1], rs.sl[rs.mp[val]]
 
-	this.mp[this.sl[this.mp[val]]] = this.mp[val]
+	rs.mp[rs.sl[rs.mp[val]]] = rs.mp[val]
 
-	delete(this.mp, val)
-	this.sl = this.sl[:len(this.sl)-1]
+	delete(rs.mp, val)
+	rs.sl = rs.sl[:len(rs.sl)-1]
 
 	return true
 }
 
-func (this *RandomizedSet) GetRandom() int {
-	r := rand.IntN(len(this.sl))
+func (rs *RandomizedSet) GetRandom() int {
+	r := rand.IntN(len(rs.sl))
 
-	return this.sl[r]
+	return rs.sl[r]
 }
 
 /**

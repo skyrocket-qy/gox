@@ -36,13 +36,13 @@ func Init(strs []string) *radixTree {
 // longestPrefix finds the length of the shared prefix
 // of two strings.
 func longestPrefix(k1, k2 string) int {
-	max := len(k1)
-	if l := len(k2); l < max {
-		max = l
+	maxLength := len(k1)
+	if l := len(k2); l < maxLength {
+		maxLength = l
 	}
 
 	var i int
-	for i = 0; i < max; i++ {
+	for i = 0; i < maxLength; i++ {
 		if k1[i] != k2[i] {
 			break
 		}

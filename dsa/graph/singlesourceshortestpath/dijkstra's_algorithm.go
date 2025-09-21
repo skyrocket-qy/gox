@@ -21,11 +21,11 @@ func DijkstraAlgorithm(graph [][]int, start, end int) int {
 	for range n {
 		a := -1
 
-		min := math.MaxInt
+		minDistance := math.MaxInt
 		for j := range n {
-			if !visited[j] && dis[j] < min {
+			if !visited[j] && dis[j] < minDistance {
 				a = j
-				min = dis[j]
+				minDistance = dis[j]
 			}
 		}
 

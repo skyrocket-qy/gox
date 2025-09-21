@@ -27,9 +27,9 @@ func NewNode(array []int) *Node {
 	for i > 0 {
 		i--
 
-		new := make([]*Node, 1<<i)
-		for j := range new {
-			new[j] = &Node{
+		newNodes := make([]*Node, 1<<i)
+		for j := range newNodes {
+			newNodes[j] = &Node{
 				arrayN[j<<1].l,
 				arrayN[j<<1+1].r,
 				arrayN[j<<1].sum + arrayN[j<<1+1].sum,
@@ -38,7 +38,7 @@ func NewNode(array []int) *Node {
 			}
 		}
 
-		arrayN = new
+		arrayN = newNodes
 	}
 
 	return arrayN[0]

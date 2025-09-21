@@ -45,6 +45,8 @@ func Test_SetBoolFieldsTrue(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			err := structx.SetBoolFieldsTrue(tt.input)
 			if err != nil {
 				t.Errorf("SetBoolFieldsTrue() error = %v", err)
@@ -59,6 +61,8 @@ func Test_SetBoolFieldsTrue(t *testing.T) {
 	}
 
 	t.Run("nil input", func(t *testing.T) {
+		t.Parallel()
+
 		err := structx.SetBoolFieldsTrue(nil)
 		if err == nil {
 			t.Error("SetBoolFieldsTrue() error = nil, want error")
@@ -66,6 +70,8 @@ func Test_SetBoolFieldsTrue(t *testing.T) {
 	})
 
 	t.Run("not a pointer to a struct", func(t *testing.T) {
+		t.Parallel()
+
 		err := structx.SetBoolFieldsTrue(Example{})
 		if err == nil {
 			t.Error("SetBoolFieldsTrue() error = nil, want error")

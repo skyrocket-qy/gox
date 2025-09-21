@@ -44,7 +44,7 @@ func BoyerMoore(text, pattern string) []int {
 			if !ok {
 				s += j + 1
 			} else {
-				s += max(1, j-shift)
+				s += maxVal(1, j-shift)
 			}
 		}
 	}
@@ -52,7 +52,7 @@ func BoyerMoore(text, pattern string) []int {
 	return result
 }
 
-func max(a, b int) int {
+func maxVal(a, b int) int {
 	if a > b {
 		return a
 	}

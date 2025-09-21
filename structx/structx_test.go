@@ -23,6 +23,7 @@ type AnotherNestedStruct struct {
 }
 
 func TestDeepNew(t *testing.T) {
+	t.Parallel()
 	// Test with a simple struct
 	ptr := structx.DeepNew[SimpleStruct]()
 	assert.NotNil(t, ptr)
@@ -44,6 +45,7 @@ func TestDeepNew(t *testing.T) {
 }
 
 func TestInitFields(t *testing.T) {
+	t.Parallel()
 	// Test with a simple struct (no pointers to initialize)
 	simple := SimpleStruct{Field1: 1, Field2: "test"}
 	structx.InitFields(&simple)
