@@ -14,7 +14,7 @@ import (
 
 func TestGenerateOTPURI(t *testing.T) {
 	uri, err := qrcode.GenerateOTPURI()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Contains(t, uri, "otpauth://totp/MyApp:user@example.com")
 	assert.Contains(t, uri, "secret=")
 }
@@ -23,7 +23,7 @@ func TestGenerateQRCode(t *testing.T) {
 	// Test with a valid URI
 	uri := "otpauth://totp/Test:test@example.com?secret=ABCDEF1234567890&issuer=Test"
 	png, err := qrcode.GenerateQRCode(uri)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, png)
 	assert.NotEmpty(t, png)
 
@@ -38,7 +38,7 @@ func TestHandler(t *testing.T) {
 	// Test case 1: Successful generation
 	t.Run("Success", func(t *testing.T) {
 		req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, "/qrcode", nil)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		rr := httptest.NewRecorder()
 		handler := http.HandlerFunc(qrcode.Handler)
@@ -69,7 +69,7 @@ func (w *errorResponseWriter) Write(b []byte) (int, error) {
 
 func TestHandler_WriteError(t *testing.T) {
 	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, "/qrcode", nil)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	rr := &errorResponseWriter{}
 	handler := http.HandlerFunc(qrcode.Handler)

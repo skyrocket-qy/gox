@@ -129,7 +129,7 @@ func TestCDF(t *testing.T) {
 
 	val, err := tdigest.CDF(ctx, db, "mykey", 10.0)
 	assert.NoError(t, err)
-	assert.Equal(t, 0.99, val)
+	assert.InDelta(t, 0.99, val, 0.00001)
 
 	mock.ExpectDo("TDIGEST.CDF", "mykey", 10.0).SetErr(errors.New("cdf failed"))
 
