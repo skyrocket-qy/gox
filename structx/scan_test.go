@@ -116,29 +116,29 @@ func TestScan(t *testing.T) {
 	to7 := ScanTestSimpleTo{}
 	err = structx.Scan(nil, &to7)
 	require.Error(t, err)
-	        require.EqualError(t, err, "from is nil")
+	require.EqualError(t, err, "from is nil")
 	// Test case 8: Nil 'to' input
 	from8 := ScanTestSimpleFrom{}
 	err = structx.Scan(&from8, nil)
 	require.Error(t, err)
-	        require.EqualError(t, err, "to is nil")
+	require.EqualError(t, err, "to is nil")
 	// Test case 9: 'from' is a nil pointer
 	var from9 *ScanTestSimpleFrom
 
 	to9 := ScanTestSimpleTo{}
 	err = structx.Scan(from9, &to9)
 	require.Error(t, err)
-	        require.EqualError(t, err, "from is a nil pointer")
+	require.EqualError(t, err, "from is a nil pointer")
 	// Test case 10: 'from' is not a struct or pointer to struct
 	to10 := ScanTestSimpleTo{}
 	err = structx.Scan(123, &to10)
 	require.Error(t, err)
-	        require.EqualError(t, err, "from must be a struct or pointer of struct, got int")
+	require.EqualError(t, err, "from must be a struct or pointer of struct, got int")
 	// Test case 11: 'to' is not a non-nil pointer to struct
 	from11 := ScanTestSimpleFrom{}
 	err = structx.Scan(&from11, ScanTestSimpleTo{})
 	require.Error(t, err)
-	        require.EqualError(t, err, "to must be a non-nil pointer of struct, got type: struct")
+	require.EqualError(t, err, "to must be a non-nil pointer of struct, got type: struct")
 	// Test case 12: Unexported fields (should be skipped)
 	type ScanTestUnexportedFrom struct{ unexported int }
 
