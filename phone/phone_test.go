@@ -20,7 +20,7 @@ func TestParse(t *testing.T) {
 	phoneNumber, err = phone.Parse("+1555")
 	require.Error(t, err)
 	assert.Nil(t, phoneNumber)
-	assert.EqualError(t, err, "phone number is not valid: +1555")
+	require.EqualError(t, err, "phone number is not valid: +1555")
 
 	// Invalid phone number (non-numeric, not parsable by libphonenumber)
 	phoneNumber, err = phone.Parse("abc")

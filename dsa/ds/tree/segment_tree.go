@@ -18,7 +18,7 @@ func NewNode(array []int) *Node {
 	array, i = replenish(array)
 
 	// initial leaf node
-	arrayN := make([]*Node, 1<<i, 1<<i)
+	arrayN := make([]*Node, 1<<i)
 	for j, val := range array {
 		arrayN[j] = &Node{j, j, val, nil, nil}
 	}
@@ -27,7 +27,7 @@ func NewNode(array []int) *Node {
 	for i > 0 {
 		i--
 
-		new := make([]*Node, 1<<i, 1<<i)
+		new := make([]*Node, 1<<i)
 		for j := range new {
 			new[j] = &Node{
 				arrayN[j<<1].l,

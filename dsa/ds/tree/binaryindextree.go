@@ -5,7 +5,7 @@ type bIT []int
 func Build(array []int) bIT {
 	n := len(array)
 
-	b := make(bIT, len(array), len(array))
+	b := make(bIT, len(array))
 	for i, val := range array {
 		b[i] = val
 
