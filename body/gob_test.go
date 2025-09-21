@@ -29,14 +29,14 @@ func TestGobEncoding(t *testing.T) {
 		encodedBytes, err := body.GobEncode(original)
 
 		// Assert Encode
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotEmpty(t, encodedBytes)
 
 		// Act Decode
 		err = body.GobDecode(encodedBytes, &decoded)
 
 		// Assert Decode
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		// We expect the decoded struct to match the original, but the private field won't be
 		// encoded.

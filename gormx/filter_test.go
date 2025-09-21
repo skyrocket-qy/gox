@@ -6,6 +6,7 @@ import (
 	"github.com/skyrocket-qy/gox/gormx"
 	pkgpbv1 "github.com/skyrocket-qy/protos/gen/pkgpb/v1"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -42,7 +43,7 @@ func setupFilterDryRunDB(t *testing.T) *gorm.DB {
 		DryRun: true,
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	return db
 }
@@ -67,7 +68,7 @@ func TestApplyFilter_SQLGeneration(t *testing.T) {
 			{Field: "name", Op: pkgpbv1.Operator_EQ, Values: []string{"jules"}},
 		}
 		scope, err := gormx.ApplyFilter(filters, validFields, filterExprs)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		var results []DummyFilterModel
 
@@ -85,7 +86,7 @@ func TestApplyFilter_SQLGeneration(t *testing.T) {
 			{Field: "id", Op: pkgpbv1.Operator_GTE, Values: []string{"100"}},
 		}
 		scope, err := gormx.ApplyFilter(filters, validFields, filterExprs)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		var results []DummyFilterModel
 
@@ -102,7 +103,7 @@ func TestApplyFilter_SQLGeneration(t *testing.T) {
 			{Field: "id", Op: pkgpbv1.Operator_BETWEEN, Values: []string{"100", "200"}},
 		}
 		scope, err := gormx.ApplyFilter(filters, validFields, filterExprs)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		var results []DummyFilterModel
 

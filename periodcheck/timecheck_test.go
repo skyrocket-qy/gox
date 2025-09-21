@@ -43,7 +43,7 @@ func runCommonTimeCheckTests(
 			1*time.Millisecond,
 			100*time.Millisecond,
 		)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expectedConditionMetCallCount, callCount)
 	})
 
@@ -126,7 +126,7 @@ func runCommonTimeCheckTestsWithMaxInterval(
 			10*time.Millisecond,
 			100*time.Millisecond,
 		)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expectedConditionMetCallCount, callCount)
 	})
 
@@ -213,7 +213,7 @@ func TestSelfAdaptiveTimeCheck(t *testing.T) {
 			10*time.Millisecond,
 			100*time.Millisecond,
 		)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, 3, callCount)
 	})
 }

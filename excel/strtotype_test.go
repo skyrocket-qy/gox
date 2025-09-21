@@ -47,7 +47,7 @@ func TestStrToType(t *testing.T) {
 				if tt.wantErr {
 					require.Error(t, err)
 				} else {
-					assert.NoError(t, err)
+					require.NoError(t, err)
 					assert.Equal(t, gotType, got)
 				}
 			case int:
@@ -55,7 +55,7 @@ func TestStrToType(t *testing.T) {
 				if tt.wantErr {
 					require.Error(t, err)
 				} else {
-					assert.NoError(t, err)
+					require.NoError(t, err)
 					assert.Equal(t, gotType, got)
 				}
 			case float64:
@@ -63,7 +63,7 @@ func TestStrToType(t *testing.T) {
 				if tt.wantErr {
 					require.Error(t, err)
 				} else {
-					assert.NoError(t, err)
+					require.NoError(t, err)
 					assert.InDelta(t, gotType, got, 0.000001)
 				}
 			case bool:
@@ -71,7 +71,7 @@ func TestStrToType(t *testing.T) {
 				if tt.wantErr {
 					require.Error(t, err)
 				} else {
-					assert.NoError(t, err)
+					require.NoError(t, err)
 					assert.Equal(t, gotType, got)
 				}
 			}

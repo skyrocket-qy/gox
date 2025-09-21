@@ -5,6 +5,7 @@ import (
 
 	"github.com/skyrocket-qy/gox/gormx/lib/scope"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -22,14 +23,14 @@ func setup(t *testing.T) *gorm.DB {
 	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	sqlDB, err := db.DB()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	sqlDB.SetMaxOpenConns(1)
 
 	db.Migrator().DropTable(&User{})
 	err = db.AutoMigrate(&User{})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	users := []User{
 		{Name: "Alice", Age: 20},
@@ -38,7 +39,7 @@ func setup(t *testing.T) *gorm.DB {
 	}
 	for _, user := range users {
 		err := db.Create(&user).Error
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	}
 
 	return db
@@ -52,7 +53,7 @@ func TestApplyPager(t *testing.T) {
 
 		pager := &scope.Pager{Number: 2, Size: 1}
 		err := db.Scopes(scope.ApplyPager(pager)).Find(&users).Error
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Len(t, users, 1)
 		assert.Equal(t, "Bob", users[0].Name)
 	})
@@ -61,7 +62,7 @@ func TestApplyPager(t *testing.T) {
 		var users []User
 
 		err := db.Scopes(scope.ApplyPager(nil)).Find(&users).Error
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Len(t, users, 3)
 	})
 }
@@ -76,7 +77,7 @@ func TestApplySorter(t *testing.T) {
 			{Field: "age", Asc: false},
 		}
 		err := db.Scopes(scope.ApplySorter(sorters)).Find(&users).Error
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Len(t, users, 3)
 		assert.Equal(t, "Charlie", users[0].Name)
 	})
@@ -89,7 +90,7 @@ func TestApplySorter(t *testing.T) {
 			{Field: "name", Asc: false},
 		}
 		err := db.Scopes(scope.ApplySorter(sorters)).Find(&users).Error
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Len(t, users, 3)
 		assert.Equal(t, "Alice", users[0].Name)
 	})
@@ -99,7 +100,7 @@ func TestApplySorter(t *testing.T) {
 
 		defaultSorter := scope.Sorter{Field: "name", Asc: true}
 		err := db.Scopes(scope.ApplySorter([]scope.Sorter{}, defaultSorter)).Find(&users).Error
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Len(t, users, 3)
 		assert.Equal(t, "Alice", users[0].Name)
 	})
@@ -108,7 +109,7 @@ func TestApplySorter(t *testing.T) {
 		var users []User
 
 		err := db.Scopes(scope.ApplySorter([]scope.Sorter{})).Find(&users).Error
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Len(t, users, 3)
 	})
 }

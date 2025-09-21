@@ -79,7 +79,7 @@ func TestThrottle_UnaryInterceptor(t *testing.T) {
 			Once()
 
 		_, err := interceptor(mockHandler)(context.Background(), connect.NewRequest(&struct{}{}))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		mockLimiter.AssertExpectations(t)
 	})
 

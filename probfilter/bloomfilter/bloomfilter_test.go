@@ -40,7 +40,7 @@ func TestExists(t *testing.T) {
 	exists, err = bloomfilter.Exists(ctx, db, key, "non_existent_value") // Added bloomfilter.
 	require.NoError(t, err)
 	assert.False(t, exists)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestExists_Error(t *testing.T) {
@@ -54,7 +54,7 @@ func TestExists_Error(t *testing.T) {
 	exists, err := bloomfilter.Exists(ctx, db, key, value) // Added bloomfilter.
 	require.Error(t, err)
 	assert.False(t, exists)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestExists_UnexpectedType(t *testing.T) {
@@ -69,7 +69,7 @@ func TestExists_UnexpectedType(t *testing.T) {
 	require.Error(t, err)
 	assert.False(t, exists)
 	assert.Contains(t, err.Error(), "unexpected type for BF.EXISTS result")
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestReserve(t *testing.T) {

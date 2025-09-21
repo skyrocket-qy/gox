@@ -9,6 +9,7 @@ import (
 	"github.com/go-redis/redismock/v9"
 	"github.com/skyrocket-qy/gox/redisx"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestExecuteExactlyOnce_SuccessFirstTry(t *testing.T) {
@@ -216,9 +217,9 @@ func TestExecuteExactlyOnce_DeferDelFails(t *testing.T) {
 	mock.ExpectDel(lockKey).SetVal(0)
 
 	err := redisx.ExecuteExactlyOnce(context.Background(), db, baseKey, lockTTL, job)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestRenewLock(t *testing.T) {

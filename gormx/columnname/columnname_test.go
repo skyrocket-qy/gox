@@ -8,6 +8,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/skyrocket-qy/gox/gormx/columnname"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -58,7 +59,7 @@ func TestToCamel(t *testing.T) {
 
 func TestGetColumns(t *testing.T) {
 	db, mock, err := sqlmock.New()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	defer db.Close()
 
@@ -66,7 +67,7 @@ func TestGetColumns(t *testing.T) {
 		Conn:                      db,
 		SkipInitializeWithVersion: true,
 	}), &gorm.Config{})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	mock.ExpectQuery(regexp.QuoteMeta("SELECT SCHEMA_NAME from Information_schema.SCHEMATA")).
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).
@@ -84,14 +85,14 @@ func TestGetColumns(t *testing.T) {
 		WillReturnRows(rows)
 
 	columns, err := columnname.GetColumns(gormDB, "users")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, []string{"id", "name"}, columns)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestGenTableColumnNamesCode(t *testing.T) {
 	db, mock, err := sqlmock.New()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	defer db.Close()
 
@@ -99,7 +100,7 @@ func TestGenTableColumnNamesCode(t *testing.T) {
 		Conn:                      db,
 		SkipInitializeWithVersion: true,
 	}), &gorm.Config{})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	mock.ExpectQuery(regexp.QuoteMeta("SELECT SCHEMA_NAME from Information_schema.SCHEMATA")).
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).
@@ -117,12 +118,12 @@ func TestGenTableColumnNamesCode(t *testing.T) {
 
 	path := "./col/users.go"
 	err = columnname.GenTableColumnNamesCode(gormDB, []string{"users"}, path)
-	assert.NoError(t, err)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.NoError(t, err)
+	require.NoError(t, mock.ExpectationsWereMet())
 
 	// cleanup
 	err = os.RemoveAll("./col")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 func TestGenTableColumnNamesCode_ToCamel(t *testing.T) {

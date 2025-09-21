@@ -70,7 +70,7 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 
 	t.Run("Valid token", func(t *testing.T) {
 		token, err := generateTestJWT([]byte(testJWTSecret), time.Now().Add(time.Hour))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequestWithContext(
@@ -91,7 +91,7 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 			[]byte("wrong-secret"),
 			time.Now().Add(time.Hour),
 		)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequestWithContext(
@@ -111,7 +111,7 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 			[]byte(testJWTSecret),
 			time.Now().Add(-time.Hour),
 		)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequestWithContext(
@@ -141,7 +141,7 @@ func TestInterAuthMid_CheckAuth(t *testing.T) {
 
 	t.Run("Malformed Authorization header", func(t *testing.T) {
 		token, err := generateTestJWT([]byte(testJWTSecret), time.Now().Add(time.Hour))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequestWithContext(
@@ -168,7 +168,7 @@ func TestParseJWT(t *testing.T) {
 
 		// We can't sign it with a private key, so we'll just take the unsigned token string
 		unsignedToken, err := token.SigningString()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		// Add a bogus but validly encoded signature
 		signature := base64.RawURLEncoding.EncodeToString([]byte("bogussignature"))

@@ -7,6 +7,7 @@ import (
 	"github.com/skyrocket-qy/gox/gormx"
 	pkgpbv1 "github.com/skyrocket-qy/protos/gen/pkgpb/v1"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -20,7 +21,7 @@ func setupDryRunDB(t *testing.T) *gorm.DB {
 		DryRun: true,
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	return db
 }

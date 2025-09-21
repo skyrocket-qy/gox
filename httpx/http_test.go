@@ -16,6 +16,7 @@ import (
 	"github.com/skyrocket-qy/erx"
 	"github.com/skyrocket-qy/gox/httpx"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewErrBinder(t *testing.T) {
@@ -30,7 +31,7 @@ func TestNewErrBinder(t *testing.T) {
 func TestTrimToProject(t *testing.T) {
 	// Get current working directory to simulate project root
 	cwd, err := os.Getwd()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name     string
@@ -180,7 +181,7 @@ func TestErrBinder_Bind(t *testing.T) {
 			var resp httpx.ErrResp
 
 			err := json.Unmarshal(recorder.Body.Bytes(), &resp)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, tt.reqID, resp.ReqId)
 			assert.Equal(t, tt.expectedCode, resp.Code)
 
@@ -197,7 +198,7 @@ func TestErrBinder_Bind(t *testing.T) {
 
 func TestFilterCallerInfos(t *testing.T) {
 	cwd, err := os.Getwd()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name     string

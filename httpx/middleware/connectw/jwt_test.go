@@ -79,7 +79,7 @@ func TestAuthInterceptor_WrapAuth(t *testing.T) {
 		)
 
 		_, err := interceptor.WrapUnary(customNext)(context.Background(), req)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	// Test Case 4: Expired JWT token
@@ -160,7 +160,7 @@ func TestParseJWT(t *testing.T) {
 		tokenString, _ := token.SignedString(secret)
 
 		parsedClaims, err := connectw.ParseJWT(tokenString, secret)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, "test_user", parsedClaims.Issuer)
 	})
 

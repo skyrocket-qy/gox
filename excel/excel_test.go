@@ -57,7 +57,7 @@ func TestToExcel1D(t *testing.T) {
 			keyName, valName, data, err := excel.ToExcel1D[string, int](tc.table)
 
 			if !tc.IsErr {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			} else {
 				require.Error(t, err)
 			}
@@ -119,7 +119,7 @@ func TestToColsList(t *testing.T) {
 			if tc.isErr {
 				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.Equal(t, tc.want, got)
 			}
 		})
@@ -195,7 +195,7 @@ func TestToExcelGroup(t *testing.T) {
 				return
 			}
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, tc.wantKeys, keys)
 			assert.Equal(t, tc.wantData, data)
 		})
@@ -276,7 +276,7 @@ func TestToExcel2D(t *testing.T) {
 				return
 			}
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, tc.wantRows, rowKeys)
 			assert.Equal(t, tc.wantCols, colKeys)
 			assert.Equal(t, tc.wantData, data)
