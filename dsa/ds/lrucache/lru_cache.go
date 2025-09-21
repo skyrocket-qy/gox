@@ -20,11 +20,11 @@ func Constructor(capacity int) LRUCache {
 	return LRUCache{HT: make(map[int]*Node, capacity+1), Cap: capacity}
 }
 
-func (this *LRUCache) Get(key int) int {
-	node, ok := this.HT[key]
+func (lc *LRUCache) Get(key int) int {
+	node, ok := lc.HT[key]
 	if ok {
-		this.Remove(node)
-		this.Add(node)
+		lc.Remove(node)
+		lc.Add(node)
 
 		return node.Val
 	}
@@ -32,50 +32,50 @@ func (this *LRUCache) Get(key int) int {
 	return -1
 }
 
-func (this *LRUCache) Put(key, value int) {
-	node, ok := this.HT[key]
+func (lc *LRUCache) Put(key, value int) {
+	node, ok := lc.HT[key]
 	if ok {
 		node.Val = value
-		this.Remove(node)
-		this.Add(node)
+		lc.Remove(node)
+		lc.Add(node)
 
 		return
 	} else {
 		node = &Node{Key: key, Val: value}
-		this.HT[key] = node
-		this.Add(node)
+		lc.HT[key] = node
+		lc.Add(node)
 	}
 
-	if len(this.HT) > this.Cap {
-		delete(this.HT, this.Tail.Key)
-		this.Remove(this.Tail)
+	if len(lc.HT) > lc.Cap {
+		delete(lc.HT, lc.Tail.Key)
+		lc.Remove(lc.Tail)
 	}
 }
 
-func (this *LRUCache) Add(node *Node) {
+func (lc *LRUCache) Add(node *Node) {
 	node.Prev = nil
 
-	node.Next = this.Head
-	if this.Head != nil {
-		this.Head.Prev = node
+	node.Next = lc.Head
+	if lc.Head != nil {
+		lc.Head.Prev = node
 	}
 
-	this.Head = node
-	if this.Tail == nil {
-		this.Tail = node
+	lc.Head = node
+	if lc.Tail == nil {
+		lc.Tail = node
 	}
 }
 
-func (this *LRUCache) Remove(node *Node) {
-	if node != this.Head {
+func (lc *LRUCache) Remove(node *Node) {
+	if node != lc.Head {
 		node.Prev.Next = node.Next
 	} else {
-		this.Head = node.Next
+		lc.Head = node.Next
 	}
 
-	if node != this.Tail {
+	if node != lc.Tail {
 		node.Next.Prev = node.Prev
 	} else {
-		this.Tail = node.Prev
+		lc.Tail = node.Prev
 	}
 }

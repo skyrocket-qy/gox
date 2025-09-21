@@ -31,17 +31,17 @@ func (n *Node) FScore() float64 {
 // PriorityQueue implements heap.Interface and holds Nodes.
 type PriorityQueue []*Node
 
-func (pq PriorityQueue) Len() int { return len(pq) }
+func (pq *PriorityQueue) Len() int { return len(*pq) }
 
-func (pq PriorityQueue) Less(i, j int) bool {
+func (pq *PriorityQueue) Less(i, j int) bool {
 	// We want Pop to give us the lowest FScore
-	return pq[i].FScore() < pq[j].FScore()
+	return (*pq)[i].FScore() < (*pq)[j].FScore()
 }
 
-func (pq PriorityQueue) Swap(i, j int) {
-	pq[i], pq[j] = pq[j], pq[i]
-	pq[i].Index = i
-	pq[j].Index = j
+func (pq *PriorityQueue) Swap(i, j int) {
+	(*pq)[i], (*pq)[j] = (*pq)[j], (*pq)[i]
+	(*pq)[i].Index = i
+	(*pq)[j].Index = j
 }
 
 func (pq *PriorityQueue) Push(x any) {

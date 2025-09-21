@@ -23,15 +23,15 @@ func LabelSettingAlgorithm(graph [][]int, start, end int) int {
 	// Add all vertices
 	for range n - 1 {
 		a, b := -1, -1
-		min := math.MaxInt
+		minVal := math.MaxInt
 
 		for j := range n {
 			if visited[j] {
 				for k := range n {
 					if !visited[k] && graph[j][k] != -1 {
-						if dis[j]+graph[j][k] < min {
+						if dis[j]+graph[j][k] < minVal {
 							a, b = j, k
-							min = dis[j] + graph[j][k]
+							minVal = dis[j] + graph[j][k]
 						}
 					}
 				}
@@ -43,7 +43,7 @@ func LabelSettingAlgorithm(graph [][]int, start, end int) int {
 			break
 		}
 
-		dis[b] = min
+		dis[b] = minVal
 		parent[b] = a
 		visited[b] = true
 	}

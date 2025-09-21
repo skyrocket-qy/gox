@@ -8,7 +8,7 @@ func LongestCommonSubsequence3(text1, text2 string) int {
 
 	m, n := len(text1), len(text2)
 
-	arr1, arr2 := make([]int, n+1, n+1), make([]int, n+1, n+1)
+	arr1, arr2 := make([]int, n+1), make([]int, n+1)
 
 	for i := range m {
 		for j := 1; j <= n; j++ {
