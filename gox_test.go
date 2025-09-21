@@ -11,8 +11,8 @@ func TestAbs(t *testing.T) {
 	assert.Equal(t, 1, gox.Abs(-1))
 	assert.Equal(t, 1, gox.Abs(1))
 	assert.Equal(t, 0, gox.Abs(0))
-	assert.Equal(t, 1.23, gox.Abs(-1.23))
-	assert.Equal(t, 1.23, gox.Abs(1.23))
+	assert.InEpsilon(t, 1.23, gox.Abs(-1.23), 1e-6)
+	assert.InEpsilon(t, 1.23, gox.Abs(1.23), 1e-6)
 }
 
 func TestBatch(t *testing.T) {

@@ -66,7 +66,7 @@ func runCommonTimeCheckTests(
 			10*time.Millisecond,
 		)
 		require.Error(t, err)
-		assert.EqualError(t, err, "timeout")
+		require.EqualError(t, err, "timeout")
 		assert.GreaterOrEqual(t, callCount, 2)
 	})
 
@@ -150,7 +150,7 @@ func runCommonTimeCheckTestsWithMaxInterval(
 			10*time.Millisecond,
 		)
 		require.Error(t, err)
-		assert.EqualError(t, err, "timeout")
+		require.EqualError(t, err, "timeout")
 		assert.GreaterOrEqual(t, callCount, 2)
 	})
 

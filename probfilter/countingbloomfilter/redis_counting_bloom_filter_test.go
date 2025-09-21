@@ -92,7 +92,7 @@ func TestRemove(t *testing.T) {
 	assert.False(t, removed)
 	assert.Equal(
 		t,
-		"BF.DEL command is not supported for Bloom Filters. Use Cuckoo Filters for direct deletion.",
+		"BF.DEL command is not supported for Bloom Filters. Use Cuckoo Filters for direct deletion",
 		err.Error(),
 	)
 }

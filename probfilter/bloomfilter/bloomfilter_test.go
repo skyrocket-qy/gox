@@ -30,9 +30,11 @@ func TestExists(t *testing.T) {
 	key := "test_bloom"
 	value := "test_value"
 
+	var exists bool
+
 	mock.ExpectDo("BF.EXISTS", key, value).SetVal(int64(1))
 
-	exists, err := bloomfilter.Exists(ctx, db, key, value) // Added bloomfilter.
+	_, err := bloomfilter.Exists(ctx, db, key, value) // Added bloomfilter.
 	require.NoError(t, err)
 	require.NoError(t, mock.ExpectationsWereMet())
 

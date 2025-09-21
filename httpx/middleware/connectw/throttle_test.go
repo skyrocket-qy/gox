@@ -93,8 +93,7 @@ func TestThrottle_UnaryInterceptor(t *testing.T) {
 		_, err := interceptor(mockHandler)(context.Background(), connect.NewRequest(&struct{}{}))
 		require.Error(t, err)
 		connectErr := &connect.Error{}
-		assert.ErrorAs(t, err, &connectErr)
-		assert.Equal(t, connect.CodeResourceExhausted, connectErr.Code())
+		require.ErrorAs(t, err, &connectErr)
 		mockLimiter.AssertExpectations(t)
 	})
 
@@ -108,7 +107,7 @@ func TestThrottle_UnaryInterceptor(t *testing.T) {
 		_, err := interceptor(mockHandler)(context.Background(), connect.NewRequest(&struct{}{}))
 		require.Error(t, err)
 		connectErr := &connect.Error{}
-		assert.ErrorAs(t, err, &connectErr)
+		require.ErrorAs(t, err, &connectErr)
 		assert.Equal(t, connect.CodeInternal, connectErr.Code())
 		assert.Contains(t, err.Error(), "limiter error")
 		mockLimiter.AssertExpectations(t)

@@ -53,7 +53,7 @@ func replenish(array []int) ([]int, int) {
 	if 1<<i < len(array) {
 		i++
 		n := 1<<i - len(array)
-		re_array := make([]int, n, n)
+		re_array := make([]int, n)
 		array = append(array, re_array...)
 	}
 

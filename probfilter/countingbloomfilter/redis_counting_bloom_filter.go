@@ -52,6 +52,6 @@ func Remove(ctx context.Context, rdb *redis.Client, key, value string) (bool, er
 	// If a true decrement is needed, a different approach is required.
 	// For now, we'll return false as it's not directly supported by BF commands for Bloom Filters.
 	return false, errors.New(
-		"BF.DEL command is not supported for Bloom Filters. Use Cuckoo Filters for direct deletion.",
+		"BF.DEL command is not supported for Bloom Filters. Use Cuckoo Filters for direct deletion",
 	)
 }
