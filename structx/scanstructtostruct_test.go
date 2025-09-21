@@ -41,6 +41,7 @@ type ToStruct struct {
 }
 
 func TestScanStructToStruct(t *testing.T) {
+	t.Parallel()
 	// Define the source struct
 	cases := []struct {
 		name        string
@@ -171,6 +172,8 @@ func TestScanStructToStruct(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
+			t.Parallel()
+
 			err := structx.ScanStructToStruct(c.from, c.to)
 			if c.expectedErr != nil {
 				if err.Error() != c.expectedErr.Error() {

@@ -41,6 +41,7 @@ type ScanTestParentTo struct {
 }
 
 func TestScan(t *testing.T) {
+	t.Parallel()
 	// Test case 1: Basic scan, all fields match
 	from1 := ScanTestSimpleFrom{IntField: 1, StringField: "hello", BoolField: true}
 	to1 := ScanTestSimpleTo{}

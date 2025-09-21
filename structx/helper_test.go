@@ -37,6 +37,7 @@ func TestGetElem(t *testing.T) {
 }
 
 func TestIsEmbedded(t *testing.T) {
+	t.Parallel()
 	// Test with an embedded field
 	field, _ := reflect.TypeOf(TestStruct{}).FieldByName("Embedded")
 	assert.True(t, structx.IsEmbedded(field))
@@ -47,6 +48,7 @@ func TestIsEmbedded(t *testing.T) {
 }
 
 func TestIsNonNilPointerOfStruct(t *testing.T) {
+	t.Parallel()
 	// Test with a non-nil pointer to a struct
 	ptr := &TestStruct{}
 	assert.True(t, structx.IsNonNilPointerOfStruct(ptr))
@@ -69,12 +71,16 @@ func TestIsNonNilPointerOfStruct(t *testing.T) {
 }
 
 func TestPrintStructInfo(t *testing.T) {
+	t.Parallel()
+
 	type Person struct {
 		Name string
 		Age  int
 	}
 
 	t.Run("Input is a struct", func(t *testing.T) {
+		t.Parallel()
+
 		p := Person{Name: "John", Age: 30}
 
 		var buf bytes.Buffer
@@ -94,6 +100,8 @@ func TestPrintStructInfo(t *testing.T) {
 	})
 
 	t.Run("Input is a pointer to a struct", func(t *testing.T) {
+		t.Parallel()
+
 		p := &Person{Name: "John", Age: 30}
 
 		var buf bytes.Buffer
@@ -113,6 +121,8 @@ func TestPrintStructInfo(t *testing.T) {
 	})
 
 	t.Run("Input is not a struct", func(t *testing.T) {
+		t.Parallel()
+
 		var buf bytes.Buffer
 		log.SetOutput(&buf)
 
@@ -128,6 +138,8 @@ func TestPrintStructInfo(t *testing.T) {
 }
 
 func TestPrintFields(t *testing.T) {
+	t.Parallel()
+
 	type Person struct {
 		Name string
 		Age  int
