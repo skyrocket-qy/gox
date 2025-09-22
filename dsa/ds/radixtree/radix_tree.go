@@ -191,7 +191,7 @@ DELETE:
 	// Check if we should merge this node
 	if n != t && len(n.children) == 1 && n.leaf == nil {
 		for _, child := range n.children {
-			n.prefix = n.prefix + child.prefix
+			n.prefix += child.prefix
 			n.leaf = child.leaf
 			n.children = child.children
 		}
@@ -200,7 +200,7 @@ DELETE:
 	// Check if we should merge the parent's other child
 	if parent != nil && parent != t && len(parent.children) == 1 && parent.leaf == nil {
 		for _, child := range parent.children {
-			parent.prefix = parent.prefix + child.prefix
+			parent.prefix += child.prefix
 			parent.leaf = child.leaf
 			parent.children = child.children
 		}

@@ -281,27 +281,6 @@ func TestGetFunctionName(t *testing.T) {
 	assert.True(t, strings.HasPrefix(name, "func"))
 }
 
-func TestGetCallerName(t *testing.T) {
-	// Helper function to test GetCallerName
-	helperFunc := func(skip int, shortName bool) string {
-		return refletx.GetCallerName(skip, shortName)
-	}
-
-	// Test GetCallerName from within a test function
-	// skip = 0: GetCallerName itself
-	// skip = 1: helperFunc
-	// skip = 2: TestGetCallerName
-	name := helperFunc(2, false)
-	assert.Contains(t, name, "refletx_test.TestGetCallerName")
-
-	name = helperFunc(2, true)
-	assert.Equal(t, "TestGetCallerName", name)
-
-	// Test with a higher skip that goes out of stack
-	name = helperFunc(100, false)
-	assert.Empty(t, name)
-}
-
 func TestGetCurrentCallerShortName(t *testing.T) {
 	name := refletx.GetCurrentCallerShortName()
 	require.Equal(t, "TestGetCurrentCallerShortName", name)

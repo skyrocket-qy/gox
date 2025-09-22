@@ -145,27 +145,27 @@ func clz32(x uint32) uint8 {
 
 	var n uint8
 	if (x & 0xFFFF0000) == 0 {
-		n = n + 16
-		x = x << 16
+		n += 16
+		x <<= 16
 	}
 
 	if (x & 0xFF000000) == 0 {
-		n = n + 8
-		x = x << 8
+		n += 8
+		x <<= 8
 	}
 
 	if (x & 0xF0000000) == 0 {
-		n = n + 4
-		x = x << 4
+		n += 4
+		x <<= 4
 	}
 
 	if (x & 0xC0000000) == 0 {
-		n = n + 2
-		x = x << 2
+		n += 2
+		x <<= 2
 	}
 
 	if (x & 0x80000000) == 0 {
-		n = n + 1
+		n++
 	}
 
 	return n
