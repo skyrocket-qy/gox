@@ -31,6 +31,7 @@ func runPermutationTest[T cmp.Ordered](
 	funcName string,
 ) {
 	t.Helper()
+
 	actualPerms := [][]T{}
 	oper := func(p []T) {
 		temp := make([]T, len(p))
@@ -53,6 +54,7 @@ func runPermutationTest[T cmp.Ordered](
 		)
 	}
 }
+
 func TestOperInsertPermutation(t *testing.T) {
 	tests := []struct {
 		name     string
