@@ -71,14 +71,12 @@ func TestIsNonNilPointerOfStruct(t *testing.T) {
 }
 
 func TestPrintStructInfo(t *testing.T) {
-
 	type Person struct {
 		Name string
 		Age  int
 	}
 
 	t.Run("Input is a struct", func(t *testing.T) {
-
 		p := Person{Name: "John", Age: 30}
 
 		var buf bytes.Buffer
@@ -98,7 +96,6 @@ func TestPrintStructInfo(t *testing.T) {
 	})
 
 	t.Run("Input is a pointer to a struct", func(t *testing.T) {
-
 		p := &Person{Name: "John", Age: 30}
 
 		var buf bytes.Buffer
@@ -118,7 +115,6 @@ func TestPrintStructInfo(t *testing.T) {
 	})
 
 	t.Run("Input is not a struct", func(t *testing.T) {
-
 		var buf bytes.Buffer
 		log.SetOutput(&buf)
 
@@ -134,7 +130,6 @@ func TestPrintStructInfo(t *testing.T) {
 }
 
 func TestPrintFields(t *testing.T) {
-
 	type Person struct {
 		Name string
 		Age  int

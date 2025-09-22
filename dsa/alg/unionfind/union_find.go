@@ -46,6 +46,7 @@ func (uf *UnionFind[T]) Union(x, y T) bool {
 
 		uf.parents[rootY] = rootX
 		uf.sizes[rootX] += uf.sizes[rootY]
+
 		return true
 	}
 

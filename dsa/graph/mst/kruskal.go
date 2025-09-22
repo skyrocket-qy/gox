@@ -22,7 +22,8 @@ func Kruskal(points [][]int) int {
 
 	// 1. Generate all possible edges and their costs (Manhattan distance).
 	edges := []Edge{}
-	for i := 0; i < n; i++ {
+
+	for i := range n {
 		for j := i + 1; j < n; j++ {
 			cost := abs(points[i][0]-points[j][0]) + abs(points[i][1]-points[j][1])
 			edges = append(edges, Edge{i, j, cost})
@@ -59,6 +60,7 @@ func abs(x int) int {
 	if x < 0 {
 		return -x
 	}
+
 	return x
 }
 
@@ -105,9 +107,13 @@ func Prims(points [][]int) int {
 
 		// 3. Update the `minCost` for all neighbors of the newly added point.
 		// For every unvisited point, check if connecting it via `currPoint` is cheaper.
-		for i := 0; i < n; i++ {
+		for i := range n {
 			if !visited[i] {
-				cost := abs(points[currPoint][0]-points[i][0]) + abs(points[currPoint][1]-points[i][1])
+				cost := abs(
+					points[currPoint][0]-points[i][0],
+				) + abs(
+					points[currPoint][1]-points[i][1],
+				)
 				if cost < minCost[i] {
 					minCost[i] = cost
 				}
