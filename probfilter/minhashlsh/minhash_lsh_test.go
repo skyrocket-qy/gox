@@ -10,7 +10,8 @@ import (
 
 func TestMinHashLSHBasic(t *testing.T) {
 	// Create a MinHasher
-	mh := minhashlsh.NewMinHasher(128) // 128 permutations
+	mh, err := minhashlsh.NewMinHasher(128)
+	require.NoError(t, err) // 128 permutations
 
 	// Define some sets
 	set1 := []string{"apple", "banana", "cherry", "date", "elderberry"}

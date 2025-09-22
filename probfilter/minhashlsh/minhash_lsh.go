@@ -11,26 +11,30 @@ import (
 
 // MinHasher generates MinHash signatures for sets.
 type MinHasher struct {
-	numPermutations int
+	numPermutations uint64
 	seeds           []uint64
 }
 
 // NewMinHasher creates a new MinHasher with a specified number of permutations.
-func NewMinHasher(numPermutations int) *MinHasher {
-	seeds := make([]uint64, numPermutations)
-	for i_uint64 := range uint64(numPermutations) {
-		seeds[i_uint64] = i_uint64*2 + 1 // Simple seeds
+func NewMinHasher(numPermutations uint64) (*MinHasher, error) {
+	if numPermutations > math.MaxInt {
+		return nil, errors.New("numPermutations exceeds maximum int value")
+	}
+
+	seeds := make([]uint64, int(numPermutations))
+	for i := range numPermutations {
+		seeds[int(i)] = i*2 + 1 // #nosec G115
 	}
 
 	return &MinHasher{
 		numPermutations: numPermutations,
 		seeds:           seeds,
-	}
+	}, nil
 }
 
 // Signature computes the MinHash signature for a given set of elements.
 func (mh *MinHasher) Signature(elements []string) []uint64 {
-	signature := make([]uint64, mh.numPermutations)
+	signature := make([]uint64, int(mh.numPermutations)) // #nosec G115
 	for i := range signature {
 		signature[i] = math.MaxUint64 // Initialize with max value
 	}

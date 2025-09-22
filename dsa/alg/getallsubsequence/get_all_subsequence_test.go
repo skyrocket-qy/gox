@@ -1,8 +1,10 @@
-package getallsubsequence
+package getallsubsequence_test
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/alg/getallsubsequence"
 )
 
 func TestGetSubsequences(t *testing.T) {
@@ -14,7 +16,7 @@ func TestGetSubsequences(t *testing.T) {
 		{2, 3},
 	}
 
-	result := GetSubsequences(nums, k)
+	result := getallsubsequence.GetSubsequences(nums, k)
 	if !reflect.DeepEqual(result, expected) {
 		t.Errorf("GetSubsequences() = %v; want %v", result, expected)
 	}
@@ -32,7 +34,7 @@ func TestGetSubsequencesIndex(t *testing.T) {
 		{2, 3},
 	}
 
-	result := GetSubsequencesIndex(n, k)
+	result := getallsubsequence.GetSubsequencesIndex(n, k)
 	if !reflect.DeepEqual(result, expected) {
 		t.Errorf("GetSubsequencesIndex() = %v; want %v", result, expected)
 	}
