@@ -55,7 +55,9 @@ func TestProfileFunc(t *testing.T) {
 	}
 	defer os.Remove(tmpfile.Name())
 
-	tmpfile.Close() // Close the file so ProfileFunc can create it.
+	if err := tmpfile.Close(); err != nil {
+		t.Errorf("Error closing temporary file: %v", err)
+	} // Close the file so ProfileFunc can create it.
 
 	result2, err := pkg.ProfileFunc(
 		func() { time.Sleep(1 * time.Millisecond) },

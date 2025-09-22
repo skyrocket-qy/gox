@@ -196,7 +196,7 @@ func TestConcurrentTopologicalSort_ErrorHandling(t *testing.T) {
 		// It's possible A runs concurrently with B, so count can be 2 or 3. But it can't be all
 		// nodes.
 		// A better check is that not all nodes were processed successfully.
-		if atomic.LoadInt32(&processedCount) == int32(len(graph)) {
+		if int(atomic.LoadInt32(&processedCount)) == len(graph) {
 			t.Errorf(
 				"Expected processing to stop or be incomplete after error, but all %d nodes were processed",
 				len(graph),

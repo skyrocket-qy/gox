@@ -36,7 +36,7 @@ func Bench(fn func(), repeat int, baseOutputFile string) error {
 	reg := regexp.MustCompile("[^a-zA-Z0-9]+")
 
 	// Create the 'tmp' directory if it doesn't exist
-	if err := os.MkdirAll("tmp", 0o755); err != nil {
+	if err := os.MkdirAll("tmp", 0o750); err != nil {
 		return err
 	}
 
@@ -65,6 +65,8 @@ func WriteResultsToFile(baseOutputFile string, datas []LineData) error {
 	baseName := baseOutputFile[:len(baseOutputFile)-len(ext)]
 	outputFile := filepath.Join("tmp", baseName+"_results.json")
 
+	// G304 (CWE-22): outputFile is constructed internally using filepath.Join("tmp", ...) and is
+	// not directly user-controlled.
 	file, err := os.Create(outputFile)
 	if err != nil {
 		return err

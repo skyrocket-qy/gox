@@ -12,7 +12,7 @@ type ProfileResult struct {
 	ElapsedNS      int64
 	MemAllocStart  uint64
 	MemAllocEnd    uint64
-	MemAllocDelta  int64
+	MemAllocDelta  uint64
 	NumGC          uint32
 	CPUProfileFile string
 }
@@ -53,13 +53,16 @@ func ProfileFunc(
 	memEnd := SnapshotMemStats()
 	result.MemAllocStart = memStart.Alloc
 	result.MemAllocEnd = memEnd.Alloc
-	result.MemAllocDelta = int64(memEnd.Alloc) - int64(memStart.Alloc)
+	result.MemAllocDelta = memEnd.Alloc - memStart.Alloc
 	result.NumGC = memEnd.NumGC - memStart.NumGC
 
 	return &result, nil
 }
 
 func StartCPUProfile(path string) (func(), error) {
+	// G304 (CWE-22): path is expected to be a trusted input (e.g., from a config or internal
+	// logic),
+	// not directly from untrusted user input.
 	f, err := os.Create(path)
 	if err != nil {
 		return nil, err

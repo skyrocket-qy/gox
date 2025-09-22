@@ -1,9 +1,11 @@
-package sort
+package sort_test
 
 import (
 	"reflect"
 	"sort"
 	"testing"
+
+	sortx "github.com/skyrocket-qy/gox/dsa/alg/sort"
 )
 
 // The original qSortOutMem has a bug. The pivot is not excluded from the partitioning,
@@ -22,7 +24,7 @@ func TestQSortOutMem(t *testing.T) {
 	for _, tc := range testCases {
 		original := make([]int, len(tc))
 		copy(original, tc)
-		sorted := qSortOutMem(tc)
+		sorted := sortx.QSortOutMem(tc)
 
 		sort.Ints(original)
 
@@ -47,7 +49,7 @@ func TestQSortInMem(t *testing.T) {
 	for _, tc := range testCases {
 		original := make([]int, len(tc))
 		copy(original, tc)
-		qSortInMem(tc, 0, len(tc)-1)
+		sortx.QSortInMem(tc, 0, len(tc)-1)
 		sort.Ints(original)
 
 		if !reflect.DeepEqual(tc, original) {
@@ -70,7 +72,7 @@ func TestQSortInPartition(t *testing.T) {
 	for _, tc := range testCases {
 		original := make([]int, len(tc))
 		copy(original, tc)
-		qSortInPartition(tc, 0, len(tc)-1)
+		sortx.QSortInPartition(tc, 0, len(tc)-1)
 		sort.Ints(original)
 
 		if !reflect.DeepEqual(tc, original) {

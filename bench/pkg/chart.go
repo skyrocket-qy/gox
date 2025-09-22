@@ -39,15 +39,26 @@ func WriteChartToFile(filename string, x []string, data LineData) error {
 		return err
 	}
 
+	errChan := make(chan error, 1)
+
 	go func() {
 		defer stdin.Close()
 
-		stdin.Write(jsonData)
+		if _, err := stdin.Write(jsonData); err != nil {
+			errChan <- fmt.Errorf("failed to write JSON data to stdin: %w", err)
+		}
+
+		close(errChan)
 	}()
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("failed to execute python script: %w\nOutput:\n%s", err, string(output))
+	}
+
+	// Check for errors from the goroutine
+	if writeErr := <-errChan; writeErr != nil {
+		return writeErr
 	}
 
 	return nil
