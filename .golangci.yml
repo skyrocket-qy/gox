@@ -28,6 +28,7 @@ linters:
     - godox
     - gocognit
     - paralleltest
+    - errcheck
   enable:
     - wsl_v5
   exclusions:

@@ -105,7 +105,9 @@ func TestApplyCursor(t *testing.T) {
 					{Col: "id", Val: "200", Asc: true},
 				},
 			},
-			expectedSQL:  "SELECT * FROM dummy_models WHERE (score < ?) OR (score = ? AND created_at > ?) OR (score = ? AND created_at = ? AND id > ?)",
+			expectedSQL: "SELECT * FROM dummy_models WHERE (score < ?) " +
+				"OR (score = ? AND created_at > ?) " +
+				"OR (score = ? AND created_at = ? AND id > ?)",
 			expectedVars: []any{"100", "100", "12345", "100", "12345", "200"},
 		},
 	}
