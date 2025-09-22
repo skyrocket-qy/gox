@@ -46,10 +46,12 @@ func (pq *PriorityQueue) Swap(i, j int) {
 
 func (pq *PriorityQueue) Push(x any) {
 	n := len(*pq)
+
 	node, ok := x.(*Node)
 	if !ok {
 		panic("Push received a non-*Node value") // Should not happen in this context
 	}
+
 	node.Index = n
 	*pq = append(*pq, node)
 }
