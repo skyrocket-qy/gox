@@ -82,12 +82,12 @@ func Prims(points [][]int) int {
 	totalCost := 0
 
 	// 2. Grow the tree until all `n` points are included.
-	for pointsInMST := 0; pointsInMST < n; pointsInMST++ {
+	for range n {
 		// Find the next closest, unvisited point to add to the MST.
 		currPoint := -1
 		currMinCost := math.MaxInt32
 
-		for i := 0; i < n; i++ {
+		for i := range n {
 			if !visited[i] && minCost[i] < currMinCost {
 				currMinCost = minCost[i]
 				currPoint = i
