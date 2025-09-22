@@ -55,59 +55,45 @@ func runPermutationTest[T cmp.Ordered](
 	}
 }
 
-func TestOperInsertPermutation(t *testing.T) {
-	tests := []struct {
-		name     string
-		input    []int
-		expected [][]int
-	}{
-		{
-			name:     "Empty slice",
+var intTests = []struct {
+	name     string
+	input    []int
+	expected [][]int
+}{
+	{
+		name:     "Empty slice",
 			input:    []int{},
 			expected: [][]int{},
-		},
-		{
-			name:     "Single element",
+	},
+	{
+		name:     "Single element",
 			input:    []int{1},
 			expected: [][]int{{1}},
-		},
-		{
-			name:     "Two elements",
+	},
+	{
+		name:     "Two elements",
 			input:    []int{1, 2},
-			expected: [][]int{{1, 2}, {2, 1}},
-		},
-		{
-			name:     "Three elements",
+		expected: [][]int{{1, 2}, {2, 1}},
+	},
+	{
+		name:     "Three elements",
 			input:    []int{1, 2, 3},
 			expected: [][]int{{1, 2, 3}, {1, 3, 2}, {2, 1, 3}, {2, 3, 1}, {3, 1, 2}, {3, 2, 1}},
-		},
-	}
+	},
+}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			runPermutationTest(
-				t,
-				permutation.OperInsertPermutation[int],
-				tt.input,
-				tt.expected,
-				"OperInsertPermutation",
-			)
-		})
-	}
-
-	// Test with string type
-	stringTests := []struct {
-		name     string
-		input    []string
-		expected [][]string
-	}{
-		{
-			name:     "String - Two elements",
+var stringTests = []struct {
+	name     string
+	input    []string
+	expected [][]string
+}{
+	{
+		name:     "String - Two elements",
 			input:    []string{"a", "b"},
 			expected: [][]string{{"a", "b"}, {"b", "a"}},
-		},
-		{
-			name:  "String - Three elements",
+	},
+	{
+		name:  "String - Three elements",
 			input: []string{"a", "b", "c"},
 			expected: [][]string{
 				{"a", "b", "c"},
@@ -117,7 +103,21 @@ func TestOperInsertPermutation(t *testing.T) {
 				{"c", "a", "b"},
 				{"c", "b", "a"},
 			},
-		},
+	},
+}
+
+
+func TestOperInsertPermutation(t *testing.T) {
+	for _, tt := range intTests {
+		t.Run(tt.name, func(t *testing.T) {
+			runPermutationTest(
+				t,
+				permutation.OperInsertPermutation[int],
+				tt.input,
+				tt.expected,
+				"OperInsertPermutation",
+			)
+		})
 	}
 
 	for _, tt := range stringTests {
@@ -134,34 +134,7 @@ func TestOperInsertPermutation(t *testing.T) {
 }
 
 func TestOperBackTrackPermutation(t *testing.T) {
-	tests := []struct {
-		name     string
-		input    []int
-		expected [][]int
-	}{
-		{
-			name:     "Empty slice",
-			input:    []int{},
-			expected: [][]int{},
-		},
-		{
-			name:     "Single element",
-			input:    []int{1},
-			expected: [][]int{{1}},
-		},
-		{
-			name:     "Two elements",
-			input:    []int{1, 2},
-			expected: [][]int{{1, 2}, {2, 1}},
-		},
-		{
-			name:     "Three elements",
-			input:    []int{1, 2, 3},
-			expected: [][]int{{1, 2, 3}, {1, 3, 2}, {2, 1, 3}, {2, 3, 1}, {3, 1, 2}, {3, 2, 1}},
-		},
-	}
-
-	for _, tt := range tests {
+	for _, tt := range intTests {
 		t.Run(tt.name, func(t *testing.T) {
 			runPermutationTest(
 				t,
@@ -171,31 +144,6 @@ func TestOperBackTrackPermutation(t *testing.T) {
 				"OperBackTrackPermutation",
 			)
 		})
-	}
-
-	// Test with string type
-	stringTests := []struct {
-		name     string
-		input    []string
-		expected [][]string
-	}{
-		{
-			name:     "String - Two elements",
-			input:    []string{"a", "b"},
-			expected: [][]string{{"a", "b"}, {"b", "a"}},
-		},
-		{
-			name:  "String - Three elements",
-			input: []string{"a", "b", "c"},
-			expected: [][]string{
-				{"a", "b", "c"},
-				{"a", "c", "b"},
-				{"b", "a", "c"},
-				{"b", "c", "a"},
-				{"c", "a", "b"},
-				{"c", "b", "a"},
-			},
-		},
 	}
 
 	for _, tt := range stringTests {
@@ -212,34 +160,7 @@ func TestOperBackTrackPermutation(t *testing.T) {
 }
 
 func TestOperSwapPermutation(t *testing.T) {
-	tests := []struct {
-		name     string
-		input    []int
-		expected [][]int
-	}{
-		{
-			name:     "Empty slice",
-			input:    []int{},
-			expected: [][]int{},
-		},
-		{
-			name:     "Single element",
-			input:    []int{1},
-			expected: [][]int{{1}},
-		},
-		{
-			name:     "Two elements",
-			input:    []int{1, 2},
-			expected: [][]int{{1, 2}, {2, 1}},
-		},
-		{
-			name:     "Three elements",
-			input:    []int{1, 2, 3},
-			expected: [][]int{{1, 2, 3}, {1, 3, 2}, {2, 1, 3}, {2, 3, 1}, {3, 1, 2}, {3, 2, 1}},
-		},
-	}
-
-	for _, tt := range tests {
+	for _, tt := range intTests {
 		t.Run(tt.name, func(t *testing.T) {
 			runPermutationTest(
 				t,
@@ -249,31 +170,6 @@ func TestOperSwapPermutation(t *testing.T) {
 				"OperSwapPermutation",
 			)
 		})
-	}
-
-	// Test with string type
-	stringTests := []struct {
-		name     string
-		input    []string
-		expected [][]string
-	}{
-		{
-			name:     "String - Two elements",
-			input:    []string{"a", "b"},
-			expected: [][]string{{"a", "b"}, {"b", "a"}},
-		},
-		{
-			name:  "String - Three elements",
-			input: []string{"a", "b", "c"},
-			expected: [][]string{
-				{"a", "b", "c"},
-				{"a", "c", "b"},
-				{"b", "a", "c"},
-				{"b", "c", "a"},
-				{"c", "a", "b"},
-				{"c", "b", "a"},
-			},
-		},
 	}
 
 	for _, tt := range stringTests {
@@ -290,34 +186,7 @@ func TestOperSwapPermutation(t *testing.T) {
 }
 
 func TestOperHeapPermutation(t *testing.T) {
-	tests := []struct {
-		name     string
-		input    []int
-		expected [][]int
-	}{
-		{
-			name:     "Empty slice",
-			input:    []int{},
-			expected: [][]int{},
-		},
-		{
-			name:     "Single element",
-			input:    []int{1},
-			expected: [][]int{{1}},
-		},
-		{
-			name:     "Two elements",
-			input:    []int{1, 2},
-			expected: [][]int{{1, 2}, {2, 1}},
-		},
-		{
-			name:     "Three elements",
-			input:    []int{1, 2, 3},
-			expected: [][]int{{1, 2, 3}, {1, 3, 2}, {2, 1, 3}, {2, 3, 1}, {3, 1, 2}, {3, 2, 1}},
-		},
-	}
-
-	for _, tt := range tests {
+	for _, tt := range intTests {
 		t.Run(tt.name, func(t *testing.T) {
 			runPermutationTest(
 				t,
@@ -327,31 +196,6 @@ func TestOperHeapPermutation(t *testing.T) {
 				"OperHeapPermutation",
 			)
 		})
-	}
-
-	// Test with string type
-	stringTests := []struct {
-		name     string
-		input    []string
-		expected [][]string
-	}{
-		{
-			name:     "String - Two elements",
-			input:    []string{"a", "b"},
-			expected: [][]string{{"a", "b"}, {"b", "a"}},
-		},
-		{
-			name:  "String - Three elements",
-			input: []string{"a", "b", "c"},
-			expected: [][]string{
-				{"a", "b", "c"},
-				{"a", "c", "b"},
-				{"b", "a", "c"},
-				{"b", "c", "a"},
-				{"c", "a", "b"},
-				{"c", "b", "a"},
-			},
-		},
 	}
 
 	for _, tt := range stringTests {
