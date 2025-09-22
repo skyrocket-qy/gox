@@ -6,7 +6,7 @@ package unionfind
 // disjoint (non-overlapping) subsets.
 type UnionFind[T comparable] struct {
 	parents map[T]T
-	sizes   map[T]int // use to flatten
+	sizes   map[T]int // record the group size
 }
 
 // NewUnionFind creates and returns a new UnionFind instance.
@@ -44,7 +44,7 @@ func (uf *UnionFind[T]) Union(x, y T) bool {
 			rootX, rootY = rootY, rootX
 		}
 
-		uf.parents[rootX] = rootY
+		uf.parents[rootY] = rootX
 		uf.sizes[rootX] += uf.sizes[rootY]
 		return true
 	}
