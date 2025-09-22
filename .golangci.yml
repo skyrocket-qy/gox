@@ -30,6 +30,7 @@ linters:
     - paralleltest
     - errcheck
     - contextcheck
+    - godoclint
   enable:
     - wsl_v5
   exclusions:
@@ -43,6 +44,7 @@ linters:
       - path: ".*_test.go$"
         linters:
           - gochecknoinits
+          - gocyclo
 formatters:
   # Default: [] (uses standard Go formatting)
   enable:

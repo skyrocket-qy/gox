@@ -7,7 +7,7 @@ import (
 	"sort"
 )
 
-// find kth larger element
+// FindAfterSort find kth larger element
 // O(nlogn).
 func FindAfterSort(nums []int, k int) (int, error) {
 	if k > len(nums) {

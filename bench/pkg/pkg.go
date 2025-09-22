@@ -19,7 +19,7 @@ func CollectTimings(fn func(), repeat int) []int64 {
 	return timings
 }
 
-// Measuring per-run heap usage
+// CollectMems Measuring per-run heap usage
 // Seeing how much memory is retained after a function.
 func CollectMems(fn func(), repeat int) []uint64 {
 	allocs := make([]uint64, 0, repeat)
@@ -47,7 +47,7 @@ func CollectNumGCs(fn func(), repeat int) []uint32 {
 	return numGCs
 }
 
-// How much memory was allocated during a benchmark
+// CollectAllocs How much memory was allocated during a benchmark
 // GC pressure or allocation rate over time.
 func CollectAllocs(fn func(), repeat int) []uint64 {
 	allocs := make([]uint64, 0, repeat)

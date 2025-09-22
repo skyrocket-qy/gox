@@ -103,7 +103,7 @@ func IsPowerOf2(in uint) bool {
 	return in != 0 && (in&(in-1)) == 0
 }
 
-// in = [0,1,2,4], out = 3.
+// FindLackNum in = [0,1,2,4], out = 3.
 func FindLackNum(in []int) int {
 	n := 0
 	for i, v := range in {

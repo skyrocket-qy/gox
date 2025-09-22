@@ -2,7 +2,7 @@ package binarysearch
 
 /* @tags: binary search */
 
-// find i where nums[i] < comp && nums[i+1] >= comp.
+// FindLastSmall find i where nums[i] < comp && nums[i+1] >= comp.
 func FindLastSmall(nums []int, comp int) int {
 	l, r := 0, len(nums)-1
 
