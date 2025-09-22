@@ -3,49 +3,69 @@ package mst
 import (
 	"math"
 	"sort"
-
-	"github.com/skyrocket-qy/gox/dsa/alg/unionfind"
 )
 
-// An Edge represents a connection between two points with a specific cost.
+// Edge represents a weighted edge in a graph, suitable for Kruskal's algorithm.
+// It's generic and can be used with any underlying graph representation.
 type Edge struct {
-	point1 int
-	point2 int
-	cost   int
+	U, V int // The two vertices connected by the edge.
+	Cost int // The cost or weight of the edge.
 }
 
-func Kruskal(points [][]int) int {
-	n := len(points)
+// Kruskal finds the Minimum Spanning Tree (MST) cost for a given graph.
+// It's best for sparse graphs.
+//
+// Parameters:
+//   - n: The total number of vertices in the graph.
+//   - edges: A slice of all edges in the graph.
+//
+// Returns:
+//
+//	The total cost of the MST.
+func Kruskal(n int, edges []Edge) int {
 	if n <= 1 {
 		return 0
 	}
 
-	// 1. Generate all possible edges and their costs (Manhattan distance).
-	edges := []Edge{}
-
-	for i := range n {
-		for j := i + 1; j < n; j++ {
-			cost := abs(points[i][0]-points[j][0]) + abs(points[i][1]-points[j][1])
-			edges = append(edges, Edge{i, j, cost})
-		}
-	}
-
-	// 2. Sort all edges by cost in non-decreasing order.
+	// 1. Sort all edges by cost in non-decreasing order.
 	sort.Slice(edges, func(i, j int) bool {
-		return edges[i].cost < edges[j].cost
+		return edges[i].Cost < edges[j].Cost
 	})
 
-	// 3. Build the MST using Union-Find.
-	uf := unionfind.New[int]()
+	// 2. Build the MST using a Union-Find data structure.
+	parent := make([]int, n)
+	for i := range parent {
+		parent[i] = i
+	}
+
+	var find func(i int) int
+	find = func(i int) int {
+		if parent[i] == i {
+			return i
+		}
+		parent[i] = find(parent[i])
+		return parent[i]
+	}
+
+	union := func(i, j int) bool {
+		rootI := find(i)
+		rootJ := find(j)
+		if rootI != rootJ {
+			parent[rootI] = rootJ
+			return true
+		}
+		return false
+	}
+
 	totalCost := 0
 	edgesUsed := 0
 
 	for _, edge := range edges {
-		// If the points are not already connected, unite them.
-		if uf.Union(edge.point1, edge.point2) {
-			totalCost += edge.cost
+		// 3. If the vertices of the edge are not already connected, add the edge to the MST.
+		if union(edge.U, edge.V) {
+			totalCost += edge.Cost
 			edgesUsed++
-			// 4. Stop when we have N-1 edges, as the tree is complete.
+			// 4. Stop when we have N-1 edges, completing the tree.
 			if edgesUsed == n-1 {
 				break
 			}
@@ -55,67 +75,61 @@ func Kruskal(points [][]int) int {
 	return totalCost
 }
 
-// Helper function for absolute value.
-func abs(x int) int {
-	if x < 0 {
-		return -x
-	}
-
-	return x
-}
-
-func Prims(points [][]int) int {
-	n := len(points)
+// Prims finds the Minimum Spanning Tree (MST) cost for a given graph.
+// It's efficient for dense graphs.
+//
+// Parameters:
+//   - n: The total number of vertices in the graph.
+//   - adj: An adjacency list where adj[i] is a list of pairs [neighbor, cost].
+//
+// Returns:
+//
+//	The total cost of the MST.
+func Prims(n int, adj map[int][][2]int) int {
 	if n <= 1 {
 		return 0
 	}
 
 	// 1. Initialization.
-	// `visited` tracks which points are already in our MST.
+	// `visited` tracks vertices already in the MST.
 	visited := make([]bool, n)
-	// `minCost[i]` stores the minimum cost to connect point `i` to the MST.
+	// `minCost[i]` stores the minimum cost to connect vertex `i` to the MST.
 	minCost := make([]int, n)
 	for i := range minCost {
 		minCost[i] = math.MaxInt32
 	}
 
-	// Start with the first point (point 0).
+	// Start with the first vertex (vertex 0).
 	minCost[0] = 0
 	totalCost := 0
 
-	// 2. Grow the tree until all `n` points are included.
-	for range n {
-		// Find the next closest, unvisited point to add to the MST.
-		currPoint := -1
-		currMinCost := math.MaxInt32
-
-		for i := range n {
-			if !visited[i] && minCost[i] < currMinCost {
-				currMinCost = minCost[i]
-				currPoint = i
+	// 2. Grow the tree until all `n` vertices are included.
+	for i := 0; i < n; i++ {
+		// Find the next closest, unvisited vertex to add to the MST.
+		u := -1
+		for v := 0; v < n; v++ {
+			if !visited[v] && (u == -1 || minCost[v] < minCost[u]) {
+				u = v
 			}
 		}
 
-		// If no unvisited point is found, something is wrong (should not happen in this problem).
-		if currPoint == -1 {
-			break
+		// If no connected, unvisited vertex is found, the graph is disconnected.
+		if u == -1 || minCost[u] == math.MaxInt32 {
+			// Depending on the problem, you might return an error or a specific value.
+			// For many LeetCode problems, this indicates it's impossible to connect all points.
+			return -1 // Or handle as per problem requirements.
 		}
 
-		// Add the chosen point to the MST.
-		visited[currPoint] = true
-		totalCost += currMinCost
+		// Add the chosen vertex to the MST.
+		visited[u] = true
+		totalCost += minCost[u]
 
-		// 3. Update the `minCost` for all neighbors of the newly added point.
-		// For every unvisited point, check if connecting it via `currPoint` is cheaper.
-		for i := range n {
-			if !visited[i] {
-				cost := abs(
-					points[currPoint][0]-points[i][0],
-				) + abs(
-					points[currPoint][1]-points[i][1],
-				)
-				if cost < minCost[i] {
-					minCost[i] = cost
+		// 3. Update the `minCost` for all neighbors of the newly added vertex.
+		if neighbors, ok := adj[u]; ok {
+			for _, edge := range neighbors {
+				v, cost := edge[0], edge[1]
+				if !visited[v] && cost < minCost[v] {
+					minCost[v] = cost
 				}
 			}
 		}
