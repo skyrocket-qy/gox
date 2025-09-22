@@ -76,11 +76,20 @@ func TestGetColumns(t *testing.T) {
 		WithArgs(1).
 		WillReturnRows(sqlmock.NewRows(nil))
 
-	rows := sqlmock.NewRows([]string{"column_name", "column_default", "is_nullable", "data_type", "character_maximum_length", "column_type", "column_key", "extra", "column_comment", "numeric_precision", "numeric_scale", "datetime_precision"}).
+	rows := sqlmock.NewRows([]string{
+		"column_name", "column_default", "is_nullable", "data_type",
+		"character_maximum_length", "column_type", "column_key", "extra",
+		"column_comment", "numeric_precision", "numeric_scale", "datetime_precision",
+	}).
 		AddRow("id", nil, false, "int", nil, "int(11)", "PRI", "auto_increment", "", nil, nil, nil).
 		AddRow("name", nil, true, "varchar", 255, "varchar(255)", "", "", "", nil, nil, nil)
 
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = ? AND table_name = ? ORDER BY ORDINAL_POSITION")).
+	mock.ExpectQuery(regexp.QuoteMeta(
+		"SELECT column_name, column_default, is_nullable = 'YES', data_type, "+
+			"character_maximum_length, column_type, column_key, extra, column_comment, "+
+			"numeric_precision, numeric_scale , datetime_precision "+
+			"FROM information_schema.columns WHERE table_schema = ? AND table_name = ? "+
+			"ORDER BY ORDINAL_POSITION")).
 		WithArgs("test", "users").
 		WillReturnRows(rows)
 
@@ -108,11 +117,20 @@ func TestGenTableColumnNamesCode(t *testing.T) {
 	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `users` LIMIT ?")).
 		WithArgs(1).
 		WillReturnRows(sqlmock.NewRows(nil))
-	rows := sqlmock.NewRows([]string{"column_name", "column_default", "is_nullable", "data_type", "character_maximum_length", "column_type", "column_key", "extra", "column_comment", "numeric_precision", "numeric_scale", "datetime_precision"}).
+	rows := sqlmock.NewRows([]string{
+		"column_name", "column_default", "is_nullable", "data_type",
+		"character_maximum_length", "column_type", "column_key", "extra",
+		"column_comment", "numeric_precision", "numeric_scale", "datetime_precision",
+	}).
 		AddRow("id", nil, false, "int", nil, "int(11)", "PRI", "auto_increment", "", nil, nil, nil).
 		AddRow("user_name", nil, true, "varchar", 255, "varchar(255)", "", "", "", nil, nil, nil)
 
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT column_name, column_default, is_nullable = 'YES', data_type, character_maximum_length, column_type, column_key, extra, column_comment, numeric_precision, numeric_scale , datetime_precision FROM information_schema.columns WHERE table_schema = ? AND table_name = ? ORDER BY ORDINAL_POSITION")).
+	mock.ExpectQuery(regexp.QuoteMeta(
+		"SELECT column_name, column_default, is_nullable = 'YES', data_type, "+
+			"character_maximum_length, column_type, column_key, extra, column_comment, "+
+			"numeric_precision, numeric_scale , datetime_precision "+
+			"FROM information_schema.columns WHERE table_schema = ? AND table_name = ? "+
+			"ORDER BY ORDINAL_POSITION")).
 		WithArgs("test", "users").
 		WillReturnRows(rows)
 

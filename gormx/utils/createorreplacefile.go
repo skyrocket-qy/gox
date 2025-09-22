@@ -27,6 +27,8 @@ func CreateOrReplaceFile(path, code string) error {
 	// Create the file
 	// G304 (CWE-22): The 'path' parameter is provided by the caller. It is the caller's
 	// responsibility to ensure that 'path' is safe and does not lead to unintended file access.
+		// #nosec G304 -- The 'path' parameter is provided by the caller. It is the caller's
+	// responsibility to ensure that 'path' is safe and does not lead to unintended file access.
 	file, err := os.Create(path)
 	if err != nil {
 		return fmt.Errorf("failed to create file: %w", err)
