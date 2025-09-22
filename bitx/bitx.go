@@ -33,12 +33,11 @@ func CountBit1(in int) int {
 	return out
 }
 
-func CountBit1ChangeIn(in int) int {
+func CountBit1ChangeIn(in uint32) int {
 	out := 0
 
-	uIn := uint32(in)
-	for ; uIn != 0; uIn >>= 1 {
-		if (uIn & 1) != 0 {
+	for ; in != 0; in >>= 1 {
+		if (in & 1) != 0 {
 			out++
 		}
 	}

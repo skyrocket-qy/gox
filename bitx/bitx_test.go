@@ -100,14 +100,14 @@ func TestCountBit1(t *testing.T) {
 func TestCountBit1ChangeIn(t *testing.T) {
 	tests := []struct {
 		name  string
-		input int
+		input uint32
 		want  int
 	}{
 		{"zero", 0, 0},
 		{"one", 1, 1},
 		{"seven", 7, 3},
 		{"max int32", 0x7fffffff, 31},
-		{"negative one", -1, 32},
+		{"negative one (uint32 max)", 0xFFFFFFFF, 32},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
