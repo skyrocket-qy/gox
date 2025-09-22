@@ -109,7 +109,7 @@ func TestApplyFilter_SQLGeneration(t *testing.T) {
 
 		tx := db.Model(&DummyFilterModel{}).Scopes(scope).Find(&results)
 
-		expectedSQL := "SELECT * FROM `dummy_filter_models` WHERE `id` BETWEEN ? AND ?"
+		expectedSQL := "SELECT id FROM `dummy_filter_models` WHERE `id` BETWEEN ? AND ?"
 		assert.Equal(t, expectedSQL, tx.Statement.SQL.String())
 		assert.Equal(t, []any{"100", "200"}, tx.Statement.Vars)
 	})
