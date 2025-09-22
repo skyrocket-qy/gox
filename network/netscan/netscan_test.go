@@ -2,6 +2,7 @@ package netscan_test
 
 import (
 	"bytes"
+	context "context"
 	"fmt"
 	"log"
 	"net"
@@ -21,7 +22,7 @@ func TestScanPorts(t *testing.T) {
 	t.Run("TCP4", func(t *testing.T) {
 		logBuf.Reset()
 		// Start a local TCP listener on a random port
-		listener, err := net.Listen("tcp", "127.0.0.1:0")
+		listener, err := (&net.ListenConfig{}).Listen(context.Background(), "tcp", "127.0.0.1:0")
 		if err != nil {
 			t.Fatalf("Failed to listen on a port: %v", err)
 		}
@@ -47,7 +48,7 @@ func TestScanPorts(t *testing.T) {
 	t.Run("TCP6", func(t *testing.T) {
 		logBuf.Reset()
 		// Start a local TCP6 listener on a random port
-		listener6, err := net.Listen("tcp6", "[::1]:0")
+		listener6, err := (&net.ListenConfig{}).Listen(context.Background(), "tcp6", "[::1]:0")
 		if err != nil {
 			// Skip if IPv6 is not supported
 			if strings.Contains(err.Error(), "address family not supported by protocol") {
