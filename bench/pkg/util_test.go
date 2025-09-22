@@ -93,5 +93,4 @@ func TestProfileFunc(t *testing.T) {
 	if info.Size() == 0 {
 		t.Errorf("Expected profile file to be non-empty, but it has size 0")
 	}
-
 }

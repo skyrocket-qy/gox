@@ -75,7 +75,11 @@ func StartCPUProfile(path string) (func(), error) {
 	}
 
 	if !strings.HasPrefix(absPath, tmpDir) {
-		return nil, fmt.Errorf("CPU profile file path %s is outside of the allowed directory %s", absPath, tmpDir)
+		return nil, fmt.Errorf(
+			"CPU profile file path %s is outside of the allowed directory %s",
+			absPath,
+			tmpDir,
+		)
 	}
 
 	f, err := os.Create(path)

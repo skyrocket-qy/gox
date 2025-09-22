@@ -22,7 +22,7 @@ func TestCreateOrReplaceFile(t *testing.T) {
 	}
 
 	// Check if the file was created with the correct content
-		// #nosec G304 -- filePath is constructed internally within a temporary directory and is safe.
+	// #nosec G304 -- filePath is constructed internally within a temporary directory and is safe.
 	data, err := os.ReadFile(filePath)
 	if err != nil {
 		t.Errorf("Failed to read file: %v", err)
@@ -41,7 +41,7 @@ func TestCreateOrReplaceFile(t *testing.T) {
 	}
 
 	// Check if the file was replaced with the new content
-		// #nosec G304 -- filePath is constructed internally within a temporary directory and is safe.
+	// #nosec G304 -- filePath is constructed internally within a temporary directory and is safe.
 	data, err = os.ReadFile(filePath)
 	if err != nil {
 		t.Errorf("Failed to read file: %v", err)
@@ -54,7 +54,8 @@ func TestCreateOrReplaceFile(t *testing.T) {
 	// Test case 3: Error case - read-only directory
 	readOnlyDir := filepath.Join(tmpDir, "readonly")
 
-		// #nosec G301 -- Permissions 0o555 are already restrictive and satisfy the security requirement.
+	// #nosec G301 -- Permissions 0o555 are already restrictive and satisfy the security
+	// requirement.
 	err = os.Mkdir(readOnlyDir, 0o555) // Read and execute permissions
 	if err != nil {
 		t.Fatalf("Failed to create read-only dir: %v", err)
@@ -70,12 +71,12 @@ func TestCreateOrReplaceFile(t *testing.T) {
 	// Test case 4: Error case - path is a non-empty directory
 	dirPath := filepath.Join(tmpDir, "dir")
 
-		err = os.Mkdir(dirPath, 0o750)
+	err = os.Mkdir(dirPath, 0o750)
 	if err != nil {
 		t.Fatalf("Failed to create dir: %v", err)
 	}
 	// Create a file in the directory to make it non-empty
-		// #nosec G304 -- The path is constructed internally within a temporary directory and is safe.
+	// #nosec G304 -- The path is constructed internally within a temporary directory and is safe.
 	_, err = os.Create(filepath.Join(dirPath, "somefile.txt"))
 	if err != nil {
 		t.Fatalf("Failed to create file in dir: %v", err)

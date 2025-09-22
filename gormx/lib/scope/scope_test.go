@@ -28,9 +28,10 @@ func setup(t *testing.T) *gorm.DB {
 	require.NoError(t, err)
 	sqlDB.SetMaxOpenConns(1)
 
-		if err := db.Migrator().DropTable(&User{}); err != nil {
+	if err := db.Migrator().DropTable(&User{}); err != nil {
 		t.Logf("Error dropping table (might not exist): %v", err)
 	}
+
 	err = db.AutoMigrate(&User{})
 	require.NoError(t, err)
 

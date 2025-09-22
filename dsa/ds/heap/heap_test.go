@@ -125,7 +125,7 @@ var testData []int
 // generateData creates a slice of random integers.
 // It's called once to ensure all benchmarks run on the exact same data.
 func init() {
-		// #nosec G404 -- math/rand is acceptable for test data generation, not security-sensitive.
+	// #nosec G404 -- math/rand is acceptable for test data generation, not security-sensitive.
 	rng := rand.New(rand.NewSource(42)) // Fixed seed for reproducible benchmarks
 
 	testData = make([]int, benchmarkSize)

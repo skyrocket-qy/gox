@@ -79,7 +79,11 @@ func WriteResultsToFile(baseOutputFile string, datas []LineData) error {
 	}
 
 	if !strings.HasPrefix(absOutputFile, tmpDir) {
-		return fmt.Errorf("output file path %s is outside of the allowed directory %s", absOutputFile, tmpDir)
+		return fmt.Errorf(
+			"output file path %s is outside of the allowed directory %s",
+			absOutputFile,
+			tmpDir,
+		)
 	}
 
 	file, err := os.Create(outputFile)
