@@ -43,7 +43,8 @@ func TestMinHashLSHBasic(t *testing.T) {
 	// Add documents to LSH
 	err = lsh.Add("doc1", sig1)
 	require.NoError(t, err)
-	lsh.Add("doc2", sig2)
+	err = lsh.Add("doc2", sig2)
+	require.NoError(t, err)
 	err = lsh.Add("doc3", sig3)
 	require.NoError(t, err)
 

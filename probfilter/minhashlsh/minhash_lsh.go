@@ -18,8 +18,8 @@ type MinHasher struct {
 // NewMinHasher creates a new MinHasher with a specified number of permutations.
 func NewMinHasher(numPermutations int) *MinHasher {
 	seeds := make([]uint64, numPermutations)
-	for i := range numPermutations {
-		seeds[i] = uint64(i)*uint64(2) + 1 // Simple seeds
+	for i_uint64 := range uint64(numPermutations) {
+		seeds[i_uint64] = i_uint64*2 + 1 // Simple seeds
 	}
 
 	return &MinHasher{

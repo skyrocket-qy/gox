@@ -141,7 +141,7 @@ func TestGobDecodeError(t *testing.T) {
 	buf.Reset()
 
 	_ = enc.Encode([]uint8{1, 2, 3}) // reg
-	enc.Encode(uint32(16384))        // m
+	_ = enc.Encode(uint32(16384))    // m
 
 	err = hll.GobDecode(buf.Bytes())
 	require.Error(t, err)

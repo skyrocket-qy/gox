@@ -1,9 +1,11 @@
 package pkg
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os/exec"
+	"time"
 )
 
 type LineData struct {
@@ -31,8 +33,14 @@ func WriteChartToFile(filename string, x []string, data LineData) error {
 		return err
 	}
 
+	ctx, cancel := context.WithTimeout(
+		context.Background(),
+		30*time.Second,
+	) // Set a timeout for the command
+	defer cancel() // Ensure the context is cancelled to release resources
+
 	// Execute Python script
-	cmd := exec.Command("python3", "bench/pkg/plot.py", filename)
+	cmd := exec.CommandContext(ctx, "python3", "bench/pkg/plot.py", filename)
 
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
