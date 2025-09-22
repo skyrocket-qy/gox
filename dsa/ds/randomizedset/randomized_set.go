@@ -45,6 +45,7 @@ func (rs *RandomizedSet) Remove(val int) bool {
 }
 
 func (rs *RandomizedSet) GetRandom() int {
+	// #nosec G404 -- math/rand/v2 is acceptable for random selection, not security-sensitive.
 	r := rand.IntN(len(rs.sl))
 
 	return rs.sl[r]

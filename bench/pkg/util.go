@@ -1,10 +1,13 @@
 package pkg
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"runtime"
 	"runtime/pprof"
+	"strings"
 	"time"
 )
 
@@ -60,9 +63,21 @@ func ProfileFunc(
 }
 
 func StartCPUProfile(path string) (func(), error) {
-	// G304 (CWE-22): path is expected to be a trusted input (e.g., from a config or internal
-	// logic),
-	// not directly from untrusted user input.
+	// G304 (CWE-22): Ensure path is within the 'tmp' directory.
+	tmpDir, err := filepath.Abs("tmp")
+	if err != nil {
+		return nil, fmt.Errorf("failed to get absolute path for tmp directory: %w", err)
+	}
+
+	absPath, err := filepath.Abs(path)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get absolute path for CPU profile file: %w", err)
+	}
+
+	if !strings.HasPrefix(absPath, tmpDir) {
+		return nil, fmt.Errorf("CPU profile file path %s is outside of the allowed directory %s", absPath, tmpDir)
+	}
+
 	f, err := os.Create(path)
 	if err != nil {
 		return nil, err

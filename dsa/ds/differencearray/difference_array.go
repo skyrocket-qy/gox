@@ -10,7 +10,7 @@ After updating, we need to use prefix sum to rebuild the original array, O(n)
 
 type DiffArr []int
 
-func NewDifferenceArray(in []int) DiffArr {
+func New(in []int) DiffArr {
 	// D[i] = in[i] - in[i-1]
 	diffArr := make([]int, len(in))
 

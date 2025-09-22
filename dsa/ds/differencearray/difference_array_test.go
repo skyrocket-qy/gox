@@ -1,13 +1,15 @@
-package differencearray
+package differencearray_test
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/ds/differencearray"
 )
 
 func TestDifferenceArray(t *testing.T) {
 	in := []int{1, 2, 3, 4, 5}
-	diffArr := NewDifferenceArray(in)
+	diffArr := differencearray.New(in)
 
 	if !reflect.DeepEqual([]int(diffArr), []int{1, 1, 1, 1, 1}) {
 		t.Errorf("NewDifferenceArray failed, got %v", diffArr)
@@ -32,7 +34,7 @@ func TestDifferenceArray(t *testing.T) {
 
 func TestDifferenceArray_edge_case(t *testing.T) {
 	in := []int{1, 2, 3, 4, 5}
-	diffArr := NewDifferenceArray(in)
+	diffArr := differencearray.New(in)
 	diffArr.IntervalUpdate(0, 4, 2)
 	diffArr.Rebuild()
 

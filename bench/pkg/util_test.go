@@ -49,7 +49,14 @@ func TestProfileFunc(t *testing.T) {
 	}
 
 	// Test with CPU profiling
-	tmpfile, err := os.CreateTemp(t.TempDir(), "cpuprofile_*.prof")
+	// Create a temporary directory for CPU profiles within the package's tmp directory.
+	cpuProfileDir := "tmp"
+	if err := os.MkdirAll(cpuProfileDir, 0o750); err != nil {
+		t.Fatalf("Failed to create CPU profile directory: %v", err)
+	}
+	defer os.RemoveAll(cpuProfileDir)
+
+	tmpfile, err := os.CreateTemp(cpuProfileDir, "cpuprofile_*.prof")
 	if err != nil {
 		t.Fatalf("Failed to create temp file: %v", err)
 	}
@@ -86,4 +93,5 @@ func TestProfileFunc(t *testing.T) {
 	if info.Size() == 0 {
 		t.Errorf("Expected profile file to be non-empty, but it has size 0")
 	}
+
 }

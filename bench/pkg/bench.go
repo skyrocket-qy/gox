@@ -2,10 +2,12 @@ package pkg
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 func toInterfaceSlice[T ~int | ~int32 | ~int64 | ~uint | ~uint32 | ~uint64](data []T) []any {
@@ -65,8 +67,21 @@ func WriteResultsToFile(baseOutputFile string, datas []LineData) error {
 	baseName := baseOutputFile[:len(baseOutputFile)-len(ext)]
 	outputFile := filepath.Join("tmp", baseName+"_results.json")
 
-	// G304 (CWE-22): outputFile is constructed internally using filepath.Join("tmp", ...) and is
-	// not directly user-controlled.
+	// G304 (CWE-22): Ensure outputFile is within the 'tmp' directory.
+	tmpDir, err := filepath.Abs("tmp")
+	if err != nil {
+		return fmt.Errorf("failed to get absolute path for tmp directory: %w", err)
+	}
+
+	absOutputFile, err := filepath.Abs(outputFile)
+	if err != nil {
+		return fmt.Errorf("failed to get absolute path for output file: %w", err)
+	}
+
+	if !strings.HasPrefix(absOutputFile, tmpDir) {
+		return fmt.Errorf("output file path %s is outside of the allowed directory %s", absOutputFile, tmpDir)
+	}
+
 	file, err := os.Create(outputFile)
 	if err != nil {
 		return err
