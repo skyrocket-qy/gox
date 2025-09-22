@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/skyrocket-qy/gox/probfilter/minhashlsh"
+	"github.com/stretchr/testify/require"
 )
 
 func TestMinHashLSHBasic(t *testing.T) {
@@ -40,7 +41,8 @@ func TestMinHashLSHBasic(t *testing.T) {
 	}
 
 	// Add documents to LSH
-	lsh.Add("doc1", sig1)
+	err = lsh.Add("doc1", sig1)
+	require.NoError(t, err)
 	lsh.Add("doc2", sig2)
 	lsh.Add("doc3", sig3)
 

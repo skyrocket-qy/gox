@@ -19,7 +19,7 @@ type MinHasher struct {
 func NewMinHasher(numPermutations int) *MinHasher {
 	seeds := make([]uint64, numPermutations)
 	for i := range numPermutations {
-		seeds[i] = uint64(i*2 + 1) // Simple seeds
+		seeds[i] = uint64(i)*2 + 1 // Simple seeds
 	}
 
 	return &MinHasher{
@@ -38,7 +38,7 @@ func (mh *MinHasher) Signature(elements []string) []uint64 {
 	for _, element := range elements {
 		for i := range mh.numPermutations {
 			h := fnv.New64a()
-			h.Write([]byte(element))
+			_, _ = h.Write([]byte(element))
 			fmt.Fprintf(h, "%d", mh.seeds[i]) // Incorporate seed
 
 			hashValue := h.Sum64()

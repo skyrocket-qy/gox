@@ -132,7 +132,7 @@ func TestGobDecodeError(t *testing.T) {
 	var buf bytes.Buffer
 
 	enc := gob.NewEncoder(&buf)
-	enc.Encode([]uint8{1, 2, 3}) // reg
+	_ = enc.Encode([]uint8{1, 2, 3}) // reg
 
 	err = hll.GobDecode(buf.Bytes())
 	require.Error(t, err)

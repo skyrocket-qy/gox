@@ -48,7 +48,7 @@ func New(q, r uint8) (*QuotientFilter, error) {
 
 func (qf *QuotientFilter) hashData(data []byte) uint64 {
 	h := fnv.New64a()
-	h.Write(data)
+	_, _ = h.Write(data)
 
 	return h.Sum64()
 }
