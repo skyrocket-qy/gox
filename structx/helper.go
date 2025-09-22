@@ -34,7 +34,7 @@ func PrintStructInfo(s any) {
 
 // PrintFields prints the fields of a struct.
 func PrintFields(t reflect.Type, v reflect.Value) {
-	for i := 0; i < t.NumField(); i++ {
+	for i := range t.NumField() {
 		field := t.Field(i)
 		value := v.Field(i)
 		fieldName := field.Name
@@ -58,7 +58,7 @@ func IsEmbedded(field reflect.StructField) bool {
 
 func IsNonNilPointerOfStruct(v any) bool {
 	val := reflect.ValueOf(v)
-	if val.Kind() != reflect.Ptr {
+	if val.Kind() != reflect.Pointer {
 		return false
 	}
 
