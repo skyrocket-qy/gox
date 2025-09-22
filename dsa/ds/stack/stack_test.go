@@ -1,9 +1,13 @@
-package stack
+package stack_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/ds/stack"
+)
 
 func TestStack(t *testing.T) {
-	stack := NewStack[int]()
+	stack := stack.New[int]()
 
 	if !stack.IsEmpty() {
 		t.Error("New stack should be empty")

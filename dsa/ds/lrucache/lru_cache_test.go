@@ -1,9 +1,13 @@
-package lrucache
+package lrucache_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/ds/lrucache"
+)
 
 func TestLRUCache(t *testing.T) {
-	cache := Constructor(2)
+	cache := lrucache.New(2)
 
 	cache.Put(1, 1)
 	cache.Put(2, 2)
@@ -34,7 +38,7 @@ func TestLRUCache(t *testing.T) {
 }
 
 func TestLRUCache_update(t *testing.T) {
-	cache := Constructor(2)
+	cache := lrucache.New(2)
 
 	cache.Put(1, 1)
 	cache.Put(2, 2)
@@ -46,7 +50,7 @@ func TestLRUCache_update(t *testing.T) {
 }
 
 func TestLRUCache_zero_capacity(t *testing.T) {
-	cache := Constructor(0)
+	cache := lrucache.New(0)
 	cache.Put(1, 1)
 
 	if cache.Get(1) != -1 {

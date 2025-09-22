@@ -21,7 +21,7 @@ type radixTree struct {
 	children map[byte]*radixTree
 }
 
-func Init(strs []string) *radixTree {
+func New(strs []string) *radixTree {
 	t := &radixTree{
 		children: make(map[byte]*radixTree),
 	}

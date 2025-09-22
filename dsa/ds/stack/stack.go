@@ -6,7 +6,7 @@ type Stack[T any] struct {
 	slice []T
 }
 
-func NewStack[T any]() *Stack[T] {
+func New[T any]() *Stack[T] {
 	return &Stack[T]{
 		slice: []T{},
 	}

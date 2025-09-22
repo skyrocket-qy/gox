@@ -65,7 +65,7 @@ func (node *Node) Update(pos, value int) {
 		return
 	}
 
-	stk := stack.NewStack[*Node]()
+	stk := stack.New[*Node]()
 
 	var mid int
 	// find the leaf

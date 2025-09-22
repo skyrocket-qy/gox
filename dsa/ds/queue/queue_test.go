@@ -1,9 +1,13 @@
-package queue
+package queue_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/ds/queue"
+)
 
 func TestQueue(t *testing.T) {
-	queue := NewQueue[int]()
+	queue := queue.New[int]()
 
 	if !queue.IsEmpty() {
 		t.Error("New queue should be empty")

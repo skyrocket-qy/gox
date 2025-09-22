@@ -7,7 +7,7 @@ type Queue[T any] struct {
 	slice []T
 }
 
-func NewQueue[T any]() *Queue[T] {
+func New[T any]() *Queue[T] {
 	return &Queue[T]{
 		slice: []T{},
 	}

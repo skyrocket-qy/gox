@@ -11,7 +11,7 @@ type RandomizedSet struct {
 	sl []int
 }
 
-func Constructor() RandomizedSet {
+func New() RandomizedSet {
 	return RandomizedSet{
 		mp: make(map[int]int),
 		sl: make([]int, 0),

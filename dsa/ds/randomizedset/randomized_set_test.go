@@ -1,9 +1,13 @@
-package randomizedset
+package randomizedset_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/ds/randomizedset"
+)
 
 func TestRandomizedSet(t *testing.T) {
-	rs := Constructor()
+	rs := randomizedset.New()
 
 	if !rs.Insert(1) {
 		t.Error("Insert(1) should return true")

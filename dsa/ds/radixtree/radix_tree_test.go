@@ -1,11 +1,13 @@
-package radixtree
+package radixtree_test
 
 import (
 	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/ds/radixtree"
 )
 
 func TestRadixTree_InsertAndSearch(t *testing.T) {
-	tree := Init([]string{"apple", "app", "application"})
+	tree := radixtree.New([]string{"apple", "app", "application"})
 
 	// Test for existing strings
 	if !tree.Search("apple") {
@@ -45,7 +47,7 @@ func TestRadixTree_InsertAndSearch(t *testing.T) {
 }
 
 func TestRadixTree_Remove(t *testing.T) {
-	tree := Init([]string{"apple", "app", "application", "apply"})
+	tree := radixtree.New([]string{"apple", "app", "application", "apply"})
 
 	tree.Remove("app")
 
