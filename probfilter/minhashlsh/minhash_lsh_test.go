@@ -44,7 +44,8 @@ func TestMinHashLSHBasic(t *testing.T) {
 	err = lsh.Add("doc1", sig1)
 	require.NoError(t, err)
 	lsh.Add("doc2", sig2)
-	lsh.Add("doc3", sig3)
+	err = lsh.Add("doc3", sig3)
+	require.NoError(t, err)
 
 	// Query for similar documents
 	candidates1 := lsh.Query("doc1", sig1)
