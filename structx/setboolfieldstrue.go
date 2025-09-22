@@ -36,7 +36,7 @@ func setBoolFieldsTrueHelper(v reflect.Value) error {
 	// get all bool fields in the current struct
 	boolFields := make(map[string]any)
 
-	for i := 0; i < v.NumField(); i++ {
+	for i := range v.NumField() {
 		field := v.Type().Field(i)
 		if field.Type.Kind() == reflect.Bool {
 			boolFields[field.Name] = true

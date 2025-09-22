@@ -9,10 +9,9 @@ import (
 )
 
 type testStruct struct {
-	Name            string
-	Age             int
-	Address         string
-	unexportedField bool
+	Name    string
+	Age     int
+	Address string
 }
 
 func TestSetFields(t *testing.T) {
