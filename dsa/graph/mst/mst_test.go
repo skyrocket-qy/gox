@@ -6,6 +6,37 @@ import (
 	"github.com/skyrocket-qy/gox/dsa/graph/mst"
 )
 
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+
+	return x
+}
+
+func calculateEdges(points [][]int) (int, []mst.Edge, map[int][][2]int) {
+	n := len(points)
+	if n == 0 {
+		return 0, nil, nil
+	}
+
+	var edges []mst.Edge
+
+	adj := make(map[int][][2]int)
+
+	for i := range n {
+		for j := i + 1; j < n; j++ {
+			dist := abs(points[i][0]-points[j][0]) + abs(points[i][1]-points[j][1])
+			edges = append(edges, mst.Edge{U: i, V: j, Cost: dist})
+
+			adj[i] = append(adj[i], [2]int{j, dist})
+			adj[j] = append(adj[j], [2]int{i, dist})
+		}
+	}
+
+	return n, edges, adj
+}
+
 func TestMST(t *testing.T) {
 	testCases := []struct {
 		name   string
@@ -40,20 +71,21 @@ func TestMST(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		t.Run(tc.name+"_kruskal", func(t *testing.T) {
-			got := mst.Kruskal(tc.points)
-			if got != tc.want {
-				t.Errorf("Kruskal() = %v, want %v", got, tc.want)
-			}
-		})
-	}
+		n, edges, adj := calculateEdges(tc.points)
+		t.Run(tc.name, func(t *testing.T) {
+			t.Run("kruskal", func(t *testing.T) {
+				got := mst.Kruskal(n, edges)
+				if got != tc.want {
+					t.Errorf("Kruskal() = %v, want %v", got, tc.want)
+				}
+			})
 
-	for _, tc := range testCases {
-		t.Run(tc.name+"_prims", func(t *testing.T) {
-			got := mst.Prims(tc.points)
-			if got != tc.want {
-				t.Errorf("Prims() = %v, want %v", got, tc.want)
-			}
+			t.Run("prims", func(t *testing.T) {
+				got := mst.Prims(n, adj)
+				if got != tc.want {
+					t.Errorf("Prims() = %v, want %v", got, tc.want)
+				}
+			})
 		})
 	}
 }

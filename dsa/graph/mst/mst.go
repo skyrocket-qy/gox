@@ -39,21 +39,27 @@ func Kruskal(n int, edges []Edge) int {
 	}
 
 	var find func(i int) int
+
 	find = func(i int) int {
 		if parent[i] == i {
 			return i
 		}
+
 		parent[i] = find(parent[i])
+
 		return parent[i]
 	}
 
 	union := func(i, j int) bool {
 		rootI := find(i)
+
 		rootJ := find(j)
 		if rootI != rootJ {
 			parent[rootI] = rootJ
+
 			return true
 		}
+
 		return false
 	}
 
@@ -104,10 +110,10 @@ func Prims(n int, adj map[int][][2]int) int {
 	totalCost := 0
 
 	// 2. Grow the tree until all `n` vertices are included.
-	for i := 0; i < n; i++ {
+	for range n {
 		// Find the next closest, unvisited vertex to add to the MST.
 		u := -1
-		for v := 0; v < n; v++ {
+		for v := range n {
 			if !visited[v] && (u == -1 || minCost[v] < minCost[u]) {
 				u = v
 			}
