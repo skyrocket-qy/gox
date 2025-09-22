@@ -142,7 +142,11 @@ func TestApplyCursor_WithNilCursor(t *testing.T) {
 		tx.Find(&results)
 
 		stmt := tx.Statement
-		assert.Equal(t, "SELECT * FROM dummy_models", normalizeSQL(stmt.SQL.String()))
+		assert.Equal(
+			t,
+			"SELECT * FROM dummy_models",
+			normalizeSQL(stmt.SQL.String()),
+		)
 		assert.Empty(t, stmt.Vars)
 	})
 }

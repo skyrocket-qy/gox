@@ -74,7 +74,7 @@ func TestApplyFilter_SQLGeneration(t *testing.T) {
 
 		tx := db.Model(&DummyFilterModel{}).Scopes(scope).Find(&results)
 
-		expectedSQL := "SELECT * FROM `dummy_filter_models` WHERE `name` = ?"
+		expectedSQL := "SELECT * FROM `dummy_filter_models` WHERE `name` = ?" //nolint:unqueryvet
 		assert.Equal(t, expectedSQL, tx.Statement.SQL.String())
 		assert.Equal(t, []any{"jules"}, tx.Statement.Vars)
 	})
@@ -92,7 +92,7 @@ func TestApplyFilter_SQLGeneration(t *testing.T) {
 
 		tx := db.Model(&DummyFilterModel{}).Scopes(scope).Find(&results)
 
-		expectedSQL := "SELECT * FROM `dummy_filter_models` WHERE `name` = ? AND `id` >= ?"
+		expectedSQL := "SELECT * FROM `dummy_filter_models` WHERE `name` = ? AND `id` >= ?" //nolint:unqueryvet
 		assert.Equal(t, expectedSQL, tx.Statement.SQL.String())
 		assert.Equal(t, []any{"jules", "100"}, tx.Statement.Vars)
 	})
@@ -109,7 +109,7 @@ func TestApplyFilter_SQLGeneration(t *testing.T) {
 
 		tx := db.Model(&DummyFilterModel{}).Scopes(scope).Find(&results)
 
-		expectedSQL := "SELECT * FROM `dummy_filter_models` WHERE `id` BETWEEN ? AND ?"
+		expectedSQL := "SELECT * FROM `dummy_filter_models` WHERE `id` BETWEEN ? AND ?" //nolint:unqueryvet
 		assert.Equal(t, expectedSQL, tx.Statement.SQL.String())
 		assert.Equal(t, []any{"100", "200"}, tx.Statement.Vars)
 	})

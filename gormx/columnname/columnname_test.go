@@ -72,6 +72,8 @@ func TestGetColumns(t *testing.T) {
 	mock.ExpectQuery(regexp.QuoteMeta("SELECT SCHEMA_NAME from Information_schema.SCHEMATA")).
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).
 		WillReturnRows(sqlmock.NewRows([]string{"SCHEMA_NAME"}).AddRow("test"))
+	//nolint:unqueryvet
+	//nolint:unqueryvet
 	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `users` LIMIT ?")).
 		WithArgs(1).
 		WillReturnRows(sqlmock.NewRows(nil))
@@ -114,6 +116,7 @@ func TestGenTableColumnNamesCode(t *testing.T) {
 	mock.ExpectQuery(regexp.QuoteMeta("SELECT SCHEMA_NAME from Information_schema.SCHEMATA")).
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).
 		WillReturnRows(sqlmock.NewRows([]string{"SCHEMA_NAME"}).AddRow("test"))
+	//nolint:unqueryvet
 	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `users` LIMIT ?")).
 		WithArgs(1).
 		WillReturnRows(sqlmock.NewRows(nil))
