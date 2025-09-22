@@ -1,9 +1,13 @@
-package binaryindexedtree
+package binaryindexedtree_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/ds/binaryindexedtree"
+)
 
 func TestBinaryIndexedTree(t *testing.T) {
-	bit := NewBinaryIndexedTree(10)
+	bit := binaryindexedtree.NewBinaryIndexedTree(10)
 	bit.Update(1, 1)
 	bit.Update(2, 2)
 	bit.Update(3, 3)
@@ -44,7 +48,7 @@ func TestBinaryIndexedTree(t *testing.T) {
 }
 
 func TestBinaryIndexedTreeQuery(t *testing.T) {
-	bit := NewBinaryIndexedTree(20)
+	bit := binaryindexedtree.NewBinaryIndexedTree(20)
 	for i := 1; i <= 20; i++ {
 		bit.Update(i, i)
 	}
@@ -66,7 +70,7 @@ func TestBinaryIndexedTreeQuery(t *testing.T) {
 }
 
 func TestBinaryIndexedTreeSetToZero(t *testing.T) {
-	bit := NewBinaryIndexedTree(10)
+	bit := binaryindexedtree.NewBinaryIndexedTree(10)
 	bit.Update(1, 1)
 	bit.Set(1, 0)
 

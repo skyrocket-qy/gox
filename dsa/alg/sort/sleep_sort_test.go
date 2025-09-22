@@ -1,9 +1,11 @@
-package sort
+package sort_test
 
 import (
 	"os"
 	"testing"
 	"time"
+
+	"github.com/skyrocket-qy/gox/dsa/alg/sort"
 )
 
 func TestSleepSort(t *testing.T) {
@@ -70,5 +72,5 @@ func TestSleepSort(t *testing.T) {
 		t.Skip("Skipping slow test in CI environment")
 	}
 
-	SleepSort(nums)
+	sort.SleepSort(nums)
 }

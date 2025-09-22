@@ -1,9 +1,13 @@
-package prefixtree
+package prefixtree_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/ds/prefixtree"
+)
 
 func TestTrieArray(t *testing.T) {
-	trie := Init([]string{"apple", "apply"})
+	trie := prefixtree.Init([]string{"apple", "apply"})
 	if !trie.Search("apple") {
 		t.Error("expected to find apple")
 	}
@@ -34,7 +38,7 @@ func TestTrieArray(t *testing.T) {
 }
 
 func TestTrieArrayRemoveNotFound(t *testing.T) {
-	trie := Init([]string{"apple"})
+	trie := prefixtree.Init([]string{"apple"})
 	trie.Remove("apply")
 
 	if !trie.Search("apple") {
@@ -43,7 +47,7 @@ func TestTrieArrayRemoveNotFound(t *testing.T) {
 }
 
 func TestTrieArrayInsert(t *testing.T) {
-	trie := &Trie_array{}
+	trie := &prefixtree.Trie_array{}
 	trie.Insert("word")
 
 	if !trie.Search("word") {

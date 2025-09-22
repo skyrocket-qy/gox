@@ -1,9 +1,13 @@
-package circularqueue
+package circularqueue_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/ds/circularqueue"
+)
 
 func TestMyCircularQueue(t *testing.T) {
-	q := Constructor(3)
+	q := circularqueue.Constructor(3)
 	if !q.IsEmpty() {
 		t.Error("New queue should be empty")
 	}
@@ -54,7 +58,7 @@ func TestMyCircularQueue(t *testing.T) {
 }
 
 func TestMyCircularQueue_Empty(t *testing.T) {
-	q := Constructor(1)
+	q := circularqueue.Constructor(1)
 	if !q.EnQueue(1) {
 		t.Error("EnQueue should succeed")
 	}
