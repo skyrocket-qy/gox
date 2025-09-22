@@ -123,40 +123,44 @@ func CopyMongoData(
 	}
 	defer sess.EndSession(ctx)
 
-	callback := func(ctx mongo.SessionContext) (any, error) {
+	callback := func(ctx mongo.SessionContext) error {
 		switch mode {
 		case ModeBasic:
 			count, err := dst.CountDocuments(ctx, filter)
 			if err != nil {
-				return nil, fmt.Errorf("failed to count destination documents: %w", err)
+				return fmt.Errorf("failed to count destination documents: %w", err)
 			}
 
 			if count > 0 {
-				return nil, errors.New("destination already has data")
+				return errors.New("destination already has data")
 			}
 
 		case ModeReplace:
 			if _, err := dst.DeleteMany(ctx, filter); err != nil {
-				return nil, fmt.Errorf("failed to delete from destination: %w", err)
+				return fmt.Errorf("failed to delete from destination: %w", err)
 			}
 
 		case ModeAppend:
 			// Do nothing
 
 		default:
-			return nil, fmt.Errorf("unsupported copy mode: %v", mode)
+			return fmt.Errorf("unsupported copy mode: %v", mode)
 		}
 
 		for batchDocs := range gox.Batch(docs, BatchSize) {
 			if _, err := dst.InsertMany(ctx, batchDocs); err != nil {
-				return nil, fmt.Errorf("insert batch failed: %w", err)
+				return fmt.Errorf("insert batch failed: %w", err)
 			}
 		}
 
-		return nil, nil
+		return nil
 	}
 
-	if _, err := sess.WithTransaction(ctx, callback); err != nil {
+	wrap := func(ctx mongo.SessionContext) (any, error) {
+		return nil, callback(ctx)
+	}
+
+	if _, err := sess.WithTransaction(ctx, wrap); err != nil {
 		return fmt.Errorf("transaction failed: %w", err)
 	}
 
