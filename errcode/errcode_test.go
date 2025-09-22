@@ -1,26 +1,30 @@
-package errcode
+package errcode_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/skyrocket-qy/gox/errcode"
+)
 
 func TestErr_Str(t *testing.T) {
 	tests := []struct {
 		name string
-		c    err
+		c    errcode.Err
 		want string
 	}{
 		{
 			name: "ErrBadRequest",
-			c:    ErrBadRequest,
+			c:    errcode.ErrBadRequest,
 			want: "400.0000",
 		},
 		{
 			name: "ErrNotFound",
-			c:    ErrNotFound,
+			c:    errcode.ErrNotFound,
 			want: "404.0000",
 		},
 		{
 			name: "ErrUnknown",
-			c:    ErrUnknown,
+			c:    errcode.ErrUnknown,
 			want: "500.0000",
 		},
 	}

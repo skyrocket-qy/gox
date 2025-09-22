@@ -26,12 +26,12 @@ func IsNil(it reflect.Value) (ok bool) {
 	if !it.IsValid() {
 		ok = true
 
-		return
+		return ok
 	}
 
 	ok = it.IsNil()
 
-	return
+	return ok
 }
 
 func ValueOf[Self any](it Self, deep bool) (out reflect.Value) {
@@ -42,20 +42,20 @@ func ValueOf[Self any](it Self, deep bool) (out reflect.Value) {
 			out = out.Elem()
 		}
 
-		return
+		return out
 	}
 
 	if reflect.Pointer == out.Kind() {
 		out = out.Elem()
 	}
 
-	return
+	return out
 }
 
 func GetField[Out, Self any](it *Self, name string) (out *Out, throw error) {
 	value, throw := reflections.GetField(it, name)
 	if nil != throw {
-		return
+		return out, throw
 	}
 
 	item, ok := value.(Out)
@@ -69,7 +69,7 @@ func GetField[Out, Self any](it *Self, name string) (out *Out, throw error) {
 
 	out = &item
 
-	return
+	return out, throw
 }
 
 func CallMethod[Self any](
@@ -122,7 +122,7 @@ func GetMap[Out, In any](it *In) (out map[string]Out, throw error) {
 
 	anyOut, throw := reflections.ItemsDeep(it)
 	if nil != throw {
-		return
+		return out, throw
 	}
 
 	data := make(map[string]Out)
@@ -135,7 +135,7 @@ func GetMap[Out, In any](it *In) (out map[string]Out, throw error) {
 				key,
 			)
 
-			return
+			return out, throw
 		}
 
 		data[key] = item
@@ -143,7 +143,7 @@ func GetMap[Out, In any](it *In) (out map[string]Out, throw error) {
 
 	out = data
 
-	return
+	return out, throw
 }
 
 func GetFunctionName[Self any](data Self, shortName bool) (out string) {
@@ -157,7 +157,7 @@ func GetFunctionName[Self any](data Self, shortName bool) (out string) {
 
 	out = name
 
-	return
+	return out
 }
 
 func GetCallerName(skip int, shortName bool) (out string) {
@@ -165,7 +165,7 @@ func GetCallerName(skip int, shortName bool) (out string) {
 
 	pointer, _, _, ok := runtime.Caller(skip)
 	if !ok {
-		return
+		return out
 	}
 
 	name := runtime.FuncForPC(pointer).Name()
@@ -177,17 +177,17 @@ func GetCallerName(skip int, shortName bool) (out string) {
 
 	out = name
 
-	return
+	return out
 }
 
 func GetCurrentCallerShortName() (out string) {
 	out = GetCallerName(CurrentCaller+1, true)
 
-	return
+	return out
 }
 
 func GetCurrentCallerFullName() (out string) {
 	out = GetCallerName(CurrentCaller+1, false)
 
-	return
+	return out
 }

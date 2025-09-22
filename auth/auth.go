@@ -19,5 +19,5 @@ func GenSalt() (salt []byte, err error) {
 	salt = make([]byte, 16)
 	_, err = rand.Read(salt)
 
-	return
+	return salt, err
 }
