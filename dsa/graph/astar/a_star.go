@@ -47,7 +47,12 @@ func (pq *PriorityQueue) Swap(i, j int) {
 func (pq *PriorityQueue) Push(x any) {
 	old := *pq
 	n := len(old)
-	node := x.(*Node)
+
+	node, ok := x.(*Node)
+	if !ok {
+		panic("Push received a non-*Node value") // Should not happen in this context
+	}
+
 	node.Index = n
 	*pq = append(old, node)
 }
@@ -117,7 +122,14 @@ func AStar(
 	gScore[startPoint] = 0
 
 	for openSet.Len() > 0 {
-		current := heap.Pop(&openSet).(*Node)
+		currentAny := heap.Pop(&openSet)
+
+		current, ok := currentAny.(*Node)
+		if !ok {
+			// This should ideally not happen if the heap only contains *Node types
+			return nil, 0 // Or panic, depending on error handling strategy
+		}
+
 		delete(openSetNodes, current.Point)
 
 		if current.Point == goalPoint {

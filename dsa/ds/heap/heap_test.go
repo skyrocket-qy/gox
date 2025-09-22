@@ -97,7 +97,12 @@ func (h *IntHeap) Less(i, j int) bool { return (*h)[i] < (*h)[j] }
 func (h *IntHeap) Swap(i, j int)      { (*h)[i], (*h)[j] = (*h)[j], (*h)[i] }
 
 func (h *IntHeap) Push(x any) {
-	*h = append(*h, x.(int))
+	intVal, ok := x.(int)
+	if !ok {
+		panic("Push received a non-int value") // Should not happen in this test context
+	}
+
+	*h = append(*h, intVal)
 }
 
 func (h *IntHeap) Pop() any {

@@ -27,7 +27,14 @@ func TestScanPorts(t *testing.T) {
 		}
 		defer listener.Close()
 
-		openPort := listener.Addr().(*net.TCPAddr).Port
+		addr := listener.Addr()
+
+		tcpAddr, ok := addr.(*net.TCPAddr)
+		if !ok {
+			t.Fatalf("Expected *net.TCPAddr, got %T", addr)
+		}
+
+		openPort := tcpAddr.Port
 
 		var wg sync.WaitGroup
 		netscan.ScanPorts("tcp", "127.0.0.1", openPort, openPort, &wg) // Added netscan.
@@ -51,7 +58,14 @@ func TestScanPorts(t *testing.T) {
 		}
 		defer listener6.Close()
 
-		openPort6 := listener6.Addr().(*net.TCPAddr).Port
+		addr6 := listener6.Addr()
+
+		tcpAddr6, ok := addr6.(*net.TCPAddr)
+		if !ok {
+			t.Fatalf("Expected *net.TCPAddr, got %T", addr6)
+		}
+
+		openPort6 := tcpAddr6.Port
 
 		var wg6 sync.WaitGroup
 		netscan.ScanPorts("tcp6", "localhost", openPort6, openPort6, &wg6) // Added netscan.

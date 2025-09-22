@@ -22,7 +22,12 @@ func newOrderTrackingWorker(order *[]string, mu *sync.Mutex) topologicalsort.Wor
 		mu.Lock()
 		defer mu.Unlock()
 
-		*order = append(*order, node.(string))
+		nodeStr, ok := node.(string)
+		if !ok {
+			return fmt.Errorf("node is not a string: %v", node)
+		}
+
+		*order = append(*order, nodeStr)
 
 		return nil
 	}
@@ -37,7 +42,10 @@ func isValidOrder(order []string, graph map[any][]any) (bool, string) {
 	}
 
 	for nodeAny, depsAny := range graph {
-		node := nodeAny.(string)
+		node, ok := nodeAny.(string)
+		if !ok {
+			return false, fmt.Sprintf("nodeAny is not a string: %v", nodeAny)
+		}
 
 		nodePos, exists := positions[node]
 		if !exists {
@@ -47,7 +55,10 @@ func isValidOrder(order []string, graph map[any][]any) (bool, string) {
 		}
 
 		for _, depAny := range depsAny {
-			dep := depAny.(string)
+			dep, ok := depAny.(string)
+			if !ok {
+				return false, fmt.Sprintf("depAny is not a string: %v", depAny)
+			}
 
 			depPos, exists := positions[dep]
 			if !exists {
@@ -160,7 +171,12 @@ func TestConcurrentTopologicalSort_ErrorHandling(t *testing.T) {
 		worker := func(ctx context.Context, node any) error {
 			atomic.AddInt32(&processedCount, 1)
 
-			if node.(string) == "B" {
+			nodeStr, ok := node.(string)
+			if !ok {
+				return fmt.Errorf("node is not a string: %v", node)
+			}
+
+			if nodeStr == "B" {
 				return expectedErr
 			}
 
