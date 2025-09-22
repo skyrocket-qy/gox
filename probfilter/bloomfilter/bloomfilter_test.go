@@ -11,15 +11,18 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const (
+	testBloomKey = "test_bloom"
+	testValueStr = "test_value"
+)
+
 func TestAdd(t *testing.T) {
 	db, mock := redismock.NewClientMock()
 	ctx := context.Background()
-	key := "test_bloom"
-	value := "test_value"
 
-	mock.ExpectDo("BF.ADD", key, value).SetVal(int64(1))
+	mock.ExpectDo("BF.ADD", testBloomKey, testValueStr).SetVal(int64(1))
 
-	err := bloomfilter.Add(ctx, db, key, value) // Added bloomfilter.
+	err := bloomfilter.Add(ctx, db, testBloomKey, testValueStr) // Added bloomfilter.
 	require.NoError(t, err)
 	require.NoError(t, mock.ExpectationsWereMet())
 }
@@ -27,19 +30,22 @@ func TestAdd(t *testing.T) {
 func TestExists(t *testing.T) {
 	db, mock := redismock.NewClientMock()
 	ctx := context.Background()
-	key := "test_bloom"
-	value := "test_value"
 
 	var exists bool
 
-	mock.ExpectDo("BF.EXISTS", key, value).SetVal(int64(1))
+	mock.ExpectDo("BF.EXISTS", testBloomKey, testValueStr).SetVal(int64(1))
 
-	_, err := bloomfilter.Exists(ctx, db, key, value) // Added bloomfilter.
+	_, err := bloomfilter.Exists(ctx, db, testBloomKey, testValueStr) // Added bloomfilter.
 	require.NoError(t, err)
 	require.NoError(t, mock.ExpectationsWereMet())
 
-	mock.ExpectDo("BF.EXISTS", key, "non_existent_value").SetVal(int64(0))
-	exists, err = bloomfilter.Exists(ctx, db, key, "non_existent_value") // Added bloomfilter.
+	mock.ExpectDo("BF.EXISTS", testBloomKey, "non_existent_value").SetVal(int64(0))
+	exists, err = bloomfilter.Exists(
+		ctx,
+		db,
+		testBloomKey,
+		"non_existent_value",
+	) // Added bloomfilter.
 	require.NoError(t, err)
 	assert.False(t, exists)
 	require.NoError(t, mock.ExpectationsWereMet())
@@ -48,12 +54,10 @@ func TestExists(t *testing.T) {
 func TestExists_Error(t *testing.T) {
 	db, mock := redismock.NewClientMock()
 	ctx := context.Background()
-	key := "test_bloom"
-	value := "test_value"
 
-	mock.ExpectDo("BF.EXISTS", key, value).SetErr(errors.New("redis error"))
+	mock.ExpectDo("BF.EXISTS", testBloomKey, testValueStr).SetErr(errors.New("redis error"))
 
-	exists, err := bloomfilter.Exists(ctx, db, key, value) // Added bloomfilter.
+	exists, err := bloomfilter.Exists(ctx, db, testBloomKey, testValueStr) // Added bloomfilter.
 	require.Error(t, err)
 	assert.False(t, exists)
 	require.NoError(t, mock.ExpectationsWereMet())
@@ -62,12 +66,15 @@ func TestExists_Error(t *testing.T) {
 func TestExists_UnexpectedType(t *testing.T) {
 	db, mock := redismock.NewClientMock()
 	ctx := context.Background()
-	key := "test_bloom"
-	value := "test_value"
 
-	mock.ExpectDo("BF.EXISTS", key, value).SetVal("not_an_int")
+	mock.ExpectDo("BF.EXISTS", testBloomKey, testValueStr).SetVal("not_an_int")
 
-	exists, err := bloomfilter.Exists(ctx, db, key, value) // Already had bloomfilter.
+	exists, err := bloomfilter.Exists(
+		ctx,
+		db,
+		testBloomKey,
+		testValueStr,
+	) // Already had bloomfilter.
 	require.Error(t, err)
 	assert.False(t, exists)
 	assert.Contains(t, err.Error(), "unexpected type for BF.EXISTS result")
@@ -77,13 +84,13 @@ func TestExists_UnexpectedType(t *testing.T) {
 func TestReserve(t *testing.T) {
 	db, mock := redismock.NewClientMock()
 	ctx := context.Background()
-	key := "test_bloom"
+
 	errorRate := 0.01
 	capacity := int64(1000)
 
-	mock.ExpectDo("BF.RESERVE", key, errorRate, capacity).SetVal("OK")
+	mock.ExpectDo("BF.RESERVE", testBloomKey, errorRate, capacity).SetVal("OK")
 
-	err := bloomfilter.Reserve(ctx, db, key, errorRate, capacity) // Added bloomfilter.
+	err := bloomfilter.Reserve(ctx, db, testBloomKey, errorRate, capacity) // Added bloomfilter.
 	require.NoError(t, err)
 	require.NoError(t, mock.ExpectationsWereMet())
 }
@@ -91,13 +98,13 @@ func TestReserve(t *testing.T) {
 func TestReserve_Error(t *testing.T) {
 	db, mock := redismock.NewClientMock()
 	ctx := context.Background()
-	key := "test_bloom"
+
 	errorRate := 0.01
 	capacity := int64(1000)
 
-	mock.ExpectDo("BF.RESERVE", key, errorRate, capacity).SetErr(errors.New("redis error"))
+	mock.ExpectDo("BF.RESERVE", testBloomKey, errorRate, capacity).SetErr(errors.New("redis error"))
 
-	err := bloomfilter.Reserve(ctx, db, key, errorRate, capacity) // Added bloomfilter.
+	err := bloomfilter.Reserve(ctx, db, testBloomKey, errorRate, capacity) // Added bloomfilter.
 	require.Error(t, err)
 	require.NoError(t, mock.ExpectationsWereMet())
 }

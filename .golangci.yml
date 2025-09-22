@@ -40,6 +40,9 @@ linters:
       - path: "^docs/"
         linters:
           - gochecknoinits
+      - path: ".*_test.go$"
+        linters:
+          - gochecknoinits
 formatters:
   # Default: [] (uses standard Go formatting)
   enable:
