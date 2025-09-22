@@ -94,7 +94,7 @@ func TestHandler_Errors(t *testing.T) {
 			return "", errors.New("otp error")
 		}
 
-		req, _ := http.NewRequest(http.MethodGet, "/qrcode", nil)
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/qrcode", nil)
 		rr := httptest.NewRecorder()
 		qrcode.Handler(rr, req)
 
@@ -110,7 +110,7 @@ func TestHandler_Errors(t *testing.T) {
 			return nil, errors.New("qrcode error")
 		}
 
-		req, _ := http.NewRequest(http.MethodGet, "/qrcode", nil)
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/qrcode", nil)
 		rr := httptest.NewRecorder()
 		qrcode.Handler(rr, req)
 

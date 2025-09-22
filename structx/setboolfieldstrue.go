@@ -58,7 +58,7 @@ func setBoolFieldsTrueHelper(v reflect.Value) error {
 	}
 
 	// recursively call for nested structs
-	for i := 0; i < v.NumField(); i++ {
+	for i := range v.NumField() {
 		fieldVal := v.Field(i)
 		if fieldVal.Kind() == reflect.Struct {
 			if err := setBoolFieldsTrueHelper(fieldVal); err != nil {
