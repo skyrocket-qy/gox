@@ -1,7 +1,7 @@
 package minhashlsh_test
 
 import (
-	"fmt"
+	"log"
 	"testing"
 
 	"github.com/skyrocket-qy/gox/probfilter/minhashlsh"
@@ -25,8 +25,8 @@ func TestMinHashLSHBasic(t *testing.T) {
 	sim12 := minhashlsh.JaccardSimilarity(sig1, sig2)
 	sim13 := minhashlsh.JaccardSimilarity(sig1, sig3)
 
-	fmt.Printf("Jaccard Similarity (set1, set2): %.2f\n", sim12)
-	fmt.Printf("Jaccard Similarity (set1, set3): %.2f\n", sim13)
+	log.Printf("Jaccard Similarity (set1, set2): %.2f\n", sim12)
+	log.Printf("Jaccard Similarity (set1, set3): %.2f\n", sim13)
 
 	// Expect set1 and set2 to be more similar than set1 and set3
 	if sim12 < sim13 {
@@ -49,9 +49,9 @@ func TestMinHashLSHBasic(t *testing.T) {
 	candidates2 := lsh.Query("doc2", sig2)
 	candidates3 := lsh.Query("doc3", sig3)
 
-	fmt.Printf("Candidates for doc1: %v\n", candidates1)
-	fmt.Printf("Candidates for doc2: %v\n", candidates2)
-	fmt.Printf("Candidates for doc3: %v\n", candidates3)
+	log.Printf("Candidates for doc1: %v\n", candidates1)
+	log.Printf("Candidates for doc2: %v\n", candidates2)
+	log.Printf("Candidates for doc3: %v\n", candidates3)
 
 	// Expect doc1 and doc2 to be candidates for each other
 	if !contains(candidates1, "doc2") {

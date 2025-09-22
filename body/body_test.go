@@ -134,14 +134,6 @@ func TestDecode_NonPointerError(t *testing.T) {
 		"cannot create a non-pointer proto message with current generated code.")
 }
 
-type errorReaderCloser struct {
-	*bytes.Reader
-}
-
-func (erc *errorReaderCloser) Close() error {
-	return errors.New("close error")
-}
-
 func TestDecode_GzipCloseError(t *testing.T) {
 	t.Parallel()
 

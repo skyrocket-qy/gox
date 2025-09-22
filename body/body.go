@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"errors"
+	"fmt"
 	"io"
 	"reflect"
 
@@ -69,7 +70,10 @@ func Decode[T proto.Message](data []byte) (T, error) {
 		return out, errors.New("target type must be a pointer to a proto message")
 	}
 
-	msg := reflect.New(typ.Elem()).Interface().(T)
+	msg, ok := reflect.New(typ.Elem()).Interface().(T)
+	if !ok {
+		return out, fmt.Errorf("failed to assert type %T to proto.Message", out)
+	}
 
 	if err := proto.Unmarshal(decompressed, msg); err != nil {
 		return out, err

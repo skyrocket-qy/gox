@@ -29,6 +29,7 @@ linters:
     - gocognit
     - paralleltest
     - errcheck
+    - contextcheck
   enable:
     - wsl_v5
   exclusions:
