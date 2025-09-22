@@ -62,23 +62,23 @@ var intTests = []struct {
 }{
 	{
 		name:     "Empty slice",
-			input:    []int{},
-			expected: [][]int{},
+		input:    []int{},
+		expected: [][]int{},
 	},
 	{
 		name:     "Single element",
-			input:    []int{1},
-			expected: [][]int{{1}},
+		input:    []int{1},
+		expected: [][]int{{1}},
 	},
 	{
 		name:     "Two elements",
-			input:    []int{1, 2},
+		input:    []int{1, 2},
 		expected: [][]int{{1, 2}, {2, 1}},
 	},
 	{
 		name:     "Three elements",
-			input:    []int{1, 2, 3},
-			expected: [][]int{{1, 2, 3}, {1, 3, 2}, {2, 1, 3}, {2, 3, 1}, {3, 1, 2}, {3, 2, 1}},
+		input:    []int{1, 2, 3},
+		expected: [][]int{{1, 2, 3}, {1, 3, 2}, {2, 1, 3}, {2, 3, 1}, {3, 1, 2}, {3, 2, 1}},
 	},
 }
 
@@ -89,23 +89,22 @@ var stringTests = []struct {
 }{
 	{
 		name:     "String - Two elements",
-			input:    []string{"a", "b"},
-			expected: [][]string{{"a", "b"}, {"b", "a"}},
+		input:    []string{"a", "b"},
+		expected: [][]string{{"a", "b"}, {"b", "a"}},
 	},
 	{
 		name:  "String - Three elements",
-			input: []string{"a", "b", "c"},
-			expected: [][]string{
-				{"a", "b", "c"},
-				{"a", "c", "b"},
-				{"b", "a", "c"},
-				{"b", "c", "a"},
-				{"c", "a", "b"},
-				{"c", "b", "a"},
-			},
+		input: []string{"a", "b", "c"},
+		expected: [][]string{
+			{"a", "b", "c"},
+			{"a", "c", "b"},
+			{"b", "a", "c"},
+			{"b", "c", "a"},
+			{"c", "a", "b"},
+			{"c", "b", "a"},
+		},
 	},
 }
-
 
 func TestOperInsertPermutation(t *testing.T) {
 	for _, tt := range intTests {
