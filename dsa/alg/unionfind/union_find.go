@@ -34,7 +34,7 @@ func (uf *UnionFind[T]) Find(x T) T {
 }
 
 // Union merges the sets containing x and y.
-func (uf *UnionFind[T]) Union(x, y T) {
+func (uf *UnionFind[T]) Union(x, y T) bool {
 	rootX := uf.Find(x)
 	rootY := uf.Find(y)
 
@@ -46,7 +46,10 @@ func (uf *UnionFind[T]) Union(x, y T) {
 
 		uf.parents[rootX] = rootY
 		uf.sizes[rootX] += uf.sizes[rootY]
+		return true
 	}
+
+	return false
 }
 
 func (uf *UnionFind[T]) Groups() [][]T {
