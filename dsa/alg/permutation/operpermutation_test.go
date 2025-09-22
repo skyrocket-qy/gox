@@ -22,6 +22,37 @@ func sortPermutations[T cmp.Ordered](perms [][]T) {
 	})
 }
 
+// runPermutationTest is a generic helper function to test permutation functions.
+func runPermutationTest[T cmp.Ordered](
+	t *testing.T,
+	permutationFunc func([]T, func([]T)),
+	input []T,
+	expected [][]T,
+	funcName string,
+) {
+	t.Helper()
+	actualPerms := [][]T{}
+	oper := func(p []T) {
+		temp := make([]T, len(p))
+		copy(temp, p)
+		actualPerms = append(actualPerms, temp)
+	}
+
+	permutationFunc(input, oper)
+
+	sortPermutations(actualPerms)
+	sortPermutations(expected)
+
+	if !reflect.DeepEqual(actualPerms, expected) {
+		t.Errorf(
+			"%s(%v) got %v, want %v",
+			funcName,
+			input,
+			actualPerms,
+			expected,
+		)
+	}
+}
 func TestOperInsertPermutation(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -52,26 +83,13 @@ func TestOperInsertPermutation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			actualPerms := [][]int{}
-			oper := func(p []int) {
-				temp := make([]int, len(p))
-				copy(temp, p)
-				actualPerms = append(actualPerms, temp)
-			}
-
-			permutation.OperInsertPermutation[int](tt.input, oper)
-
-			sortPermutations(actualPerms)
-			sortPermutations(tt.expected)
-
-			if !reflect.DeepEqual(actualPerms, tt.expected) {
-				t.Errorf(
-					"OperInsertPermutation(%v) got %v, want %v",
-					tt.input,
-					actualPerms,
-					tt.expected,
-				)
-			}
+			runPermutationTest(
+				t,
+				permutation.OperInsertPermutation[int],
+				tt.input,
+				tt.expected,
+				"OperInsertPermutation",
+			)
 		})
 	}
 
@@ -102,26 +120,13 @@ func TestOperInsertPermutation(t *testing.T) {
 
 	for _, tt := range stringTests {
 		t.Run(tt.name, func(t *testing.T) {
-			actualPerms := [][]string{}
-			oper := func(p []string) {
-				temp := make([]string, len(p))
-				copy(temp, p)
-				actualPerms = append(actualPerms, temp)
-			}
-
-			permutation.OperInsertPermutation[string](tt.input, oper)
-
-			sortPermutations(actualPerms)
-			sortPermutations(tt.expected)
-
-			if !reflect.DeepEqual(actualPerms, tt.expected) {
-				t.Errorf(
-					"OperInsertPermutation(%v) got %v, want %v",
-					tt.input,
-					actualPerms,
-					tt.expected,
-				)
-			}
+			runPermutationTest(
+				t,
+				permutation.OperInsertPermutation[string],
+				tt.input,
+				tt.expected,
+				"OperInsertPermutation",
+			)
 		})
 	}
 }
@@ -156,26 +161,13 @@ func TestOperBackTrackPermutation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			actualPerms := [][]int{}
-			oper := func(p []int) {
-				temp := make([]int, len(p))
-				copy(temp, p)
-				actualPerms = append(actualPerms, temp)
-			}
-
-			permutation.OperBackTrackPermutation[int](tt.input, oper)
-
-			sortPermutations(actualPerms)
-			sortPermutations(tt.expected)
-
-			if !reflect.DeepEqual(actualPerms, tt.expected) {
-				t.Errorf(
-					"OperBackTrackPermutation(%v) got %v, want %v",
-					tt.input,
-					actualPerms,
-					tt.expected,
-				)
-			}
+			runPermutationTest(
+				t,
+				permutation.OperBackTrackPermutation[int],
+				tt.input,
+				tt.expected,
+				"OperBackTrackPermutation",
+			)
 		})
 	}
 
@@ -206,26 +198,13 @@ func TestOperBackTrackPermutation(t *testing.T) {
 
 	for _, tt := range stringTests {
 		t.Run(tt.name, func(t *testing.T) {
-			actualPerms := [][]string{}
-			oper := func(p []string) {
-				temp := make([]string, len(p))
-				copy(temp, p)
-				actualPerms = append(actualPerms, temp)
-			}
-
-			permutation.OperBackTrackPermutation[string](tt.input, oper)
-
-			sortPermutations(actualPerms)
-			sortPermutations(tt.expected)
-
-			if !reflect.DeepEqual(actualPerms, tt.expected) {
-				t.Errorf(
-					"OperBackTrackPermutation(%v) got %v, want %v",
-					tt.input,
-					actualPerms,
-					tt.expected,
-				)
-			}
+			runPermutationTest(
+				t,
+				permutation.OperBackTrackPermutation[string],
+				tt.input,
+				tt.expected,
+				"OperBackTrackPermutation",
+			)
 		})
 	}
 }
@@ -260,26 +239,13 @@ func TestOperSwapPermutation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			actualPerms := [][]int{}
-			oper := func(p []int) {
-				temp := make([]int, len(p))
-				copy(temp, p)
-				actualPerms = append(actualPerms, temp)
-			}
-
-			permutation.OperSwapPermutation[int](tt.input, oper)
-
-			sortPermutations(actualPerms)
-			sortPermutations(tt.expected)
-
-			if !reflect.DeepEqual(actualPerms, tt.expected) {
-				t.Errorf(
-					"OperSwapPermutation(%v) got %v, want %v",
-					tt.input,
-					actualPerms,
-					tt.expected,
-				)
-			}
+			runPermutationTest(
+				t,
+				permutation.OperSwapPermutation[int],
+				tt.input,
+				tt.expected,
+				"OperSwapPermutation",
+			)
 		})
 	}
 
@@ -310,26 +276,13 @@ func TestOperSwapPermutation(t *testing.T) {
 
 	for _, tt := range stringTests {
 		t.Run(tt.name, func(t *testing.T) {
-			actualPerms := [][]string{}
-			oper := func(p []string) {
-				temp := make([]string, len(p))
-				copy(temp, p)
-				actualPerms = append(actualPerms, temp)
-			}
-
-			permutation.OperSwapPermutation[string](tt.input, oper)
-
-			sortPermutations(actualPerms)
-			sortPermutations(tt.expected)
-
-			if !reflect.DeepEqual(actualPerms, tt.expected) {
-				t.Errorf(
-					"OperSwapPermutation(%v) got %v, want %v",
-					tt.input,
-					actualPerms,
-					tt.expected,
-				)
-			}
+			runPermutationTest(
+				t,
+				permutation.OperSwapPermutation[string],
+				tt.input,
+				tt.expected,
+				"OperSwapPermutation",
+			)
 		})
 	}
 }
@@ -364,26 +317,13 @@ func TestOperHeapPermutation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			actualPerms := [][]int{}
-			oper := func(p []int) {
-				temp := make([]int, len(p))
-				copy(temp, p)
-				actualPerms = append(actualPerms, temp)
-			}
-
-			permutation.OperHeapPermutation[int](tt.input, oper)
-
-			sortPermutations(actualPerms)
-			sortPermutations(tt.expected)
-
-			if !reflect.DeepEqual(actualPerms, tt.expected) {
-				t.Errorf(
-					"OperHeapPermutation(%v) got %v, want %v",
-					tt.input,
-					actualPerms,
-					tt.expected,
-				)
-			}
+			runPermutationTest(
+				t,
+				permutation.OperHeapPermutation[int],
+				tt.input,
+				tt.expected,
+				"OperHeapPermutation",
+			)
 		})
 	}
 
@@ -414,26 +354,13 @@ func TestOperHeapPermutation(t *testing.T) {
 
 	for _, tt := range stringTests {
 		t.Run(tt.name, func(t *testing.T) {
-			actualPerms := [][]string{}
-			oper := func(p []string) {
-				temp := make([]string, len(p))
-				copy(temp, p)
-				actualPerms = append(actualPerms, temp)
-			}
-
-			permutation.OperHeapPermutation[string](tt.input, oper)
-
-			sortPermutations(actualPerms)
-			sortPermutations(tt.expected)
-
-			if !reflect.DeepEqual(actualPerms, tt.expected) {
-				t.Errorf(
-					"OperHeapPermutation(%v) got %v, want %v",
-					tt.input,
-					actualPerms,
-					tt.expected,
-				)
-			}
+			runPermutationTest(
+				t,
+				permutation.OperHeapPermutation[string],
+				tt.input,
+				tt.expected,
+				"OperHeapPermutation",
+			)
 		})
 	}
 }
