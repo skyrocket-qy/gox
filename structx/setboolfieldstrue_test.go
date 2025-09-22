@@ -18,6 +18,8 @@ type Nested struct {
 }
 
 func Test_SetBoolFieldsTrue(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name     string
 		input    any

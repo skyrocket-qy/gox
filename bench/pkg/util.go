@@ -82,7 +82,7 @@ func StartCPUProfile(path string) (func(), error) {
 		)
 	}
 
-	f, err := os.Create(path)
+	f, err := os.Create(path) // #nosec G304
 	if err != nil {
 		return nil, err
 	}

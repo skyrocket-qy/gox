@@ -86,7 +86,7 @@ func WriteResultsToFile(baseOutputFile string, datas []LineData) error {
 		)
 	}
 
-	file, err := os.Create(outputFile)
+	file, err := os.Create(outputFile) // #nosec G304
 	if err != nil {
 		return err
 	}

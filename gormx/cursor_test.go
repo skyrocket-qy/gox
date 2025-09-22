@@ -144,7 +144,7 @@ func TestApplyCursor_WithNilCursor(t *testing.T) {
 		stmt := tx.Statement
 		assert.Equal(
 			t,
-			"SELECT * FROM dummy_models",
+			"SELECT * FROM dummy_models", //nolint:unqueryvet
 			normalizeSQL(stmt.SQL.String()),
 		)
 		assert.Empty(t, stmt.Vars)
