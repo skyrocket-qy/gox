@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/skyrocket-qy/gox/bench/pkg"
@@ -46,7 +45,7 @@ func benchNumbersWithChannel() {
 		sum += v
 	}
 
-	fmt.Println(sum)
+	log.Println(sum)
 }
 
 func tradit() []int {
@@ -64,7 +63,7 @@ func benchSliceAppend() {
 		sum += v
 	}
 
-	fmt.Println(sum)
+	log.Println(sum)
 }
 
 func CallbackLoop(f func(v int)) []int {
@@ -83,5 +82,5 @@ func benchCallbackLoop() {
 	CallbackLoop(func(v int) {
 		sum += v
 	})
-	fmt.Println(sum)
+	log.Println(sum)
 }
