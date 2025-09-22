@@ -1,8 +1,10 @@
-package astar
+package astar_test
 
 import (
 	"math"
 	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/graph/astar"
 )
 
 func TestAStar(t *testing.T) {
@@ -13,7 +15,7 @@ func TestAStar(t *testing.T) {
 		{0, 0, 0},
 	}
 
-	path1, cost1 := AStar(grid1, 0, 0, 2, 2, ManhattanDistance)
+	path1, cost1 := astar.AStar(grid1, 0, 0, 2, 2, astar.ManhattanDistance)
 	if path1 == nil || cost1 == 0 {
 		t.Errorf("Test Case 1 Failed: Expected a path, got nil or 0 cost")
 	}
@@ -34,7 +36,7 @@ func TestAStar(t *testing.T) {
 		{0, 0, 0},
 	}
 
-	path2, cost2 := AStar(grid2, 0, 0, 2, 2, ManhattanDistance)
+	path2, cost2 := astar.AStar(grid2, 0, 0, 2, 2, astar.ManhattanDistance)
 	if path2 == nil || cost2 == 0 {
 		t.Errorf("Test Case 2 Failed: Expected a path, got nil or 0 cost")
 	}
@@ -55,7 +57,7 @@ func TestAStar(t *testing.T) {
 		{0, 1, 0},
 	}
 
-	path3, cost3 := AStar(grid3, 0, 0, 2, 2, ManhattanDistance)
+	path3, cost3 := astar.AStar(grid3, 0, 0, 2, 2, astar.ManhattanDistance)
 	if path3 != nil || cost3 != 0 {
 		t.Errorf("Test Case 3 Failed: Expected no path, got path or non-zero cost")
 	}
@@ -67,7 +69,7 @@ func TestAStar(t *testing.T) {
 		{0, 0, 0},
 	}
 
-	path4, cost4 := AStar(grid4, 0, 0, 0, 0, ManhattanDistance)
+	path4, cost4 := astar.AStar(grid4, 0, 0, 0, 0, astar.ManhattanDistance)
 	if path4 == nil || cost4 != 0 {
 		t.Errorf("Test Case 4 Failed: Expected path with cost 0, got nil or non-zero cost")
 	}
@@ -77,13 +79,13 @@ func TestAStar(t *testing.T) {
 	}
 
 	// Test case 5: Invalid start coordinates
-	path5, cost5 := AStar(grid1, -1, 0, 2, 2, ManhattanDistance)
+	path5, cost5 := astar.AStar(grid1, -1, 0, 2, 2, astar.ManhattanDistance)
 	if path5 != nil || cost5 != 0 {
 		t.Errorf("Test Case 5 Failed: Expected no path, got path or non-zero cost")
 	}
 
 	// Test case 6: Invalid goal coordinates
-	path6, cost6 := AStar(grid1, 0, 0, 3, 3, ManhattanDistance)
+	path6, cost6 := astar.AStar(grid1, 0, 0, 3, 3, astar.ManhattanDistance)
 	if path6 != nil || cost6 != 0 {
 		t.Errorf("Test Case 6 Failed: Expected no path, got path or non-zero cost")
 	}
@@ -95,7 +97,7 @@ func TestAStar(t *testing.T) {
 		{0, 0, 0},
 	}
 
-	path7, cost7 := AStar(grid7, 0, 0, 2, 2, ManhattanDistance)
+	path7, cost7 := astar.AStar(grid7, 0, 0, 2, 2, astar.ManhattanDistance)
 	if path7 != nil || cost7 != 0 {
 		t.Errorf("Test Case 7 Failed: Expected no path, got path or non-zero cost")
 	}
@@ -107,7 +109,7 @@ func TestAStar(t *testing.T) {
 		{0, 0, 1},
 	}
 
-	path8, cost8 := AStar(grid8, 0, 0, 2, 2, ManhattanDistance)
+	path8, cost8 := astar.AStar(grid8, 0, 0, 2, 2, astar.ManhattanDistance)
 	if path8 != nil || cost8 != 0 {
 		t.Errorf("Test Case 8 Failed: Expected no path, got path or non-zero cost")
 	}
@@ -115,7 +117,7 @@ func TestAStar(t *testing.T) {
 	// Test case 9: Empty grid
 	grid9 := [][]int{}
 
-	path9, cost9 := AStar(grid9, 0, 0, 0, 0, ManhattanDistance)
+	path9, cost9 := astar.AStar(grid9, 0, 0, 0, 0, astar.ManhattanDistance)
 	if path9 != nil || cost9 != 0 {
 		t.Errorf("Test Case 9 Failed: Expected no path, got path or non-zero cost")
 	}
@@ -125,7 +127,7 @@ func TestAStar(t *testing.T) {
 		{0},
 	}
 
-	path10, cost10 := AStar(grid10, 0, 0, 0, 0, ManhattanDistance)
+	path10, cost10 := astar.AStar(grid10, 0, 0, 0, 0, astar.ManhattanDistance)
 	if path10 == nil || cost10 != 0 || len(path10) != 1 {
 		t.Errorf(
 			"Test Case 10 Failed: Expected path with cost 0 and length 1, got nil or non-zero cost or wrong length",
@@ -133,7 +135,7 @@ func TestAStar(t *testing.T) {
 	}
 
 	// Test case 11: Single cell grid, start and goal different (invalid)
-	path11, cost11 := AStar(grid10, 0, 0, 0, 1, ManhattanDistance)
+	path11, cost11 := astar.AStar(grid10, 0, 0, 0, 1, astar.ManhattanDistance)
 	if path11 != nil || cost11 != 0 {
 		t.Errorf("Test Case 11 Failed: Expected no path, got path or non-zero cost")
 	}
@@ -145,7 +147,7 @@ func TestAStar(t *testing.T) {
 		{0, 0, 0},
 	}
 
-	path12, cost12 := AStar(grid12, 0, 0, 2, 2, EuclideanDistance)
+	path12, cost12 := astar.AStar(grid12, 0, 0, 2, 2, astar.EuclideanDistance)
 	if path12 == nil || cost12 == 0 {
 		t.Errorf("Test Case 12 Failed: Expected a path, got nil or 0 cost")
 	}

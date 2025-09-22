@@ -1,12 +1,14 @@
-package tree
+package tree_test
 
 import (
 	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/ds/tree"
 )
 
 func TestSegmentTree(t *testing.T) {
 	array := []int{1, 3, 5, 7, 9, 11}
-	root := NewNode(array)
+	root := tree.NewNode(array)
 
 	// Test GetSum before any updates
 	if sum := root.GetSum(0, 5); sum != 36 {
@@ -64,7 +66,7 @@ func TestSegmentTree(t *testing.T) {
 func TestSegmentTree_Empty(t *testing.T) {
 	var array []int
 
-	root := NewNode(array)
+	root := tree.NewNode(array)
 
 	if root != nil {
 		t.Errorf("NewNode with empty array should return nil, got %v", root)

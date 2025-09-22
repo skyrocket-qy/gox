@@ -1,9 +1,13 @@
-package tree
+package tree_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/ds/tree"
+)
 
 func TestTreeTrie(t *testing.T) {
-	trie := Constructor()
+	trie := tree.Constructor()
 	trie.Insert("apple")
 
 	if !trie.Search("apple") {
@@ -42,7 +46,7 @@ func TestTreeTrie(t *testing.T) {
 }
 
 func TestTreeTrieRemove(t *testing.T) {
-	trie := Constructor()
+	trie := tree.Constructor()
 	trie.Insert("a")
 	trie.Remove("a")
 
@@ -71,7 +75,7 @@ func TestTreeTrieRemove(t *testing.T) {
 }
 
 func TestTreeTrieRemoveNonExistent(t *testing.T) {
-	trie := Constructor()
+	trie := tree.Constructor()
 	trie.Insert("apple")
 	trie.Remove("apply")
 

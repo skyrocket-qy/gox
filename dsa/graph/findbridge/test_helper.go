@@ -5,7 +5,7 @@ import (
 )
 
 // Helper function to sort bridges for consistent comparison.
-func sortBridges(bridges [][]int) {
+func SortBridges(bridges [][]int) {
 	sort.Slice(bridges, func(i, j int) bool {
 		if bridges[i][0] != bridges[j][0] {
 			return bridges[i][0] < bridges[j][0]

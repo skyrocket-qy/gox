@@ -1,9 +1,13 @@
-package tree
+package tree_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/ds/tree"
+)
 
 func TestTreeStack(t *testing.T) {
-	s := &Stack{}
+	s := &tree.Stack{}
 	if !s.IsEmpty() {
 		t.Error("expected stack to be empty")
 	}

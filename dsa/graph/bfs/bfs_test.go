@@ -1,8 +1,10 @@
-package bfs
+package bfs_test
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/graph/bfs"
 )
 
 func TestBfs(t *testing.T) {
@@ -76,14 +78,14 @@ func TestBfs(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name+" Recursive", func(t *testing.T) {
-			result := BfsRecursive(tc.graph, tc.root)
+			result := bfs.BfsRecursive(tc.graph, tc.root)
 			if !reflect.DeepEqual(result, tc.expected) {
 				t.Errorf("BfsRecursive failed, expected %v, got %v", tc.expected, result)
 			}
 		})
 
 		t.Run(tc.name+" Iterative", func(t *testing.T) {
-			result := BfsIterative(tc.graph, tc.root)
+			result := bfs.BfsIterative(tc.graph, tc.root)
 			if !reflect.DeepEqual(result, tc.expected) {
 				t.Errorf("BfsIterative failed, expected %v, got %v", tc.expected, result)
 			}

@@ -1,11 +1,15 @@
-package tree
+package tree_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/ds/tree"
+)
 
 func TestBIT(t *testing.T) {
 	array := []int{1, 2, 3, 4, 5}
 
-	bit := Build(array)
+	bit := tree.Build(array)
 	if sum := bit.Query(0, 4); sum != 15 {
 		t.Errorf("expected sum to be 15, but got %d", sum)
 	}

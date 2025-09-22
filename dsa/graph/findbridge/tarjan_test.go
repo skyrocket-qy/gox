@@ -1,15 +1,16 @@
-package findbridge
+package findbridge_test
 
 import (
 	"log"
 	"testing"
 
+	"github.com/skyrocket-qy/gox/dsa/graph/findbridge"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTarjan(t *testing.T) {
 	// Create a graph given in the above diagram
-	g1 := NewGraph(5)
+	g1 := findbridge.NewGraph(5)
 	g1.AddEdge(1, 0)
 	g1.AddEdge(0, 2)
 	g1.AddEdge(2, 1)
@@ -28,15 +29,15 @@ func TestTarjan(t *testing.T) {
 	}}
 
 	// Sort both actual and expected bridges for consistent comparison
-	sortBridges(bridges)
-	sortBridges(expectedBridges)
+	findbridge.SortBridges(bridges)
+	findbridge.SortBridges(expectedBridges)
 
 	assert.Equal(t, expectedBridges, bridges, "Bridges should match")
 }
 
 func TestSortBridges(t *testing.T) {
 	bridges := [][]int{{3, 0}, {4, 3}}
-	sortBridges(bridges)
+	findbridge.SortBridges(bridges)
 
 	expected := [][]int{{0, 3}, {3, 4}}
 	assert.Equal(t, expected, bridges)

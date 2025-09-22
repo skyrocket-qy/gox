@@ -1,8 +1,10 @@
-package dfs
+package dfs_test
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/graph/dfs"
 )
 
 func TestDfs(t *testing.T) {
@@ -76,14 +78,14 @@ func TestDfs(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name+" Recursive", func(t *testing.T) {
-			result := DfsRecursive(tc.graph, tc.root)
+			result := dfs.DfsRecursive(tc.graph, tc.root)
 			if !reflect.DeepEqual(result, tc.expected) {
 				t.Errorf("DfsRecursive failed, expected %v, got %v", tc.expected, result)
 			}
 		})
 
 		t.Run(tc.name+" Iterative", func(t *testing.T) {
-			result := DfsIterative(tc.graph, tc.root)
+			result := dfs.DfsIterative(tc.graph, tc.root)
 			if !reflect.DeepEqual(result, tc.expected) {
 				t.Errorf("DfsIterative failed, expected %v, got %v", tc.expected, result)
 			}

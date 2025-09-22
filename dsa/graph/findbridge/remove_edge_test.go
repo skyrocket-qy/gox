@@ -1,15 +1,16 @@
-package findbridge
+package findbridge_test
 
 import (
 	"log"
 	"testing"
 
+	"github.com/skyrocket-qy/gox/dsa/graph/findbridge"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestRemoveEdge(t *testing.T) {
 	// Create a graph given in the above diagram
-	g1 := NewGraphRemoveEdge(5)
+	g1 := findbridge.NewGraphRemoveEdge(5)
 	g1.AddEdge(1, 0)
 	g1.AddEdge(0, 2)
 	g1.AddEdge(2, 1)
@@ -28,8 +29,8 @@ func TestRemoveEdge(t *testing.T) {
 	}}
 
 	// Sort both actual and expected bridges for consistent comparison
-	sortBridges(bridges)
-	sortBridges(expectedBridges)
+	findbridge.SortBridges(bridges)
+	findbridge.SortBridges(expectedBridges)
 
 	assert.Equal(t, expectedBridges, bridges, "Bridges should match")
 }
