@@ -3,13 +3,15 @@ package unionfindrank
 import "cmp"
 
 type UnionFind[T cmp.Ordered] struct {
-	parents map[T]T
+	parents  map[T]T
+	isParent func(T, T) bool
 }
 
 // NewUnionFind creates and returns a new UnionFind instance.
-func New[T cmp.Ordered]() *UnionFind[T] {
+func New[T cmp.Ordered](isParent func(T, T) bool) *UnionFind[T] {
 	return &UnionFind[T]{
-		parents: make(map[T]T),
+		parents:  make(map[T]T),
+		isParent: isParent,
 	}
 }
 
@@ -35,7 +37,7 @@ func (uf *UnionFind[T]) Union(x, y T) bool {
 
 	// If they are not already in the same set, merge them.
 	if rootX != rootY {
-		if rootX < rootY {
+		if !uf.isParent(rootX, rootY) {
 			rootX, rootY = rootY, rootX
 		}
 
