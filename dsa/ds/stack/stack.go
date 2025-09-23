@@ -1,7 +1,5 @@
 package stack
 
-/* @tags: stack */
-
 type Stack[T any] struct {
 	slice []T
 }
