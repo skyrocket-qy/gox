@@ -1,5 +1,10 @@
 package unionfind
 
+import (
+	"iter"
+	"slices"
+)
+
 /* @tags: union find,group */
 
 // UnionFind is a data structure that keeps track of a set of elements partitioned into a number of
@@ -68,4 +73,8 @@ func (uf *UnionFind[T]) Groups() [][]T {
 	}
 
 	return result
+}
+
+func (uf *UnionFind[T]) Groups2() iter.Seq2[int, []T] {
+	return slices.All(uf.Groups())
 }
