@@ -1,84 +1,89 @@
-package binaryindexedtree_test
+package binaryindexedtree
 
 import (
 	"testing"
-
-	"github.com/skyrocket-qy/gox/dsa/ds/binaryindexedtree"
 )
 
-func TestBinaryIndexedTree(t *testing.T) {
-	bit := binaryindexedtree.NewBinaryIndexedTree(10)
-	bit.Update(1, 1)
-	bit.Update(2, 2)
-	bit.Update(3, 3)
+func TestBinaryIndexedTree_Int(t *testing.T) {
+	add := func(a, b int) int { return a + b }
+	subtract := func(a, b int) int { return a - b }
+	zero := 0
+	length := 10
 
-	if bit.QueryPrefixSum(1) != 1 {
-		t.Errorf("QueryPrefixSum(1) failed, got %d, want 1", bit.QueryPrefixSum(1))
+	bit := New(length, add, subtract, zero)
+
+	// Initial array: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+	// Update index 3 (1-based) with value 5
+	// Array becomes: [0, 0, 5, 0, 0, 0, 0, 0, 0, 0]
+	bit.Update(3, 5)
+
+	// Query prefix sum up to 5
+	// Sum(1..5) = 5
+	if sum := bit.QueryPrefixSum(5); sum != 5 {
+		t.Errorf("QueryPrefixSum(5) = %d; want 5", sum)
+	}
+	// Query prefix sum up to 2
+	// Sum(1..2) = 0
+	if sum := bit.QueryPrefixSum(2); sum != 0 {
+		t.Errorf("QueryPrefixSum(2) = %d; want 0", sum)
 	}
 
-	if bit.QueryPrefixSum(2) != 3 {
-		t.Errorf("QueryPrefixSum(2) failed, got %d, want 3", bit.QueryPrefixSum(2))
+	// Update index 5 with value 2
+	// Array becomes: [0, 0, 5, 0, 2, 0, 0, 0, 0, 0]
+	bit.Update(5, 2)
+
+	// Query prefix sum up to 5
+	// Sum(1..5) = 5 + 2 = 7
+	if sum := bit.QueryPrefixSum(5); sum != 7 {
+		t.Errorf("QueryPrefixSum(5) = %d; want 7", sum)
 	}
 
-	if bit.QueryPrefixSum(3) != 6 {
-		t.Errorf("QueryPrefixSum(3) failed, got %d, want 6", bit.QueryPrefixSum(3))
+	// Query value at index 3
+	if val := bit.Query(3); val != 5 {
+		t.Errorf("Query(3) = %d; want 5", val)
 	}
 
-	if bit.Query(1) != 1 {
-		t.Errorf("Query(1) failed, got %d, want 1", bit.Query(1))
+	// Query value at index 4
+	if val := bit.Query(4); val != 0 {
+		t.Errorf("Query(4) = %d; want 0", val)
 	}
 
-	if bit.Query(2) != 2 {
-		t.Errorf("Query(2) failed, got %d, want 2", bit.Query(2))
+	// Set value at index 3 to 1
+	// Array becomes: [0, 0, 1, 0, 2, 0, 0, 0, 0, 0]
+	bit.Set(3, 1)
+
+	// Query prefix sum up to 5
+	// Sum(1..5) = 1 + 2 = 3
+	if sum := bit.QueryPrefixSum(5); sum != 3 {
+		t.Errorf("After Set, QueryPrefixSum(5) = %d; want 3", sum)
 	}
 
-	if bit.Query(3) != 3 {
-		t.Errorf("Query(3) failed, got %d, want 3", bit.Query(3))
-	}
-
-	bit.Set(2, 5)
-
-	if bit.Query(2) != 5 {
-		t.Errorf("Set(2, 5) failed, Query(2) got %d, want 5", bit.Query(2))
-	}
-
-	if bit.QueryPrefixSum(2) != 6 {
-		t.Errorf("QueryPrefixSum(2) after Set(2,5) failed, got %d, want 6", bit.QueryPrefixSum(2))
-	}
-}
-
-func TestBinaryIndexedTreeQuery(t *testing.T) {
-	bit := binaryindexedtree.NewBinaryIndexedTree(20)
-	for i := 1; i <= 20; i++ {
-		bit.Update(i, i)
-	}
-
-	// Test case for (i-4)%8 == 0
-	if bit.Query(4) != 4 {
-		t.Errorf("Query(4) failed, got %d, want 4", bit.Query(4))
-	}
-
-	// Test case for (i-8)%16 == 0
-	if bit.Query(8) != 8 {
-		t.Errorf("Query(8) failed, got %d, want 8", bit.Query(8))
-	}
-
-	// Test case for the final return statement
-	if bit.Query(6) != 6 {
-		t.Errorf("Query(6) failed, got %d, want 6", bit.Query(6))
+	// Query value at index 3
+	if val := bit.Query(3); val != 1 {
+		t.Errorf("After Set, Query(3) = %d; want 1", val)
 	}
 }
 
-func TestBinaryIndexedTreeSetToZero(t *testing.T) {
-	bit := binaryindexedtree.NewBinaryIndexedTree(10)
-	bit.Update(1, 1)
-	bit.Set(1, 0)
+func TestBinaryIndexedTree_Float64(t *testing.T) {
+	add := func(a, b float64) float64 { return a + b }
+	subtract := func(a, b float64) float64 { return a - b }
+	zero := 0.0
+	length := 10
 
-	if bit.Query(1) != 0 {
-		t.Errorf("Set(1, 0) failed, Query(1) got %d, want 0", bit.Query(1))
+	bit := New(length, add, subtract, zero)
+
+	bit.Update(3, 5.5)
+	bit.Update(5, 2.2)
+
+	if sum := bit.QueryPrefixSum(5); sum != 7.7 {
+		t.Errorf("QueryPrefixSum(5) = %f; want 7.7", sum)
 	}
 
-	if bit.QueryPrefixSum(1) != 0 {
-		t.Errorf("QueryPrefixSum(1) after Set(1,0) failed, got %d, want 0", bit.QueryPrefixSum(1))
+	bit.Set(3, 1.1)
+
+	// Expected sum is 1.1 + 2.2 = 3.3
+	if sum := bit.QueryPrefixSum(5); sum > 3.3+1e-9 || sum < 3.3-1e-9 {
+		t.Errorf("After Set, QueryPrefixSum(5) = %f; want 3.3", sum)
 	}
 }

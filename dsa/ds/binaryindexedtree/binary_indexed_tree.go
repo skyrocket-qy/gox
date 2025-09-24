@@ -1,64 +1,67 @@
 package binaryindexedtree
 
-/* @tags: tree,bit operation,prefix sum */
-
-/*
-Use: Compute dynamic prefix sum
-Complexity:
-	Time: O(logN)
-	Space: O(N)
-*/
-
-type binaryIndexedTree []int
-
-func NewBinaryIndexedTree(length int) binaryIndexedTree {
-	return make(binaryIndexedTree, length+1)
+// BinaryIndexedTree is a generic binary indexed tree (also known as a Fenwick tree).
+// It supports efficient prefix sum queries and point updates.
+// All indices for this data structure are 1-based.
+type BinaryIndexedTree[T any] struct {
+	tree     []T
+	add      func(a, b T) T
+	subtract func(a, b T) T
+	zero     T
 }
 
-// Set A[i] += v.
-func (t binaryIndexedTree) Update(i, v int) {
-	n := len(t)
-	for i <= n {
-		t[i] += v
+// New creates a new generic BinaryIndexedTree.
+// length: the size of the array the BIT is based on.
+// add: a function that performs addition for type T.
+// subtract: a function that performs subtraction for type T.
+// zero: the zero value for type T.
+// Time complexity: O(n) to initialize the tree.
+// Space complexity: O(n)
+func New[T any](length int, add func(a, b T) T, subtract func(a, b T) T, zero T) *BinaryIndexedTree[T] {
+	tree := make([]T, length+1)
+	for i := range tree {
+		tree[i] = zero
+	}
+	return &BinaryIndexedTree[T]{
+		tree:     tree,
+		add:      add,
+		subtract: subtract,
+		zero:     zero,
+	}
+}
+
+// Update adds a value 'v' to the element at index 'i' (1-based).
+// Time complexity: O(log n)
+func (bit *BinaryIndexedTree[T]) Update(i int, v T) {
+	n := len(bit.tree)
+	for i < n {
+		bit.tree[i] = bit.add(bit.tree[i], v)
 		i += i & -i
 	}
 }
 
-// Set A[i] = v.
-func (t binaryIndexedTree) Set(i, v int) {
-	oldV := t.Query(i)
-	diff := v - oldV
-	t.Update(i, diff)
+// Set sets the element at index 'i' (1-based) to a new value 'v'.
+// Time complexity: O(log n)
+func (bit *BinaryIndexedTree[T]) Set(i int, v T) {
+	oldV := bit.Query(i)
+	diff := bit.subtract(v, oldV)
+	bit.Update(i, diff)
 }
 
-// A[1] + ... + A[i].
-func (t binaryIndexedTree) QueryPrefixSum(i int) int {
-	res := 0
+// QueryPrefixSum calculates the prefix sum up to index 'i' (1-based)
+// (i.e., sum of elements from index 1 to i).
+// Time complexity: O(log n)
+func (bit *BinaryIndexedTree[T]) QueryPrefixSum(i int) T {
+	res := bit.zero
 	for i > 0 {
-		res += t[i]
+		res = bit.add(res, bit.tree[i])
 		i -= i & -i
 	}
-
 	return res
 }
 
-// A[i] = PreSum[i] - PreSum[i-1] = B[i] -.
-func (t binaryIndexedTree) Query(i int) int {
-	if i&1 == 1 {
-		return t[i]
-	}
-
-	if (i-2)%4 == 0 {
-		return t[i] - t[i-1]
-	}
-
-	if (i-4)%8 == 0 {
-		return t[i] - t[i-1] - t[i-2]
-	}
-
-	if (i-8)%16 == 0 {
-		return t[i] - t[i-1] - t[i-2] - t[i-4]
-	}
-
-	return t.QueryPrefixSum(i) - t.QueryPrefixSum(i-1)
+// Query returns the value of the element at index 'i' (1-based).
+// Time complexity: O(log n)
+func (bit *BinaryIndexedTree[T]) Query(i int) T {
+	return bit.subtract(bit.QueryPrefixSum(i), bit.QueryPrefixSum(i-1))
 }
