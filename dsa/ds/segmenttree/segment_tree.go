@@ -1,6 +1,9 @@
 package segmenttree
 
-import "fmt"
+import (
+	"fmt"
+	"math/bits"
+)
 
 // SegmentTree represents a segment tree.
 // It is a versatile data structure that can be used to answer range queries.
@@ -24,15 +27,29 @@ func New[T any](data []T, merge func(a, b T) T) *SegmentTree[T] {
 		return nil
 	}
 
+	size := nextPowerOf2(len(data))
+	treeSize := 2*size - 1
+
 	st := &SegmentTree[T]{
 		data:  make([]T, len(data)),
-		tree:  make([]T, 4*len(data)),
+		tree:  make([]T, treeSize), // Use the calculated, optimized size
 		merge: merge,
 	}
 	copy(st.data, data)
 
 	st.build(0, 0, len(data)-1)
 	return st
+}
+
+// nextPowerOf2 calculates the next power of 2 for a given integer n.
+// This helps in calculating the minimum required size for the segment tree array.
+func nextPowerOf2(n int) int {
+	if n == 0 {
+		return 1
+	}
+	// For n=9 (binary 1001), n-1 is 8 (binary 1000).
+	// bits.Len(8) is 4. 1 << 4 is 16. This is the next power of 2.
+	return 1 << bits.Len(uint(n-1))
 }
 
 // build is a private helper function that builds the segment tree recursively.
