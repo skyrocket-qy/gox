@@ -1,32 +1,27 @@
 package binaryindexedtree
 
-// BinaryIndexedTree is a generic binary indexed tree (also known as a Fenwick tree).
-// It supports efficient prefix sum queries and point updates.
-// All indices for this data structure are 1-based.
-type BinaryIndexedTree[T any] struct {
-	tree     []T
-	add      func(a, b T) T
-	subtract func(a, b T) T
-	zero     T
+import "golang.org/x/exp/constraints"
+
+/* @tags: tree,bit operation,prefix sum */
+
+type Number interface {
+	constraints.Integer | constraints.Float
 }
 
-// New creates a new generic BinaryIndexedTree.
+// BinaryIndexedTree is a generic binary indexed tree (also known as a Fenwick tree).
+// It supports efficient prefix sum queries and point updates for numeric types.
+// All indices for this data structure are 1-based.
+type BinaryIndexedTree[T Number] struct {
+	tree []T
+}
+
+// New creates a new generic BinaryIndexedTree for any numeric type.
 // length: the size of the array the BIT is based on.
-// add: a function that performs addition for type T.
-// subtract: a function that performs subtraction for type T.
-// zero: the zero value for type T.
 // Time complexity: O(n) to initialize the tree.
 // Space complexity: O(n)
-func New[T any](length int, add func(a, b T) T, subtract func(a, b T) T, zero T) *BinaryIndexedTree[T] {
-	tree := make([]T, length+1)
-	for i := range tree {
-		tree[i] = zero
-	}
+func New[T Number](length int) *BinaryIndexedTree[T] {
 	return &BinaryIndexedTree[T]{
-		tree:     tree,
-		add:      add,
-		subtract: subtract,
-		zero:     zero,
+		tree: make([]T, length+1),
 	}
 }
 
@@ -35,7 +30,7 @@ func New[T any](length int, add func(a, b T) T, subtract func(a, b T) T, zero T)
 func (bit *BinaryIndexedTree[T]) Update(i int, v T) {
 	n := len(bit.tree)
 	for i < n {
-		bit.tree[i] = bit.add(bit.tree[i], v)
+		bit.tree[i] += v
 		i += i & -i
 	}
 }
@@ -44,7 +39,7 @@ func (bit *BinaryIndexedTree[T]) Update(i int, v T) {
 // Time complexity: O(log n)
 func (bit *BinaryIndexedTree[T]) Set(i int, v T) {
 	oldV := bit.Query(i)
-	diff := bit.subtract(v, oldV)
+	diff := v - oldV
 	bit.Update(i, diff)
 }
 
@@ -52,9 +47,9 @@ func (bit *BinaryIndexedTree[T]) Set(i int, v T) {
 // (i.e., sum of elements from index 1 to i).
 // Time complexity: O(log n)
 func (bit *BinaryIndexedTree[T]) QueryPrefixSum(i int) T {
-	res := bit.zero
+	var res T
 	for i > 0 {
-		res = bit.add(res, bit.tree[i])
+		res += bit.tree[i]
 		i -= i & -i
 	}
 	return res
@@ -63,5 +58,5 @@ func (bit *BinaryIndexedTree[T]) QueryPrefixSum(i int) T {
 // Query returns the value of the element at index 'i' (1-based).
 // Time complexity: O(log n)
 func (bit *BinaryIndexedTree[T]) Query(i int) T {
-	return bit.subtract(bit.QueryPrefixSum(i), bit.QueryPrefixSum(i-1))
+	return bit.QueryPrefixSum(i) - bit.QueryPrefixSum(i-1)
 }

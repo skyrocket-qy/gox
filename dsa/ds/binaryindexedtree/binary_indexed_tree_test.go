@@ -5,12 +5,9 @@ import (
 )
 
 func TestBinaryIndexedTree_Int(t *testing.T) {
-	add := func(a, b int) int { return a + b }
-	subtract := func(a, b int) int { return a - b }
-	zero := 0
 	length := 10
 
-	bit := New(length, add, subtract, zero)
+	bit := New[int](length)
 
 	// Initial array: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
@@ -66,12 +63,9 @@ func TestBinaryIndexedTree_Int(t *testing.T) {
 }
 
 func TestBinaryIndexedTree_Float64(t *testing.T) {
-	add := func(a, b float64) float64 { return a + b }
-	subtract := func(a, b float64) float64 { return a - b }
-	zero := 0.0
 	length := 10
 
-	bit := New(length, add, subtract, zero)
+	bit := New[float64](length)
 
 	bit.Update(3, 5.5)
 	bit.Update(5, 2.2)
