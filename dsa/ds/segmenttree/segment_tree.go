@@ -118,3 +118,46 @@ func (st *SegmentTree[T]) String() string {
 	}
 	return fmt.Sprintf("SegmentTree with data: %v", st.data)
 }
+
+// QueryLeftmostIndex finds the index of the leftmost basket with capacity >= requiredCapacity.
+// This is a specialized query, assuming the tree stores integers and the merge function
+// calculates the maximum in a range.
+// Returns -1 if no such basket is found.
+// It will panic if the tree does not store integers.
+func (st *SegmentTree[T]) QueryLeftmostIndex(requiredCapacity int) int {
+	if st == nil {
+		return -1
+	}
+
+	// Check if the max of the whole range is sufficient.
+	if v, ok := any(st.tree[0]).(int); !ok || v < requiredCapacity {
+		return -1
+	}
+
+	return st.queryLeftmostIndex(0, 0, len(st.data)-1, requiredCapacity)
+}
+
+func (st *SegmentTree[T]) queryLeftmostIndex(treeIndex, l, r, requiredCapacity int) int {
+	// The max in this range is not enough.
+	if v, ok := any(st.tree[treeIndex]).(int); !ok || v < requiredCapacity {
+		return -1
+	}
+
+	// We are at a leaf node, and we know its value is >= requiredCapacity.
+	if l == r {
+		return l
+	}
+
+	mid := l + (r-l)/2
+	leftTreeIndex := 2*treeIndex + 1
+	rightTreeIndex := 2*treeIndex + 2
+
+	// Try to find in the left subtree first.
+	res := st.queryLeftmostIndex(leftTreeIndex, l, mid, requiredCapacity)
+	if res != -1 {
+		return res
+	}
+
+	// If not in the left, try the right subtree.
+	return st.queryLeftmostIndex(rightTreeIndex, mid+1, r, requiredCapacity)
+}
