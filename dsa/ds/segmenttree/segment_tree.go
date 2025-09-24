@@ -17,6 +17,8 @@ type SegmentTree[T any] struct {
 
 // New creates a new SegmentTree with the given data and merge function.
 // The merge function is used to combine two elements in the tree.
+// Time complexity: O(n)
+// Space complexity: O(n)
 func New[T any](data []T, merge func(a, b T) T) *SegmentTree[T] {
 	if len(data) == 0 {
 		return nil
@@ -53,6 +55,8 @@ func (st *SegmentTree[T]) build(treeIndex, l, r int) {
 // Query performs a query on the range [queryL, queryR].
 // It returns the result of the query.
 // If the query range is invalid, it returns the zero value of type T.
+// Time complexity: O(log n)
+// Space complexity: O(log n) for recursion stack.
 func (st *SegmentTree[T]) Query(queryL, queryR int) T {
 	var zero T
 	if st == nil || queryL < 0 || queryR >= len(st.data) || queryL > queryR {
@@ -83,6 +87,8 @@ func (st *SegmentTree[T]) query(treeIndex, l, r, queryL, queryR int) T {
 }
 
 // Update updates the value at the given index with the given value.
+// Time complexity: O(log n)
+// Space complexity: O(log n) for recursion stack.
 func (st *SegmentTree[T]) Update(index int, val T) {
 	if st == nil || index < 0 || index >= len(st.data) {
 		return
@@ -124,6 +130,8 @@ func (st *SegmentTree[T]) String() string {
 // calculates the maximum in a range.
 // Returns -1 if no such basket is found.
 // It will panic if the tree does not store integers.
+// Time complexity: O(log n)
+// Space complexity: O(log n) for recursion stack.
 func (st *SegmentTree[T]) QueryLeftmostIndex(requiredCapacity int) int {
 	if st == nil {
 		return -1
