@@ -21,7 +21,7 @@ Here are the implementations under dsa/ that would be valuable to implement in a
    * prefix-tree (Trie), radix-tree: Concurrent tries/radix trees can improve performance for search and update operations.
    * randomized-set: Concurrent versions are possible, though potentially complex.
 
-  Graphs (`dsa/graph/`)
+  Graphs (`dsa/`)
    * a_star, bfs, dfs: Graph traversal algorithms can often be parallelized for large graphs.
    * find-bridge: Can be parallelized.
    * mst (Minimum Spanning Tree): Parallel MST algorithms exist (e.g., Boruvka's algorithm).

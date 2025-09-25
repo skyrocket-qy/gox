@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/skyrocket-qy/erx"
-	"github.com/skyrocket-qy/gox/cdsa/graph/topologicalsort"
+	"github.com/skyrocket-qy/gox/cdsa/topologicalsort"
 )
 
 type Closer func(context.Context) error
