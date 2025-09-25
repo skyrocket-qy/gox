@@ -1,13 +1,15 @@
-package binaryindexedtree
+package binaryindexedtree_test
 
 import (
 	"testing"
+
+	"github.com/skyrocket-qy/gox/dsa/binaryindexedtree"
 )
 
 func TestBinaryIndexedTree_Int(t *testing.T) {
 	length := 10
 
-	bit := New[int](length)
+	bit := binaryindexedtree.New[int](length)
 
 	// Initial array: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
@@ -65,7 +67,7 @@ func TestBinaryIndexedTree_Int(t *testing.T) {
 func TestBinaryIndexedTree_Float64(t *testing.T) {
 	length := 10
 
-	bit := New[float64](length)
+	bit := binaryindexedtree.New[float64](length)
 
 	bit.Update(3, 5.5)
 	bit.Update(5, 2.2)

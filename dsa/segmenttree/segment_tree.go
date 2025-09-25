@@ -2,7 +2,6 @@ package segmenttree
 
 import (
 	"fmt"
-	"math/bits"
 )
 
 // SegmentTree represents a segment tree.
@@ -21,7 +20,7 @@ type SegmentTree[T any] struct {
 // New creates a new SegmentTree with the given data and merge function.
 // The merge function is used to combine two elements in the tree.
 // Time complexity: O(n)
-// Space complexity: O(n)
+// Space complexity: O(n).
 func New[T any](data []T, merge func(a, b T) T) *SegmentTree[T] {
 	if len(data) == 0 {
 		return nil
@@ -38,24 +37,30 @@ func New[T any](data []T, merge func(a, b T) T) *SegmentTree[T] {
 	copy(st.data, data)
 
 	st.build(0, 0, len(data)-1)
+
 	return st
 }
 
 // nextPowerOf2 calculates the next power of 2 for a given integer n.
 // This helps in calculating the minimum required size for the segment tree array.
 func nextPowerOf2(n int) int {
-	if n == 0 {
+	if n <= 0 {
 		return 1
 	}
-	// For n=9 (binary 1001), n-1 is 8 (binary 1000).
-	// bits.Len(8) is 4. 1 << 4 is 16. This is the next power of 2.
-	return 1 << bits.Len(uint(n-1))
+
+	p := 1
+	for p < n {
+		p <<= 1
+	}
+
+	return p
 }
 
 // build is a private helper function that builds the segment tree recursively.
 func (st *SegmentTree[T]) build(treeIndex, l, r int) {
 	if l == r {
 		st.tree[treeIndex] = st.data[l]
+
 		return
 	}
 
@@ -79,6 +84,7 @@ func (st *SegmentTree[T]) Query(queryL, queryR int) T {
 	if st == nil || queryL < 0 || queryR >= len(st.data) || queryL > queryR {
 		return zero
 	}
+
 	return st.query(0, 0, len(st.data)-1, queryL, queryR)
 }
 
@@ -100,6 +106,7 @@ func (st *SegmentTree[T]) query(treeIndex, l, r, queryL, queryR int) T {
 
 	leftResult := st.query(leftTreeIndex, l, mid, queryL, mid)
 	rightResult := st.query(rightTreeIndex, mid+1, r, mid+1, queryR)
+
 	return st.merge(leftResult, rightResult)
 }
 
@@ -110,6 +117,7 @@ func (st *SegmentTree[T]) Update(index int, val T) {
 	if st == nil || index < 0 || index >= len(st.data) {
 		return
 	}
+
 	st.data[index] = val
 	st.update(0, 0, len(st.data)-1, index, val)
 }
@@ -118,6 +126,7 @@ func (st *SegmentTree[T]) Update(index int, val T) {
 func (st *SegmentTree[T]) update(treeIndex, l, r, index int, val T) {
 	if l == r {
 		st.tree[treeIndex] = val
+
 		return
 	}
 
@@ -139,6 +148,7 @@ func (st *SegmentTree[T]) String() string {
 	if st == nil {
 		return "<nil>"
 	}
+
 	return fmt.Sprintf("SegmentTree with data: %v", st.data)
 }
 
