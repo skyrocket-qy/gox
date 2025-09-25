@@ -3,7 +3,7 @@ package prefixtree_test
 import (
 	"testing"
 
-	"github.com/skyrocket-qy/gox/dsa/prefixtree"
+	prefixtree "github.com/skyrocket-qy/gox/dsa/trie"
 )
 
 func TestTrie(t *testing.T) {
