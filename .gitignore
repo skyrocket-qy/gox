@@ -21,3 +21,5 @@
 go.work
 
 tmp
+.gemini/
+gha-creds-*.json

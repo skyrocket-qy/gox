@@ -10,3 +10,6 @@ cover:
 
 latest-tag:
 	git describe --tags --abbrev=0
+
+pull-all:
+	for d in ./*/ ; do (cd "$d" && git pull); done
