@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type GobTestStruct struct {
@@ -27,14 +28,14 @@ func TestGobEncoding(t *testing.T) {
 		encodedBytes, err := Encode(original)
 
 		// Assert Encode
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotEmpty(t, encodedBytes)
 
 		// Act Decode
 		err = Decode(encodedBytes, &decoded)
 
 		// Assert Decode
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		// We expect the decoded struct to match the original, but the private field won't be
 		// encoded.

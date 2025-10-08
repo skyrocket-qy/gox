@@ -47,6 +47,7 @@ linters:
         linters:
           - gochecknoinits
           - gocyclo
+          - unqueryvet
 formatters:
   # Default: [] (uses standard Go formatting)
   enable:
