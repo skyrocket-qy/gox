@@ -1,5 +1,13 @@
 package gox
 
+const (
+	EnvProd  string = "prod"
+	EnvStage string = "stage"
+	EnvQa    string = "qa"
+	EnvDev   string = "dev"
+	EnvLocal string = "local"
+)
+
 type SignedNumber interface {
 	~int | ~int8 | ~int16 | ~int32 | ~int64 |
 		~float32 | ~float64
@@ -26,4 +34,8 @@ func Batch[T any](items []T, batchSize int) <-chan []T {
 	}()
 
 	return ch
+}
+
+func Str(s string) *string {
+	return &s
 }

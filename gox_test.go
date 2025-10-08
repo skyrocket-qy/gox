@@ -1,18 +1,17 @@
-package gox_test
+package gox
 
 import (
 	"testing"
 
-	"github.com/skyrocket-qy/gox"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAbs(t *testing.T) {
-	assert.Equal(t, 1, gox.Abs(-1))
-	assert.Equal(t, 1, gox.Abs(1))
-	assert.Equal(t, 0, gox.Abs(0))
-	assert.InEpsilon(t, 1.23, gox.Abs(-1.23), 1e-6)
-	assert.InEpsilon(t, 1.23, gox.Abs(1.23), 1e-6)
+	assert.Equal(t, 1, Abs(-1))
+	assert.Equal(t, 1, Abs(1))
+	assert.Equal(t, 0, Abs(0))
+	assert.InEpsilon(t, 1.23, Abs(-1.23), 1e-6)
+	assert.InEpsilon(t, 1.23, Abs(1.23), 1e-6)
 }
 
 func TestBatch(t *testing.T) {
@@ -27,7 +26,7 @@ func TestBatch(t *testing.T) {
 	}
 
 	batches1 := make([][]int, 0)
-	for batch := range gox.Batch(items1, batchSize1) {
+	for batch := range Batch(items1, batchSize1) {
 		batches1 = append(batches1, batch)
 	}
 
@@ -43,7 +42,7 @@ func TestBatch(t *testing.T) {
 	}
 
 	batches2 := make([][]string, 0)
-	for batch := range gox.Batch(items2, batchSize2) {
+	for batch := range Batch(items2, batchSize2) {
 		batches2 = append(batches2, batch)
 	}
 
@@ -55,7 +54,7 @@ func TestBatch(t *testing.T) {
 	expected3 := [][]float64{}
 
 	batches3 := make([][]float64, 0)
-	for batch := range gox.Batch(items3, batchSize3) {
+	for batch := range Batch(items3, batchSize3) {
 		batches3 = append(batches3, batch)
 	}
 
@@ -69,7 +68,7 @@ func TestBatch(t *testing.T) {
 	}
 
 	batches4 := make([][]byte, 0)
-	for batch := range gox.Batch(items4, batchSize4) {
+	for batch := range Batch(items4, batchSize4) {
 		batches4 = append(batches4, batch)
 	}
 
@@ -85,9 +84,35 @@ func TestBatch(t *testing.T) {
 	}
 
 	batches5 := make([][]int, 0)
-	for batch := range gox.Batch(items5, batchSize5) {
+	for batch := range Batch(items5, batchSize5) {
 		batches5 = append(batches5, batch)
 	}
 
 	assert.Equal(t, expected5, batches5)
+}
+
+func TestStr(t *testing.T) {
+	t.Run("should return a pointer to the given string", func(t *testing.T) {
+		// Arrange
+		s := "hello"
+
+		// Act
+		sp := Str(s)
+
+		// Assert
+		assert.NotNil(t, sp)
+		assert.Equal(t, s, *sp)
+	})
+
+	t.Run("should return a pointer to an empty string", func(t *testing.T) {
+		// Arrange
+		s := ""
+
+		// Act
+		sp := Str(s)
+
+		// Assert
+		assert.NotNil(t, sp)
+		assert.Equal(t, s, *sp)
+	})
 }

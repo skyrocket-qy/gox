@@ -1,27 +1,27 @@
-package scope
+package util
 
 import (
 	"strings"
 
+	pkgpbv1 "github.com/skyrocket-qy/protos/gen/pkgpb/v1"
 	"gorm.io/gorm"
 )
 
-type Sorter struct {
-	Field string `json:"field" validate:"required"`
-	Asc   bool   `json:"asc"   validate:"required"`
-}
-
-func ApplySorter(seqSorters []Sorter, dfSort ...Sorter) func(db *gorm.DB) *gorm.DB {
+func ApplySorter(
+	seqSorters []*pkgpbv1.Sorter,
+	dfSort ...*pkgpbv1.Sorter,
+) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		if len(seqSorters) == 0 {
-			if len(dfSort) == 0 {
+			// Use default sorter only if it exists and is not nil
+			if len(dfSort) == 0 || dfSort[0] == nil {
 				return db
 			}
 
 			df := dfSort[0]
 
-			expr := df.Field
-			if !df.Asc {
+			expr := df.GetField()
+			if !df.GetAsc() {
 				expr += " DESC"
 			}
 
@@ -29,8 +29,8 @@ func ApplySorter(seqSorters []Sorter, dfSort ...Sorter) func(db *gorm.DB) *gorm.
 		}
 
 		for _, sorter := range seqSorters {
-			expr := ToPascalCase(sorter.Field)
-			if !sorter.Asc {
+			expr := ToPascalCase(sorter.GetField())
+			if !sorter.GetAsc() {
 				expr += " DESC"
 			}
 
