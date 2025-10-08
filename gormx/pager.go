@@ -1,4 +1,4 @@
-package util
+package gormx
 
 import (
 	pkgpbv1 "github.com/skyrocket-qy/protos/gen/pkgpb/v1"

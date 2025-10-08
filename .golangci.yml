@@ -32,6 +32,7 @@ linters:
     - contextcheck
     - godoclint
     - intrange
+    - testpackage
   enable:
     - wsl_v5
   exclusions:
