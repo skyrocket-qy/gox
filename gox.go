@@ -8,6 +8,15 @@ const (
 	EnvLocal string = "local"
 )
 
+type DbConf struct {
+	Driver   string `env:"DB_DRIVER"`
+	User     string `env:"DB_USER"`
+	Password string `env:"DB_PASSWORD"`
+	Host     string `env:"DB_HOST"`
+	Port     int    `env:"DB_PORT"`
+	Db       string `env:"DB_DB"`
+}
+
 type SignedNumber interface {
 	~int | ~int8 | ~int16 | ~int32 | ~int64 |
 		~float32 | ~float64
