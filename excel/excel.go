@@ -6,7 +6,32 @@ import (
 	"reflect"
 	"regexp"
 	"strconv"
+
+	"github.com/xuri/excelize/v2"
 )
+
+type SheetName = string
+
+func LoadExcel(path string) (map[SheetName][][]string, error) {
+	result := make(map[string][][]string)
+
+	f, err := excelize.OpenFile(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	sheets := f.GetSheetList()
+	for _, sheet := range sheets {
+		rows, err := f.GetRows(sheet)
+		if err != nil {
+			return nil, err
+		}
+		result[sheet] = rows
+	}
+
+	return result, nil
+}
 
 /*
 The table format is as follows:
