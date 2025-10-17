@@ -12,11 +12,11 @@ import (
 type TokenHintType int32
 
 const (
-	// RevokeURL is the endpoint for revoke tokens
+	// RevokeURL is the endpoint for revoke tokens.
 	RevokeURL string = "https://appleid.apple.com/auth/revoke"
-	// RevokeContentType is the one expected by Apple
+	// RevokeContentType is the one expected by Apple.
 	RevokeContentType string = "application/x-www-form-urlencoded"
-	// RevokeAcceptHeader is the content that we are willing to accept
+	// RevokeAcceptHeader is the content that we are willing to accept.
 	RevokeAcceptHeader string = "application/json"
 
 	RefreshTokenTypeHint TokenHintType = 1
@@ -32,7 +32,7 @@ type RVKClient struct {
 	client    *http.Client
 }
 
-// New RVKClient object
+// New RVKClient object.
 func NewRVKClient() *RVKClient {
 	client := &RVKClient{
 		revokeURL: RevokeURL,
@@ -40,10 +40,11 @@ func NewRVKClient() *RVKClient {
 			Timeout: 5 * time.Second,
 		},
 	}
+
 	return client
 }
 
-// RevokeToken sends the WebRevokeTokenRequest and gets revocation result
+// RevokeToken sends the WebRevokeTokenRequest and gets revocation result.
 func (c *RVKClient) RevokeToken(ctx context.Context, reqBody RevokeTokenRequest) error {
 	var typeHint string
 
@@ -67,13 +68,19 @@ func (c *RVKClient) RevokeToken(ctx context.Context, reqBody RevokeTokenRequest)
 }
 
 func sendRequest(ctx context.Context, client *http.Client, url string, data url.Values) error {
-	req, err := http.NewRequestWithContext(ctx, "POST", url, strings.NewReader(data.Encode()))
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodPost,
+		url,
+		strings.NewReader(data.Encode()),
+	)
 	if err != nil {
 		return err
 	}
 
-	req.Header.Add("content-type", RevokeContentType)
-	req.Header.Add("accept", RevokeAcceptHeader)
+	req.Header.Add("Content-Type", RevokeContentType)
+	req.Header.Add("Accept", RevokeAcceptHeader)
+
 	res, err := client.Do(req)
 	if err != nil {
 		return err

@@ -24,6 +24,7 @@ func GetRSAPublicKey(kid string) (*rsa.PublicKey, error) {
 	if err != nil {
 		return nil, erx.Wf(errors.ErrInternal, "cant get applePublicKeyUrl err : %s", err.Error())
 	}
+
 	defer func() {
 		_ = response.Body.Close()
 	}()
@@ -32,7 +33,9 @@ func GetRSAPublicKey(kid string) (*rsa.PublicKey, error) {
 	if err := json.NewDecoder(response.Body).Decode(&keys); err != nil {
 		return nil, errors.Wrapf(errors.ErrInternal, "json.NewDecoder fail err : %s", err.Error())
 	}
+
 	pubKey := new(rsa.PublicKey)
+
 	for _, key := range keys.Keys {
 		if key.Kid == kid {
 			nBin, _ := base64.RawURLEncoding.DecodeString(key.N)
@@ -41,9 +44,11 @@ func GetRSAPublicKey(kid string) (*rsa.PublicKey, error) {
 			eData := new(big.Int).SetBytes(eBin)
 			pubKey.N = nData
 			pubKey.E = int(eData.Uint64())
+
 			break
 		}
 	}
+
 	return pubKey, nil
 }
 
@@ -71,28 +76,33 @@ func ParseAppleJWT(jwtToken string) (jwt.MapClaims, error) {
 	if len(jwtTokenPart) != 3 {
 		return nil, errors.Wrap(errors.ErrInternal, "wrong json web token")
 	}
+
 	jwtHeaderBs, err := jwt.DecodeSegment(jwtTokenPart[0])
 	if err != nil {
 		return nil, errors.Wrapf(errors.ErrInternal, "DecodeSegment fail err: %s", err.Error())
 	}
+
 	var jwtHeader JwtHeader
 	if err := json.Unmarshal(jwtHeaderBs, &jwtHeader); err != nil {
 		return nil, errors.Wrapf(errors.ErrInternal, "Unmarshal fail err: %s", err.Error())
 	}
 
 	claims := jwt.MapClaims{}
+
 	switch jwtHeader.Alg {
 	case "RS256":
-		_, err = jwt.ParseWithClaims(jwtToken, &claims, func(token *jwt.Token) (interface{}, error) {
+		_, err = jwt.ParseWithClaims(jwtToken, &claims, func(token *jwt.Token) (any, error) {
 			return GetRSAPublicKey(jwtHeader.Kid)
 		})
 	case "ES256":
-		_, err = jwt.ParseWithClaims(jwtToken, &claims, func(token *jwt.Token) (interface{}, error) {
+		_, err = jwt.ParseWithClaims(jwtToken, &claims, func(token *jwt.Token) (any, error) {
 			return ExtractPublicKey(jwtHeader.X5c)
 		})
 	}
+
 	if err != nil {
 		return nil, errors.Wrapf(errors.ErrInternal, "ParseWithClaims fail err: %s", err.Error())
 	}
+
 	return claims, nil
 }

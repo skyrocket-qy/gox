@@ -15,7 +15,7 @@ The secret expires after 6 months
 signingKey - Private key from Apple obtained by going to the keys section of the developer section
 teamID - Your 10-character Team ID
 clientID - Your Services ID, e.g. com.aaronparecki.services
-keyID - Find the 10-char Key ID value from the portal
+keyID - Find the 10-char Key ID value from the portal.
 */
 func GenerateClientSecret(signingKey, teamID, clientID, keyID string) (string, error) {
 	block, _ := pem.Decode([]byte(signingKey))

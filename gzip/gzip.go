@@ -25,11 +25,13 @@ func Decode(in []byte) (out []byte, err error) {
 	if err != nil {
 		return nil, err
 	}
+
 	out, err = io.ReadAll(reader)
 	reader.Close()
+
 	if err != nil {
 		return nil, err
 	}
 
-	return
+	return out, err
 }

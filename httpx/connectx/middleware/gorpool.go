@@ -24,7 +24,6 @@ func (m *ReqPool) UnaryInterceptor() connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
 		return connect.UnaryFunc(
 			func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
-
 				if m.isReturnOnFull {
 					select {
 					case m.ch <- struct{}{}:

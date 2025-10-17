@@ -7,9 +7,7 @@ import (
 	"errors"
 )
 
-var (
-	ErrInvalidBlockSize = errors.New("invalid block size")
-)
+var ErrInvalidBlockSize = errors.New("invalid block size")
 
 func EncryptCBC(plainEncryptText, secretKey, iv []byte) ([]byte, error) {
 	plainEncryptText, err := pkcs7Padding(plainEncryptText, aes.BlockSize)
@@ -38,7 +36,9 @@ func EncryptCBCWithBase64(plainEncryptText, secretKey, iv []byte) (string, error
 	if err != nil {
 		return "", err
 	}
+
 	result := base64.StdEncoding.EncodeToString(cipherText)
+
 	return result, nil
 }
 
@@ -66,5 +66,6 @@ func DecryptWithBase64(payload string, secretKey, iv []byte) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return DecryptCBC(plainDecryptText, secretKey, iv)
 }
