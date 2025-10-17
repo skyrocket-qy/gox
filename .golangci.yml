@@ -33,6 +33,9 @@ linters:
     - godoclint
     - intrange
     - testpackage
+    - nestif
+    - maintidx
+    - lll
   enable:
     - wsl_v5
   exclusions:

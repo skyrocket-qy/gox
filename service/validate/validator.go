@@ -9,7 +9,6 @@ import (
 var v *validator.Validate
 
 func New() {
-
 	v = validator.New(validator.WithRequiredStructEnabled())
 }
 

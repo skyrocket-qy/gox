@@ -27,6 +27,7 @@ func LoadExcel(path string) (map[SheetName][][]string, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		result[sheet] = rows
 	}
 

@@ -17,15 +17,19 @@ func TestNewLogRequest(t *testing.T) {
 	t.Run("should log connect error", func(t *testing.T) {
 		// Redirect logger output
 		var buf bytes.Buffer
+
 		log.Logger = log.Output(&buf)
+
 		defer func() {
 			log.Logger = log.Output(os.Stderr)
 		}()
 
 		// Create a mock handler that returns a connect error
-		mockHandler := connect.UnaryFunc(func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
-			return nil, connect.NewError(connect.CodeInternal, errors.New("internal error"))
-		})
+		mockHandler := connect.UnaryFunc(
+			func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
+				return nil, connect.NewError(connect.CodeInternal, errors.New("internal error"))
+			},
+		)
 
 		// Create the interceptor
 		interceptor := NewLogRequest()
@@ -36,7 +40,8 @@ func TestNewLogRequest(t *testing.T) {
 		assert.Error(t, err)
 
 		// Check the log output
-		var logLine map[string]interface{}
+		var logLine map[string]any
+
 		err = json.Unmarshal(buf.Bytes(), &logLine)
 		assert.NoError(t, err)
 		assert.Equal(t, "debug", logLine["level"])
@@ -46,15 +51,19 @@ func TestNewLogRequest(t *testing.T) {
 	t.Run("should log generic error", func(t *testing.T) {
 		// Redirect logger output
 		var buf bytes.Buffer
+
 		log.Logger = log.Output(&buf)
+
 		defer func() {
 			log.Logger = log.Output(os.Stderr)
 		}()
 
 		// Create a mock handler that returns a generic error
-		mockHandler := connect.UnaryFunc(func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
-			return nil, errors.New("generic error")
-		})
+		mockHandler := connect.UnaryFunc(
+			func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
+				return nil, errors.New("generic error")
+			},
+		)
 
 		// Create the interceptor
 		interceptor := NewLogRequest()
@@ -65,7 +74,8 @@ func TestNewLogRequest(t *testing.T) {
 		assert.Error(t, err)
 
 		// Check the log output
-		var logLine map[string]interface{}
+		var logLine map[string]any
+
 		err = json.Unmarshal(buf.Bytes(), &logLine)
 		assert.NoError(t, err)
 		assert.Equal(t, "debug", logLine["level"])
@@ -75,15 +85,19 @@ func TestNewLogRequest(t *testing.T) {
 	t.Run("should not log on success", func(t *testing.T) {
 		// Redirect logger output
 		var buf bytes.Buffer
+
 		log.Logger = log.Output(&buf)
+
 		defer func() {
 			log.Logger = log.Output(os.Stderr)
 		}()
 
 		// Create a mock handler that returns success
-		mockHandler := connect.UnaryFunc(func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
-			return connect.NewResponse(&struct{}{}), nil
-		})
+		mockHandler := connect.UnaryFunc(
+			func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
+				return connect.NewResponse(&struct{}{}), nil
+			},
+		)
 
 		// Create the interceptor
 		interceptor := NewLogRequest()

@@ -11,7 +11,11 @@ type KafkaConnection interface {
 }
 
 type KafkaDialer interface {
-	DialLeader(ctx context.Context, network, address string, topic string, partition int) (KafkaConnection, error)
+	DialLeader(
+		ctx context.Context,
+		network, address, topic string,
+		partition int,
+	) (KafkaConnection, error)
 }
 
 type kafkaDialer struct{}
@@ -20,6 +24,10 @@ func NewKafkaDialer() KafkaDialer {
 	return &kafkaDialer{}
 }
 
-func (d *kafkaDialer) DialLeader(ctx context.Context, network, address string, topic string, partition int) (KafkaConnection, error) {
+func (d *kafkaDialer) DialLeader(
+	ctx context.Context,
+	network, address, topic string,
+	partition int,
+) (KafkaConnection, error) {
 	return kafka.DialLeader(ctx, network, address, topic, partition)
 }

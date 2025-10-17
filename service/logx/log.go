@@ -26,6 +26,7 @@ func InitLogger(curEnv string) error {
 			if i == nil {
 				return "0000-00-00 00:00:00"
 			}
+
 			if s, ok := i.(string); ok {
 				return s
 			}
@@ -36,6 +37,7 @@ func InitLogger(curEnv string) error {
 			if i == nil {
 				return "[???]"
 			}
+
 			if s, ok := i.(string); ok {
 				return "[" + s + "]"
 			}
@@ -46,6 +48,7 @@ func InitLogger(curEnv string) error {
 			if i == nil {
 				return "unknown:0"
 			}
+
 			if s, ok := i.(string); ok {
 				return SimplifyCaller(s)
 			}
@@ -56,6 +59,7 @@ func InitLogger(curEnv string) error {
 			if i == nil {
 				return ""
 			}
+
 			if s, ok := i.(string); ok {
 				return s
 			}

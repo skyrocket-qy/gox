@@ -9,7 +9,7 @@ import (
 )
 
 type MailService interface {
-	SendMail(ctx context.Context, to string, sbj string, content string) (err error)
+	SendMail(ctx context.Context, to, sbj, content string) (err error)
 }
 
 var _ MailService = &MailServiceImpl{}
@@ -26,7 +26,7 @@ func NewMailServiceImpl(sendGridToken, srcAddr string) MailService {
 	}
 }
 
-func (m *MailServiceImpl) SendMail(ctx context.Context, to string, sbj string, content string) (
+func (m *MailServiceImpl) SendMail(ctx context.Context, to, sbj, content string) (
 	err error,
 ) {
 	from := mail.NewEmail("no-reply", m.SrcAddr)
@@ -36,6 +36,7 @@ func (m *MailServiceImpl) SendMail(ctx context.Context, to string, sbj string, c
 	htmlContent := content
 	message := mail.NewSingleEmail(from, subject, toMail, plainTextContent, htmlContent)
 	client := sendgrid.NewSendClient(m.Token)
+
 	_, err = client.Send(message)
 	if err != nil {
 		return erx.W(err, "send mail failed reason")
