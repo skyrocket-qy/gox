@@ -12,6 +12,12 @@ func (c Err) Str() string {
 	return string(c)
 }
 
+/*
+The common
+The range XXX.0000-XXX.1000 is reserved for common usage.
+Projects should define their own error codes outside this range to avoid conflicts
+when the errcode version is updated.
+*/
 const (
 	ErrBadRequest               Err = "400.0000"
 	ErrEmptyRequest             Err = "400.0001"
