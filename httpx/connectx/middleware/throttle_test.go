@@ -1,4 +1,4 @@
-package connectw_test
+package middleware
 
 import (
 	"context"
@@ -8,7 +8,6 @@ import (
 
 	"connectrpc.com/connect"
 	"github.com/go-redis/redismock/v9"
-	"github.com/skyrocket-qy/gox/httpx/middleware/connectw"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -61,7 +60,7 @@ func TestThrottle_UnaryInterceptor(t *testing.T) {
 	}
 
 	// Initialize Throttle with the mock limiter
-	throttle := connectw.NewThrottle(nil, limit, window, keyPrefix, keyExtractor, mockLimiter)
+	throttle := NewThrottle(nil, limit, window, keyPrefix, keyExtractor, mockLimiter)
 
 	interceptor := throttle.UnaryInterceptor()
 
@@ -116,7 +115,7 @@ func TestThrottle_UnaryInterceptor(t *testing.T) {
 
 func TestNewThrottle_NilLimiter(t *testing.T) {
 	db, _ := redismock.NewClientMock()
-	throttle := connectw.NewThrottle(
+	throttle := NewThrottle(
 		db,
 		1,
 		time.Second,

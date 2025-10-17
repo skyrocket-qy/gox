@@ -1,4 +1,4 @@
-package connectw
+package middleware
 
 import (
 	"context"

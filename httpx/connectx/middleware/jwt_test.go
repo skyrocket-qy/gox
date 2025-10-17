@@ -1,4 +1,4 @@
-package connectw_test
+package middleware
 
 import (
 	"context"
@@ -8,7 +8,6 @@ import (
 
 	"connectrpc.com/connect"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/skyrocket-qy/gox/httpx/middleware/connectw"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -17,7 +16,7 @@ func TestAuthInterceptor_WrapAuth(t *testing.T) {
 	secret := []byte("test_secret")
 
 	// Create a new AuthInterceptor
-	authInterceptor := connectw.NewAuthInterceptor()
+	authInterceptor := NewAuthInterceptor()
 
 	// Create a dummy next function for the interceptor chain
 	next := connect.UnaryFunc(
@@ -70,7 +69,7 @@ func TestAuthInterceptor_WrapAuth(t *testing.T) {
 		// Custom next function to check context value
 		customNext := connect.UnaryFunc(
 			func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
-				userID, ok := connectw.UserIDFromContext(ctx)
+				userID, ok := UserIDFromContext(ctx)
 				assert.True(t, ok)
 				assert.Equal(t, "test_user_id", userID)
 
@@ -159,14 +158,14 @@ func TestParseJWT(t *testing.T) {
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 		tokenString, _ := token.SignedString(secret)
 
-		parsedClaims, err := connectw.ParseJWT(tokenString, secret)
+		parsedClaims, err := ParseJWT(tokenString, secret)
 		require.NoError(t, err)
 		assert.Equal(t, "test_user", parsedClaims.Issuer)
 	})
 
 	// Test Case 2: Invalid token string
 	t.Run("Invalid Token String", func(t *testing.T) {
-		_, err := connectw.ParseJWT("invalid_token_string", secret)
+		_, err := ParseJWT("invalid_token_string", secret)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "token is malformed")
 	})
@@ -180,7 +179,7 @@ func TestParseJWT(t *testing.T) {
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 		tokenString, _ := token.SignedString(secret)
 
-		_, err := connectw.ParseJWT(tokenString, secret)
+		_, err := ParseJWT(tokenString, secret)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "token is expired")
 	})
@@ -194,7 +193,7 @@ func TestParseJWT(t *testing.T) {
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 		tokenString, _ := token.SignedString([]byte("wrong_secret"))
 
-		_, err := connectw.ParseJWT(tokenString, secret)
+		_, err := ParseJWT(tokenString, secret)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "signature is invalid")
 	})
@@ -208,7 +207,7 @@ func TestParseJWT(t *testing.T) {
 		token := jwt.NewWithClaims(jwt.SigningMethodNone, claims)
 		tokenString, _ := token.SignedString(jwt.UnsafeAllowNoneSignatureType)
 
-		_, err := connectw.ParseJWT(tokenString, secret)
+		_, err := ParseJWT(tokenString, secret)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "unexpected signing method")
 	})
