@@ -26,11 +26,12 @@ const (
 
 	ErrNotFound Err = "404.0000"
 
-	ErrDuplicate     Err = "409.0000"
-	ErrUnknown       Err = "500.0000"
-	ErrDBUnavailable Err = "500.0001"
-	ErrLokiError     Err = "500.0002"
-	ErrNoWrapErx     Err = "500.0003"
+	ErrDuplicate      Err = "409.0000"
+	ErrUnknown        Err = "500.0000"
+	ErrDBUnavailable  Err = "500.0001"
+	ErrLokiError      Err = "500.0002"
+	ErrNoWrapErx      Err = "500.0003"
+	ErrTooManyRequest Err = "500.0004"
 
 	ErrNotImplemented Err = "501.0000"
 )
