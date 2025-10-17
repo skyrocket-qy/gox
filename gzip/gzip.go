@@ -14,8 +14,13 @@ func Encode(in []byte) (out []byte, err error) {
 		return nil, err
 	}
 
-	w.Flush()
-	w.Close()
+	if err = w.Flush(); err != nil {
+		return nil, err
+	}
+
+	if err = w.Close(); err != nil {
+		return nil, err
+	}
 
 	return buf.Bytes(), nil
 }
@@ -27,7 +32,15 @@ func Decode(in []byte) (out []byte, err error) {
 	}
 
 	out, err = io.ReadAll(reader)
-	reader.Close()
+	if err != nil {
+		_ = reader.Close()
+
+		return nil, err
+	}
+
+	if err = reader.Close(); err != nil {
+		return nil, err
+	}
 
 	if err != nil {
 		return nil, err

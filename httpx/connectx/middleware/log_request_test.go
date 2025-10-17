@@ -11,6 +11,7 @@ import (
 	"connectrpc.com/connect"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewLogRequest(t *testing.T) {
@@ -37,13 +38,13 @@ func TestNewLogRequest(t *testing.T) {
 
 		// Call the handler
 		_, err := wrappedHandler(context.Background(), connect.NewRequest(&struct{}{}))
-		assert.Error(t, err)
+		require.Error(t, err)
 
 		// Check the log output
 		var logLine map[string]any
 
 		err = json.Unmarshal(buf.Bytes(), &logLine)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, "debug", logLine["level"])
 		assert.Equal(t, "Request  failed: code=internal, err=internal error\n", logLine["message"])
 	})
@@ -71,13 +72,13 @@ func TestNewLogRequest(t *testing.T) {
 
 		// Call the handler
 		_, err := wrappedHandler(context.Background(), connect.NewRequest(&struct{}{}))
-		assert.Error(t, err)
+		require.Error(t, err)
 
 		// Check the log output
 		var logLine map[string]any
 
 		err = json.Unmarshal(buf.Bytes(), &logLine)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, "debug", logLine["level"])
 		assert.Equal(t, "Request  failed: err=generic error\n", logLine["message"])
 	})
@@ -105,7 +106,7 @@ func TestNewLogRequest(t *testing.T) {
 
 		// Call the handler
 		_, err := wrappedHandler(context.Background(), connect.NewRequest(&struct{}{}))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		// Check the log output
 		assert.Empty(t, buf.String())

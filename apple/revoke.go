@@ -59,7 +59,7 @@ func (c *RVKClient) RevokeToken(ctx context.Context, reqBody RevokeTokenRequest)
 	case AccessTokenTypeHint:
 		typeHint = "access_token"
 	default:
-		return errors.New("Invalid token type hint")
+		return errors.New("invalid token type hint")
 	}
 
 	data.Set("token_type_hint", typeHint)

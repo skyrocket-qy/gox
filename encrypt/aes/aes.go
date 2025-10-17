@@ -10,10 +10,7 @@ import (
 var ErrInvalidBlockSize = errors.New("invalid block size")
 
 func EncryptCBC(plainEncryptText, secretKey, iv []byte) ([]byte, error) {
-	plainEncryptText, err := pkcs7Padding(plainEncryptText, aes.BlockSize)
-	if err != nil {
-		return nil, err
-	}
+	plainEncryptText = pkcs7Padding(plainEncryptText, aes.BlockSize)
 
 	if len(plainEncryptText)%aes.BlockSize != 0 {
 		return nil, ErrInvalidBlockSize

@@ -2,11 +2,11 @@ package aes
 
 import "bytes"
 
-func pkcs7Padding(ciphertext []byte, blockSize int) ([]byte, error) {
+func pkcs7Padding(ciphertext []byte, blockSize int) []byte {
 	padding := blockSize - len(ciphertext)%blockSize
 	paddingText := bytes.Repeat([]byte{byte(padding)}, padding)
 
-	return append(ciphertext, paddingText...), nil
+	return append(ciphertext, paddingText...)
 }
 
 func pkcs7Unpacking(origData []byte) []byte {

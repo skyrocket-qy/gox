@@ -1,6 +1,7 @@
 package apple
 
 import (
+	"context"
 	"crypto/ecdsa"
 	"crypto/rsa"
 	"crypto/x509"
@@ -20,7 +21,17 @@ const (
 )
 
 func GetRSAPublicKey(kid string) (*rsa.PublicKey, error) {
-	response, err := http.Get(applePublicKeyUrl)
+	req, err := http.NewRequestWithContext(
+		context.Background(),
+		http.MethodGet,
+		applePublicKeyUrl,
+		nil,
+	)
+	if err != nil {
+		return nil, erx.Wf(errors.ErrInternal, "cant create http request err : %s", err.Error())
+	}
+
+	response, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, erx.Wf(errors.ErrInternal, "cant get applePublicKeyUrl err : %s", err.Error())
 	}
@@ -43,7 +54,7 @@ func GetRSAPublicKey(kid string) (*rsa.PublicKey, error) {
 			eBin, _ := base64.RawURLEncoding.DecodeString(key.E)
 			eData := new(big.Int).SetBytes(eBin)
 			pubKey.N = nData
-			pubKey.E = int(eData.Uint64())
+			pubKey.E = int(eData.Int64())
 
 			break
 		}
