@@ -1,3 +1,0 @@
-# System Modes
-
-System modes in distributed systems describe the various operational states, architectural patterns, or deployment configurations that a distributed application can adopt. These modes often dictate how components interact, how data is managed, and how the system behaves under different conditions, such as normal operation, failure, or recovery. Examples include client-server, peer-to-peer, and microservices architectures.
