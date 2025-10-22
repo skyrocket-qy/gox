@@ -13,3 +13,10 @@ This section addresses various strategies and mechanisms for resolving these con
 - **Application-specific Logic:** In some cases, the application itself is best equipped to resolve conflicts based on business rules.
 
 ## Comparison
+
+| Strategy | Complexity | Data Loss Risk | Resolution Logic | Use Case |
+|---|---|---|---|---|
+| **[Last-Write-Wins (LWW)](./last-write-wins)** | Low | High | Timestamp-based | Simple, non-critical data |
+| **[Vector Clocks](./vector-clocks)** | Medium | Low | Causal history | Detecting concurrency, manual resolution |
+| **[CRDTs](./crdts)** | High | None | Automatic, deterministic | Collaborative editing, real-time apps |
+| **[Timestamps with Logical Clocks](./timestamps-with-logical-clocks)** | Medium | Medium | Causal ordering | Distributed databases, event sourcing |

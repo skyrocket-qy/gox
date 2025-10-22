@@ -27,3 +27,12 @@ The goal of fault tolerance is to mask failures from the end-user, providing the
 
 
 ## Comparison
+
+| Technique | Recovery Time | Resource Overhead | Complexity | Use Case |
+|---|---|---|---|---|
+| **[Active-Passive Failover](./active-passive-failover)** | Fast | Low | Low | Stateful applications |
+| **[Active-Active Cluster](./active-active-cluster)** | Instant | High | High | Stateless applications, load balancing |
+| **[Checkpointing](./checkpoint)** | Medium | Medium | Medium | Long-running computations |
+| **[Snapshot](./snapshot)** | Fast | High | Medium | Stateful applications, databases |
+| **[Consensus-Based Recovery](./consensus-recovery)** | Slow | High | High | Distributed databases, state machine replication |
+| **[Gossip-Based Recovery](./gossip-recovery)** | Slow | Low | Low | Peer-to-peer networks, cluster membership |

@@ -31,3 +31,8 @@ There are many popular messaging systems in use today, including:
 -   **Google Cloud Pub/Sub:** A fully managed real-time messaging service from Google Cloud.
 
 ## Comparison
+
+| Pattern | Delivery | Scalability | Use Case |
+|---|---|---|---|
+| **[Message Queue](./message-queue)** | One-to-one | High | Task distribution, work queues |
+| **[Publish-Subscribe](./publish-subscribe)** | One-to-many | High | Event notification, real-time data streaming |

@@ -21,3 +21,8 @@ There are a number of different techniques that can be used to scale a distribut
 The choice of which scaling techniques to use depends on the specific requirements of the application. For example, a system that is read-heavy might benefit from caching, while a system that is write-heavy might benefit from sharding.
 
 ## Comparison
+
+| Scaling Method | Approach | Cost | Scalability Limit | Use Case |
+|---|---|---|---|---|
+| **[Vertical Scaling](./vertical)** | Add resources to a single node | High | Limited by hardware | Monolithic applications, databases |
+| **[Horizontal Scaling](./horizontal)** | Add more nodes to the system | Low | High | Microservices, distributed databases |

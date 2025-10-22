@@ -11,3 +11,12 @@ Without proper coordination, a distributed system can suffer from a variety of p
 
 
 ## Comparison
+
+| Mechanism | Primary Goal | Scalability | Complexity | Use Case |
+|---|---|---|---|---|
+| **[Consensus](./consensus)** | Agreement | Low | High | Leader election, distributed transactions |
+| **[Quorum](./quorum)** | Consistency | Medium | Medium | Read/write operations in replicated systems |
+| **[Gossip](./gossip)** | Dissemination | High | Low | Cluster membership, failure detection |
+| **[Vector Clock](./vector-clock)** | Causality | High | Medium | Detecting concurrent updates, versioning |
+| **[CRDT](./crdt)** | Conflict-free replication | High | High | Collaborative applications |
+| **[Event Streaming](./event-streaming)** | Data flow | High | Medium | Real-time data processing, microservices |

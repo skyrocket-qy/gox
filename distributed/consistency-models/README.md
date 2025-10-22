@@ -7,3 +7,9 @@ In a distributed system, a **consistency model** is a contract between the syste
 The choice of a consistency model has a significant impact on the performance, availability, and complexity of a distributed system. There is often a trade-off between the strength of the consistency guarantee and the performance and availability of the system. Stronger consistency models are easier for developers to reason about, but they often come at the cost of higher latency and lower availability. Weaker consistency models can provide better performance and availability, but they require developers to handle the complexities of eventual consistency.
 
 ## Comparison
+
+| Model | Guarantee | Performance | Use Case |
+|---|---|---|---|
+| **[Strong Consistency](./strong-consistency)** | All replicas are always up-to-date | High latency | Financial systems, critical data |
+| **[Eventual Consistency](./eventual-consistency)** | Replicas will eventually be consistent | Low latency | Social media, e-commerce |
+| **[Causal Consistency](./causal-consistency)** | Causal order of operations is preserved | Medium latency | Collaborative editing, chat |

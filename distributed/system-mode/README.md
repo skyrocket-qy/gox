@@ -22,3 +22,20 @@ Understanding the trade-offs between these different system modes is essential f
 
 
 ## Comparison
+
+| Mode | Scalability | Consistency | Availability | Complexity | Use Case |
+|---|---|---|---|---|---|
+| **[Leader-Follower](./leader-follower)** | High (read), Low (write) | Strong (read from leader) | High | Medium | Databases, replicated systems |
+| **[Master-Slave](./master-slave)** | High (read), Low (write) | Strong (read from master) | High | Medium | Databases, replicated systems |
+| **[Multi-Master](./multi-master)** | High | Eventual | High | High | Multi-datacenter deployments |
+| **[Peer-to-Peer](./peer-to-peer)** | High | Eventual | High | High | File sharing, content delivery |
+| **[Sharded/Partitioned](./sharded-partitioned)** | High | Varies | High | High | Large-scale databases |
+| **[Shared-Nothing](./shared-nothing)** | High | Varies | High | High | Distributed databases |
+| **[Shared-Everything](./shared-everything)** | Low | Strong | Low | Low | Traditional databases |
+| **[Quorum-Based](./quorum-based)** | Medium | Strong | High | High | Distributed storage systems |
+| **[Strongly Consistent](./strongly-consistent)** | Low | Strong | Low | High | Financial systems, critical data |
+| **[Eventually Consistent](./eventually-consistent)** | High | Eventual | High | Medium | Social media, e-commerce |
+| **[Event-Driven](./event-driven)** | High | Eventual | High | Medium | Microservices, real-time data processing |
+| **[Log-Based](./log-based)** | High | Strong | High | High | Distributed databases, event sourcing |
+| **[Federated Multi-Cluster](./federated-multi-cluster)** | High | Varies | High | High | Large-scale, multi-cloud deployments |
+| **[CAP Tradeoff (Tunable)](./cap-tradeoff-tunable)** | Varies | Tunable | Tunable | High | Systems requiring flexibility |

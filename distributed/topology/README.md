@@ -19,3 +19,11 @@ There are a number of different network topologies that can be used in a distrib
 The choice of which topology to use is a trade-off between a number of factors, including cost, performance, reliability, and scalability.
 
 ## Comparison
+
+| Topology | Reliability | Scalability | Cost | Use Case |
+|---|---|---|---|---|
+| **[Bus](./bus)** | Low | Low | Low | Small networks |
+| **[Star](./star)** | Medium | Low | Medium | Local area networks (LANs) |
+| **[Ring](./ring)** | High | Low | Medium | Telecom networks |
+| **[Mesh](./mesh)** | High | High | High | Wide area networks (WANs) |
+| **[Tree](./tree)** | Medium | High | High | Large networks |
