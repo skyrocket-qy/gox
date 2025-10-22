@@ -1,10 +1,12 @@
 # System Modes
 
+## Core
+
 In the context of distributed systems, a **system mode** (also known as an architectural pattern or deployment model) describes the fundamental way in which the components of the system are organized and interact with each other. The choice of a system mode is a critical architectural decision that has a profound impact on the system's properties, such as its scalability, fault tolerance, consistency, and complexity.
 
 Different system modes are suited for different types of applications and use cases. For example, a simple web application might be well-served by a traditional client-server model, while a large-scale, data-intensive application might require a more complex, peer-to-peer or microservices architecture.
 
-## Common System Modes
+### Common System Modes
 
 This section provides an overview of some of the most common system modes found in distributed systems:
 
@@ -17,3 +19,6 @@ This section provides an overview of some of the most common system modes found 
 -   **Microservices:** An architectural style that structures an application as a collection of loosely coupled services.
 
 Understanding the trade-offs between these different system modes is essential for designing and building effective distributed systems.
+
+
+## Comparison

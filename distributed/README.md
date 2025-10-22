@@ -2,7 +2,7 @@
 
 This directory aims to document various concepts, modes, and mechanisms related to distributed systems.
 
-## Topics:
+## Topics
 
 - [Communication](./communication/README.md)
 - [Conflict Resolution](./conflict-resolution/README.md)
@@ -15,3 +15,5 @@ This directory aims to document various concepts, modes, and mechanisms related 
 - [Scaling](./scaling/README.md)
 - [System Modes](./system-mode/README.md)
 - [Topology](./topology/README.md)
+
+## Common service with their pattern

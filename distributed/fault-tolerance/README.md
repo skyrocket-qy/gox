@@ -1,8 +1,10 @@
 # Fault Tolerance
 
+## Core
+
 **Fault tolerance** is a critical property of distributed systems that enables them to continue operating correctly even in the presence of failures (or "faults"). In a distributed system, where many independent components are communicating over an unreliable network, failures are not the exception—they are the norm. Therefore, designing systems that can withstand and recover from these failures is essential for building reliable and highly available services.
 
-## Types of Faults
+### Types of Faults
 
 Faults in a distributed system can be broadly categorized into three types:
 
@@ -10,7 +12,7 @@ Faults in a distributed system can be broadly categorized into three types:
 2.  **Network Failures:** Messages between nodes can be lost, delayed, or delivered out of order. The network can also become partitioned, where two or more groups of nodes are unable to communicate with each other.
 3.  **Storage Failures:** Data stored on disk can be corrupted or lost.
 
-## Techniques for Fault Tolerance
+### Techniques for Fault Tolerance
 
 There are a number of techniques that can be used to build fault-tolerant distributed systems. Some of the most common ones include:
 
@@ -22,3 +24,6 @@ There are a number of techniques that can be used to build fault-tolerant distri
 -   **Graceful Degradation:** Designing the system to continue operating at a reduced level of functionality when some components have failed, rather than failing completely.
 
 The goal of fault tolerance is to mask failures from the end-user, providing the illusion of a continuously available and correct system. The specific techniques used will depend on the system's requirements for availability, consistency, and performance.
+
+
+## Comparison
