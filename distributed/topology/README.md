@@ -27,3 +27,17 @@ The choice of which topology to use is a trade-off between a number of factors, 
 | **[Ring](./ring)** | High | Low | Medium | Telecom networks |
 | **[Mesh](./mesh)** | High | High | High | Wide area networks (WANs) |
 | **[Tree](./tree)** | Medium | High | High | Large networks |
+
+## Which service use it?
+
+
+
+-   **Bus Topology:** Historically used in early Ethernet networks (e.g., 10Base2, 10Base5 coaxial cables) and still found in some industrial control systems or embedded networks.
+
+-   **Star Topology:** Widely used in modern Local Area Networks (LANs) where all devices connect to a central switch or hub. Most home and office networks are star topologies.
+
+-   **Ring Topology:** Historically used in Token Ring networks and some fiber optic networks. Also found in some Storage Area Networks (SANs) and metropolitan area networks (MANs).
+
+-   **Mesh Topology:** Employed in critical infrastructure like military communications, backbone networks of the internet, and some wireless sensor networks where high redundancy and fault tolerance are paramount.
+
+-   **Tree Topology:** Often used in large corporate networks, combining multiple star networks into a hierarchical structure, allowing for easy expansion and management.

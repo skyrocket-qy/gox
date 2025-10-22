@@ -30,3 +30,9 @@ Replication between masters can be synchronous or asynchronous. Asynchronous rep
 -   **Conflict Resolution Complexity:** The need to handle and resolve write conflicts adds significant complexity to the system.
 -   **Eventual Consistency:** Due to replication lag, data is typically eventually consistent. Different nodes might have different versions of the data for a short period.
 -   **Difficult to Reason About:** The possibility of concurrent writes and conflicts can make it harder to reason about the state of the data and the behavior of the system.
+
+## Which service use it?
+
+-   **Distributed Databases (e.g., MySQL, PostgreSQL with BDR):** When configured for multi-master replication, these databases allow writes to occur on multiple nodes, which then synchronize with each other. This is often used for high availability and geographic distribution.
+-   **Distributed Version Control Systems (e.g., Git):** In Git, every developer's local repository is a full copy of the codebase, acting as a master. Changes can be made and committed locally, and then pushed and pulled between repositories, effectively operating in a multi-master fashion.
+-   **Some Distributed Key-Value Stores:** Certain key-value stores can be configured to allow writes to multiple nodes, handling conflicts through various resolution strategies.

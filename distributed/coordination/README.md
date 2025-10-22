@@ -20,3 +20,19 @@ Without proper coordination, a distributed system can suffer from a variety of p
 | **[Vector Clock](./vector-clock)** | Causality | High | Medium | Detecting concurrent updates, versioning |
 | **[CRDT](./crdt)** | Conflict-free replication | High | High | Collaborative applications |
 | **[Event Streaming](./event-streaming)** | Data flow | High | Medium | Real-time data processing, microservices |
+
+## Which service use it?
+
+
+
+-   **Consensus:** Distributed databases (e.g., etcd, ZooKeeper, Apache Kafka for controller election), distributed transaction systems, and leader election in replicated systems.
+
+-   **Quorum:** Distributed storage systems (e.g., Apache Cassandra, Amazon DynamoDB), and any system requiring a certain number of nodes to agree on an operation for consistency.
+
+-   **Gossip:** Cluster membership management (e.g., HashiCorp Serf, Apache Cassandra), failure detection, and data dissemination in large-scale distributed systems.
+
+-   **Vector Clock:** Collaborative editing applications, distributed databases (e.g., Riak), and systems needing to track causal relationships between events.
+
+-   **CRDT (Conflict-free Replicated Data Types):** Real-time collaborative applications (e.g., Google Docs-like editors), distributed counters, and shared data structures in eventually consistent systems.
+
+-   **Event Streaming:** Microservices architectures, real-time analytics platforms, IoT data processing, and any system requiring asynchronous, decoupled communication and data flow.

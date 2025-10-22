@@ -17,14 +17,8 @@ Tunable systems often expose configuration parameters that allow administrators 
 -   **Favoring Consistency:** To favor consistency, a system might require a strict quorum of nodes to be available for reads and writes. If a partition occurs and a quorum cannot be reached, the system will become unavailable rather than risk returning stale data.
 -   **Favoring Availability:** To favor availability, a system might allow reads and writes to be served by any available node, even if it is not in the majority partition. This can lead to conflicts, which must be resolved later, but it ensures that the system remains responsive.
 
-## Pros & Cons
+## Which service use it?
 
-### Pros
-
--   **Flexibility:** The ability to tune the system's behavior allows it to be adapted to a wide range of use cases with different requirements.
--   **Dynamic Adaptation:** Some systems can even change their behavior dynamically in response to changing network conditions or application needs.
-
-### Cons
-
--   **Complexity:** The flexibility of tunable systems comes at the cost of increased complexity. It can be difficult to reason about the system's behavior under all possible conditions.
--   **Risk of Misconfiguration:** If not configured correctly, a tunable system can provide weaker guarantees than intended, leading to data loss or other problems.
+-   **Apache Cassandra:** Cassandra allows developers to choose consistency levels (e.g., ONE, QUORUM, ALL) on a per-operation basis, effectively tuning the CAP tradeoff. A higher consistency level prioritizes consistency, while a lower one prioritizes availability and performance.
+-   **Riak:** Riak is another NoSQL database that provides tunable consistency through its N, R, and W values (number of replicas, read quorum, write quorum), allowing users to decide how many nodes must agree for an operation to succeed.
+-   **Amazon DynamoDB:** DynamoDB offers both eventually consistent and strongly consistent read options, allowing applications to choose the appropriate consistency model based on their requirements for a given read operation.

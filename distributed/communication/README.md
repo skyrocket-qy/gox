@@ -15,3 +15,17 @@ This section explores various communication patterns, protocols, and models used
 | **[Publish-Subscribe](./pubsub)** | Loose | Asynchronous | Decoupled | Event-driven systems, notifications |
 | **[Peer-to-Peer (P2P)](./p2p)** | Loose | Both | Decentralized | File sharing, content delivery |
 | **[Actor Model](./actor-model)** | Loose | Asynchronous | Decentralized | Concurrent and parallel systems |
+
+## Which service use it?
+
+
+
+-   **Client-Server:** The most common communication pattern, used in virtually all web applications, email systems, file servers, and traditional enterprise software.
+
+-   **Message Queue:** Asynchronous task processing, decoupling microservices, buffering requests, and enabling reliable communication between distributed components.
+
+-   **Publish-Subscribe:** Real-time data feeds, event notifications, chat applications, and IoT data ingestion.
+
+-   **Peer-to-Peer (P2P):** File sharing networks, cryptocurrencies, distributed content delivery, and some online gaming.
+
+-   **Actor Model:** Concurrent and parallel systems, especially those requiring high concurrency and fault tolerance, such as Erlang/OTP applications, Akka-based systems, and some distributed databases.

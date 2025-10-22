@@ -31,3 +31,10 @@ The state of the system can be derived at any point in time by replaying the log
 -   **Storage Overhead:** The log can grow to be very large, which can lead to storage overhead.
 -   **Replay Time:** Replaying the log can be time-consuming, especially if the log is very large.
 -   **Complexity:** Log-based systems can be complex to implement.
+
+## Which service use it?
+
+-   **Apache Kafka:** Kafka is a distributed streaming platform that fundamentally operates as a distributed commit log. It stores streams of records in a fault-tolerant, durable, and highly available manner.
+-   **Event Sourcing Architectures:** In event-sourced systems, all changes to application state are stored as a sequence of immutable events in an event log. The current state is derived by replaying these events.
+-   **Distributed Databases (e.g., PostgreSQL WAL, MySQL Binlog):** Many traditional databases use a Write-Ahead Log (WAL) or binary log to ensure durability and enable replication. These logs are essentially append-only sequences of changes.
+-   **Change Data Capture (CDC) Systems:** CDC tools often rely on reading database transaction logs to capture and propagate changes to other systems in real-time.

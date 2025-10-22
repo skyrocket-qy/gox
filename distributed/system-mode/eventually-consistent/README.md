@@ -28,3 +28,13 @@ There are a number of different ways to propagate updates to other nodes, includ
 
 -   **Stale Data:** The main drawback of eventual consistency is that it is possible to read stale data. This can be a problem for applications that require strong consistency, such as financial systems.
 -   **Complexity:** Eventual consistency can add complexity to the system, as developers need to be aware of the possibility of reading stale data and design their applications accordingly.
+
+## Which service use it?
+
+Several popular services and systems leverage eventual consistency to achieve high availability and scalability:
+
+-   **Domain Name System (DNS):** DNS is a classic example of an eventually consistent system. Changes to DNS records propagate across the internet over time, meaning that different DNS servers may have slightly different information at any given moment.
+-   **Amazon S3 (Simple Storage Service):** Amazon S3 provides eventual consistency for most operations. When you write a new object to S3 or overwrite an existing one, it may take some time for the change to be fully propagated across all storage nodes.
+-   **Apache Cassandra:** Cassandra is a NoSQL database designed for high availability and scalability, and it uses eventual consistency as its primary consistency model.
+-   **DynamoDB:** Amazon's DynamoDB also offers eventual consistency as one of its consistency options, allowing for faster write operations at the cost of potentially reading stale data for a short period.
+-   **Many social media platforms:** Platforms like Facebook and Twitter often use eventual consistency for things like follower counts, likes, and news feeds. This allows them to handle massive amounts of data and traffic without sacrificing availability.

@@ -42,3 +42,10 @@ By tuning R and W, system designers can trade off between read and write latency
 -   **Increased Latency:** Operations must wait for responses from multiple nodes, which can increase latency compared to single-node operations.
 -   **Communication Overhead:** Requires coordination between multiple nodes for each read and write operation.
 -   **Complexity:** The logic for handling quorum requests, versioning, and data repair (when nodes return with stale data) can be complex to implement correctly.
+
+## Which service use it?
+
+-   **Apache Cassandra:** Cassandra allows users to specify consistency levels (e.g., `ONE`, `QUORUM`, `ALL`) for read and write operations, which are directly based on quorum principles.
+-   **Amazon DynamoDB:** While not explicitly exposing N, R, W, DynamoDB offers eventually consistent and strongly consistent reads, where strong consistency implicitly relies on a quorum-like agreement among replicas.
+-   **Distributed File Systems (e.g., HDFS):** HDFS uses a configurable replication factor (e.g., 3) for data blocks. While not a strict R+W>N quorum for every operation, the concept of requiring a certain number of replicas to be available for reads and writes is similar.
+-   **Consensus Algorithms (e.g., Paxos, Raft):** These algorithms fundamentally rely on quorums (a majority of nodes) to make decisions and ensure consistency in distributed state machines, such as for leader election and log replication.

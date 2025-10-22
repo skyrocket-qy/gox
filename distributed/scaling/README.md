@@ -26,3 +26,8 @@ The choice of which scaling techniques to use depends on the specific requiremen
 |---|---|---|---|---|
 | **[Vertical Scaling](./vertical)** | Add resources to a single node | High | Limited by hardware | Monolithic applications, databases |
 | **[Horizontal Scaling](./horizontal)** | Add more nodes to the system | Low | High | Microservices, distributed databases |
+
+## Which service use it?
+
+-   **Vertical Scaling:** Traditional monolithic applications, single-instance relational databases (e.g., a powerful SQL Server instance), and specialized high-performance computing tasks that benefit from a single, very powerful machine.
+-   **Horizontal Scaling:** Most modern web applications, microservices architectures, distributed databases (NoSQL and sharded SQL), big data processing frameworks (e.g., Apache Spark, Hadoop), and cloud-native applications.

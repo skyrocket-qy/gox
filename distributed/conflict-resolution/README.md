@@ -20,3 +20,17 @@ This section addresses various strategies and mechanisms for resolving these con
 | **[Vector Clocks](./vector-clocks)** | Medium | Low | Causal history | Detecting concurrency, manual resolution |
 | **[CRDTs](./crdts)** | High | None | Automatic, deterministic | Collaborative editing, real-time apps |
 | **[Timestamps with Logical Clocks](./timestamps-with-logical-clocks)** | Medium | Medium | Causal ordering | Distributed databases, event sourcing |
+
+## Which service use it?
+
+
+
+-   **Last-Write-Wins (LWW):** Often used in systems where simplicity is prioritized and occasional data loss due to concurrent updates is acceptable, such as caching systems or some eventually consistent key-value stores.
+
+-   **Vector Clocks:** Employed in distributed databases (e.g., Riak) and collaborative systems to detect concurrent updates and allow for application-level conflict resolution or merging.
+
+-   **CRDTs (Conflict-free Replicated Data Types):** Ideal for real-time collaborative applications (e.g., text editors, whiteboards) where multiple users can concurrently modify data, and conflicts need to be resolved automatically and deterministically.
+
+-   **Timestamps with Logical Clocks:** Used in distributed databases and event sourcing systems to establish a causal order of events and resolve conflicts based on that order, providing stronger consistency guarantees than simple physical timestamps.
+
+-   **Application-specific Logic:** Many complex distributed systems, especially those dealing with business logic, implement custom conflict resolution strategies tailored to their specific domain requirements.

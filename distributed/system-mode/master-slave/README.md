@@ -30,3 +30,9 @@ Replication can be configured in two primary ways:
 -   **Single Point of Failure for Writes:** The master is the only node that can accept writes. If it fails, the system cannot process any write requests until a slave is promoted.
 -   **Replication Lag:** In asynchronous mode, slaves can fall behind the master. Applications reading from a slave might see stale data.
 -   **Failover Complexity:** The process of promoting a slave to a new master can be complex and may involve potential data loss if the slave was not fully synchronized.
+
+## Which service use it?
+
+-   **Relational Databases (e.g., MySQL, PostgreSQL, SQL Server):** This is a very common replication setup for traditional databases, where a primary database handles all writes and replicates data to one or more secondary (read-only) databases.
+-   **Redis:** Redis can be configured in a master-replica (formerly master-slave) setup, where the master handles writes and replicas serve read requests.
+-   **Some Message Brokers (e.g., RabbitMQ with mirrored queues):** While not a pure master-slave, some message queue systems use similar concepts for high availability, where a primary node handles writes and mirrors messages to other nodes.

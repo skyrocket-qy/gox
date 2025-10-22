@@ -30,3 +30,13 @@ Some common use cases for federation include:
 -   **Complexity:** Federated systems can be complex to design, build, and operate.
 -   **Security:** Securing a federated system can be challenging, as it is necessary to secure the communication between clusters.
 -   **Cost:** Federated systems can be more expensive to operate than single-cluster systems, as they require more infrastructure.
+
+## Which service use it?
+
+
+
+-   **Kubernetes Federation:** While the original Kubernetes Federation v1 has evolved, the concept of managing and coordinating applications across multiple Kubernetes clusters (e.g., using tools like Kubefed or multi-cluster ingress controllers) is a prime example of a federated multi-cluster approach.
+
+-   **Multi-Cloud Deployments:** Enterprises often deploy applications across different cloud providers (AWS, Azure, GCP) to avoid vendor lock-in, improve resilience, and optimize costs. These setups often involve federated control planes or management layers.
+
+-   **Large-Scale Enterprise Systems:** Global companies with operations in multiple regions or data centers might use federated architectures to provide localized services while maintaining a global view or shared data.

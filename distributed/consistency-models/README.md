@@ -13,3 +13,13 @@ The choice of a consistency model has a significant impact on the performance, a
 | **[Strong Consistency](./strong-consistency)** | All replicas are always up-to-date | High latency | Financial systems, critical data |
 | **[Eventual Consistency](./eventual-consistency)** | Replicas will eventually be consistent | Low latency | Social media, e-commerce |
 | **[Causal Consistency](./causal-consistency)** | Causal order of operations is preserved | Medium latency | Collaborative editing, chat |
+
+## Which service use it?
+
+
+
+-   **Strong Consistency:** Financial transaction systems, banking applications, and critical data management systems where immediate data accuracy is paramount.
+
+-   **Eventual Consistency:** Social media feeds, e-commerce product catalogs, DNS, and large-scale web services where high availability and performance are prioritized over immediate consistency.
+
+-   **Causal Consistency:** Collaborative editing applications, distributed social networks, and systems that need to preserve the causal order of events without requiring global strong consistency.

@@ -29,3 +29,10 @@ When an event producer sends an event, it is published to the event bus. The eve
 -   **Complexity:** Event-driven systems can be more complex than traditional request-response systems, as it can be difficult to reason about the flow of events through the system.
 -   **Debugging:** Debugging event-driven systems can be challenging, as it can be difficult to trace the path of an event through the system.
 -   **Eventual Consistency:** Event-driven systems are often eventually consistent, which means that there can be a delay between when an event is produced and when it is consumed. This can be a problem for applications that require strong consistency.
+
+## Which service use it?
+
+-   **Microservices Architectures:** Event-driven communication is a cornerstone of many microservices deployments, allowing services to communicate asynchronously and react to changes in other services.
+-   **Real-time Data Processing (e.g., IoT platforms, financial trading systems):** Systems that need to process and react to a continuous stream of data often use event-driven patterns.
+-   **User Activity Tracking and Analytics:** Websites and applications can generate events for user actions (clicks, views, purchases) that are then consumed by analytics systems.
+-   **Serverless Computing (e.g., AWS Lambda, Google Cloud Functions):** Serverless functions are often triggered by events from various sources like database changes, file uploads, or message queues.

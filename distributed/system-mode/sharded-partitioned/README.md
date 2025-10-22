@@ -31,3 +31,10 @@ A sharded architecture also requires a routing or query coordination layer. When
 -   **Rebalancing:** As data grows, shards may need to be rebalanced (split or moved) to maintain even distribution. This can be a complex and resource-intensive operation.
 -   **Loss of ACID Guarantees:** Transactions that span multiple shards are difficult to coordinate and may not provide the same ACID guarantees as single-shard transactions.
 -   **Hot Spots:** Poor choice of a shard key can lead to uneven data distribution, with some shards becoming performance bottlenecks ("hot spots").
+
+## Which service use it?
+
+-   **Large-Scale Relational Databases (e.g., sharded MySQL, PostgreSQL):** Many high-traffic web applications shard their relational databases to handle massive amounts of data and user requests.
+-   **NoSQL Databases (e.g., MongoDB, Apache Cassandra, Apache HBase):** These databases are inherently designed for horizontal scaling through sharding/partitioning, distributing data across clusters.
+-   **Distributed Search Engines (e.g., Elasticsearch, Apache Solr):** These systems shard their indexes across multiple nodes to handle large volumes of data and provide fast search capabilities.
+-   **Data Warehouses and Analytics Platforms:** Large data processing systems often partition data to enable parallel processing and efficient querying of petabytes of information.

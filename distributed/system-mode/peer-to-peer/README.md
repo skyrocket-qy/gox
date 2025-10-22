@@ -33,3 +33,10 @@ P2P networks can be:
 -   **Data Availability:** Data is only available if the peers storing it are online. If all peers with a piece of data go offline, that data becomes inaccessible.
 -   **Security:** P2P networks can be vulnerable to security threats such as malicious peers, data poisoning, and denial-of-service attacks.
 -   **Inconsistent Performance:** The performance of the network can be unpredictable and depends on the number of peers online and their network conditions.
+
+## Which service use it?
+
+-   **File Sharing Networks (e.g., BitTorrent):** Users directly share files with each other without a central server mediating the transfers.
+-   **Cryptocurrencies (e.g., Bitcoin, Ethereum):** The blockchain is maintained and validated by a decentralized network of peer nodes, where each node holds a copy of the ledger and participates in transaction verification.
+-   **Distributed Content Delivery Networks (CDNs):** Some CDNs use P2P principles to distribute content more efficiently, allowing users to download content from nearby peers.
+-   **Some Online Gaming Platforms:** Certain games use P2P connections for direct communication between players, especially for real-time multiplayer experiences.

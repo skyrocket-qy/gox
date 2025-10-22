@@ -27,3 +27,10 @@ This architecture is in contrast to distributed architectures like shared-nothin
 -   **Limited Scalability:** The system can only be scaled vertically. There is a physical limit to the amount of resources that can be added to a single machine, and the cost of high-end hardware increases exponentially.
 -   **Single Point of Failure:** Since all components are in a single system, the failure of any critical component (like the motherboard or storage system) can bring the entire system down.
 -   **Resource Contention:** As the number of processors and applications increases, there can be significant contention for shared resources like memory bandwidth and I/O channels, which can become a bottleneck.
+
+## Which service use it?
+
+-   **Traditional Single-Instance Relational Databases (e.g., Oracle, SQL Server, PostgreSQL, MySQL):** Before distributed versions became prevalent, these databases ran on a single powerful server, sharing its CPU, memory, and storage.
+-   **Operating Systems on Multi-Core Machines:** Modern operating systems manage shared resources (CPU cores, RAM) for multiple processes and threads running on a single physical machine.
+-   **High-Performance Computing (HPC) Systems with Shared Memory:** Many supercomputers and specialized HPC systems use shared-memory architectures for extremely fast inter-process communication within a single node.
+-   **In-Memory Data Grids (within a single node):** Some in-memory data grids or caches might operate in a shared-everything manner on a single large server to maximize performance by avoiding network overhead.

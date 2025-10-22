@@ -36,3 +36,23 @@ The goal of fault tolerance is to mask failures from the end-user, providing the
 | **[Snapshot](./snapshot)** | Fast | High | Medium | Stateful applications, databases |
 | **[Consensus-Based Recovery](./consensus-recovery)** | Slow | High | High | Distributed databases, state machine replication |
 | **[Gossip-Based Recovery](./gossip-recovery)** | Slow | Low | Low | Peer-to-peer networks, cluster membership |
+
+## Which service use it?
+
+
+
+-   **Redundancy (Replication):** Distributed databases (e.g., Cassandra, MongoDB), distributed file systems (e.g., HDFS), and cloud storage services (e.g., Amazon S3) extensively use replication to ensure data availability and durability.
+
+-   **Failure Detection:** Cluster management systems (e.g., Kubernetes, Apache Mesos), distributed coordination services (e.g., ZooKeeper, etcd), and load balancers use various mechanisms to detect unhealthy nodes or services.
+
+-   **Checkpointing and Recovery:** Long-running batch processing jobs (e.g., in Apache Spark, Flink), scientific simulations, and stateful stream processing applications use checkpointing to recover from failures without restarting from scratch.
+
+-   **Graceful Degradation:** Content delivery networks (CDNs), large-scale web services, and streaming platforms often implement graceful degradation to maintain some level of service even when parts of the system are under stress or experiencing failures.
+
+-   **Active-Passive Failover:** Traditional high-availability setups for databases, application servers, and network devices.
+
+-   **Active-Active Cluster:** Load-balanced web servers, stateless microservices, and distributed caching systems.
+
+-   **Consensus-Based Recovery:** Distributed databases (e.g., CockroachDB), distributed transaction systems, and state machine replication systems.
+
+-   **Gossip-Based Recovery:** Peer-to-peer networks, distributed hash tables (DHTs), and some cluster membership services.

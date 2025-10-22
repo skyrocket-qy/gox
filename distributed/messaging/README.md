@@ -36,3 +36,19 @@ There are many popular messaging systems in use today, including:
 |---|---|---|---|
 | **[Message Queue](./message-queue)** | One-to-one | High | Task distribution, work queues |
 | **[Publish-Subscribe](./publish-subscribe)** | One-to-many | High | Event notification, real-time data streaming |
+
+## Which service use it?
+
+
+
+-   **Microservices Communication:** Messaging is a primary mechanism for inter-service communication in microservices architectures, enabling loose coupling and asynchronous interactions.
+
+-   **Event-Driven Architectures:** The foundation of event-driven systems, where events are published and consumed to trigger actions and propagate state changes.
+
+-   **Real-time Data Processing:** Used in stream processing applications (e.g., IoT, financial analytics) to ingest, process, and react to continuous data streams.
+
+-   **Background Job Processing:** Offloading long-running or resource-intensive tasks to background workers, improving the responsiveness of user-facing applications.
+
+-   **Data Integration:** Connecting disparate systems and applications by exchanging messages, facilitating data flow and synchronization.
+
+-   **Notifications and Alerts:** Sending notifications (e.g., email, SMS, push notifications) to users or systems in response to events.

@@ -29,3 +29,11 @@ Common techniques for achieving strong consistency include:
 -   **Higher Latency:** Write operations must often be confirmed by multiple nodes before they are acknowledged, which increases latency. Read operations may also be slower if they need to be coordinated.
 -   **Lower Availability:** In the event of a network partition, a strongly consistent system may have to become unavailable to write (or even read) operations in order to avoid the risk of serving inconsistent data. This is the tradeoff described in the CAP theorem (choosing Consistency over Availability).
 -   **Reduced Scalability:** The coordination overhead required for strong consistency can limit the system's horizontal scalability.
+
+## Which service use it?
+
+-   **Traditional Relational Databases (e.g., PostgreSQL, MySQL with ACID transactions):** These databases typically provide strong consistency within a single instance or through synchronous replication setups, ensuring that all transactions are atomic, consistent, isolated, and durable.
+-   **Google Spanner:** A globally distributed, strongly consistent database that uses atomic clocks and GPS to achieve global external consistency.
+-   **CockroachDB:** A distributed SQL database that provides strong consistency and transactional guarantees.
+-   **etcd and Apache ZooKeeper:** These are distributed key-value stores primarily used for coordinating distributed systems, managing configuration, and implementing leader election, all of which require strong consistency.
+-   **Financial Transaction Systems:** Banking and trading systems often require strong consistency to ensure that all transactions are processed correctly and that account balances are always accurate.

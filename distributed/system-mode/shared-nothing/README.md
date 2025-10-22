@@ -28,3 +28,10 @@ For example, a distributed database might partition its data by a user ID. All d
 -   **Network Overhead:** Communication between nodes over the network is significantly slower than communication through shared memory. Performance can be limited by network bandwidth and latency.
 -   **Consistency Challenges:** Maintaining data consistency across multiple, independent nodes is a major challenge. Many shared-nothing systems opt for eventual consistency over strong consistency to improve availability and performance.
 -   **Rebalancing Costs:** Adding new nodes or handling node failures often requires rebalancing the data across the cluster, which can be a complex and I/O-intensive process.
+
+## Which service use it?
+
+-   **Most NoSQL Databases (e.g., Apache Cassandra, MongoDB, Apache HBase):** These databases are designed from the ground up to be horizontally scalable using a shared-nothing architecture, distributing data and processing across many independent nodes.
+-   **Massively Parallel Processing (MPP) Data Warehouses (e.g., Teradata, Greenplum, Amazon Redshift):** These systems distribute large datasets and query processing across many nodes, each with its own CPU, memory, and storage.
+-   **Distributed File Systems (e.g., Apache HDFS):** HDFS stores large files across multiple machines, with each DataNode managing its own local storage.
+-   **Web Search Engines (e.g., Google Search):** The indexing and serving infrastructure of large search engines are built on shared-nothing principles to handle the immense scale of the web.
