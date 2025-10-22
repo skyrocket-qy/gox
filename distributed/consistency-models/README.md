@@ -1,0 +1,3 @@
+# Consistency Models
+
+Consistency models in distributed systems define the rules and guarantees for how data updates are propagated and observed across multiple replicas or nodes. They determine the degree to which all clients see the same data at the same time, balancing between strong consistency (immediate visibility of updates) and eventual consistency (updates propagate over time). Examples include strong consistency, eventual consistency, causal consistency, and sequential consistency.

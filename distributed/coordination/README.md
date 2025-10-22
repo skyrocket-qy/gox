@@ -1,0 +1,3 @@
+# Coordination
+
+Coordination in distributed systems refers to the mechanisms and protocols used to manage interactions, dependencies, and shared resources among independent processes or nodes. It ensures that operations occur in a consistent and orderly manner, preventing conflicts and maintaining system integrity. Key aspects include leader election, distributed locking, and distributed transactions.

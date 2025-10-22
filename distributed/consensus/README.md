@@ -1,0 +1,3 @@
+# Consensus
+
+Consensus in distributed systems is the process of achieving agreement among multiple independent processes on a single data value or decision. This is a fundamental problem in distributed computing, crucial for maintaining data consistency, ensuring fault tolerance, and enabling reliable state replication across a network of potentially failing nodes. Common algorithms include Paxos and Raft.
