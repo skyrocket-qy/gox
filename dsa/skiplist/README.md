@@ -8,6 +8,64 @@ A SkipList consists of multiple layers of sorted linked lists. Each node has a r
 
 When searching, inserting, or deleting an element, the algorithm starts at the highest level and traverses forward until it finds a node whose value is greater than or equal to the target value. If the next node's value is greater than the target, or if there is no next node, the algorithm drops down one level and continues the traversal. This process continues until level 0 is reached.
 
+```mermaid
+graph LR
+    subgraph Level 2
+        H2[Head] --> A2(A)
+        A2 --> C2(C)
+        C2 --> E2(E)
+    end
+
+    subgraph Level 1
+        H1[Head] --> A1(A)
+        A1 --> B1(B)
+        B1 --> C1(C)
+        C1 --> D1(D)
+        D1 --> E1(E)
+    end
+
+    subgraph Level 0
+        H0[Head] --> A0(A)
+        A0 --> B0(B)
+        B0 --> C0(C)
+        C0 --> D0(D)
+        D0 --> E0(E)
+        E0 --> F0(F)
+    end
+
+    style H0 fill:#fff,stroke:#333,stroke-width:2px
+    style H1 fill:#fff,stroke:#333,stroke-width:2px
+    style H2 fill:#fff,stroke:#333,stroke-width:2px
+
+    linkStyle 0 stroke-width:0px;
+    linkStyle 1 stroke-width:0px;
+    linkStyle 2 stroke-width:0px;
+
+    classDef headNode fill:#f9f,stroke:#333,stroke-width:2px;
+    class H0,H1,H2 headNode;
+
+    classDef node fill:#ccf,stroke:#333,stroke-width:2px;
+    class A0,B0,C0,D0,E0,F0,A1,B1,C1,D1,E1,A2,C2,E2 node;
+
+    H2 -.-> H1
+    H1 -.-> H0
+
+    A2 -.-> A1
+    A1 -.-> A0
+
+    B1 -.-> B0
+
+    C2 -.-> C1
+    C1 -.-> C0
+
+    D1 -.-> D0
+
+    E2 -.-> E1
+    E1 -.-> E0
+
+    F0 -.-> F0
+```
+
 ## Implementation Details
 
 This implementation provides the following functionalities:
