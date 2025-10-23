@@ -3,7 +3,6 @@ package rank
 import (
 	"fmt"
 	"sort"
-	"sync"
 )
 
 // RankEntry holds the score for a single player.
@@ -25,9 +24,6 @@ type TopNCache struct {
 
 	// n is the maximum number of entries to keep in the top list.
 	n int
-
-	// lock makes the cache safe for concurrent use.
-	lock sync.RWMutex
 }
 
 // NewTopNCache creates a new, empty cache.
@@ -44,9 +40,6 @@ func NewTopNCache(n int) *TopNCache {
 // SetScore updates a player's score.
 // This is the core logic.
 func (c *TopNCache) SetScore(playerID string, newScore int) {
-	c.lock.Lock()
-	defer c.lock.Unlock()
-
 	// Update the master score list
 	c.allScores[playerID] = newScore
 
@@ -101,9 +94,6 @@ func (c *TopNCache) SetScore(playerID string, newScore int) {
 
 // GetTopN returns a copy of the current Top N list.
 func (c *TopNCache) GetTopN() []RankEntry {
-	c.lock.RLock()
-	defer c.lock.RUnlock()
-
 	// Return a *copy* to prevent race conditions
 	// if the caller tries to modify the returned slice.
 	result := make([]RankEntry, len(c.topN))
@@ -113,8 +103,6 @@ func (c *TopNCache) GetTopN() []RankEntry {
 
 // GetPlayerScore returns a single player's score from the master list.
 func (c *TopNCache) GetPlayerScore(playerID string) (int, bool) {
-	c.lock.RLock()
-	defer c.lock.RUnlock()
 	score, ok := c.allScores[playerID]
 	return score, ok
 }
