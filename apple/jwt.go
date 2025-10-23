@@ -12,8 +12,8 @@ import (
 	"strings"
 
 	"github.com/golang-jwt/jwt"
-	"github.com/skyrocket-qy/errors"
 	"github.com/skyrocket-qy/erx"
+	"github.com/skyrocket-qy/gox/errcode"
 )
 
 const (
@@ -28,12 +28,12 @@ func GetRSAPublicKey(kid string) (*rsa.PublicKey, error) {
 		nil,
 	)
 	if err != nil {
-		return nil, erx.Wf(errors.ErrInternal, "cant create http request err : %s", err.Error())
+		return nil, erx.Newf(errcode.ErrUnknown, "cant create http request err : %s", err.Error())
 	}
 
 	response, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, erx.Wf(errors.ErrInternal, "cant get applePublicKeyUrl err : %s", err.Error())
+		return nil, erx.Newf(errcode.ErrUnknown, "cant get applePublicKeyUrl err : %s", err.Error())
 	}
 
 	defer func() {
@@ -42,7 +42,7 @@ func GetRSAPublicKey(kid string) (*rsa.PublicKey, error) {
 
 	var keys AuthKeys
 	if err := json.NewDecoder(response.Body).Decode(&keys); err != nil {
-		return nil, errors.Wrapf(errors.ErrInternal, "json.NewDecoder fail err : %s", err.Error())
+		return nil, erx.Newf(errcode.ErrUnknown, "json.NewDecoder fail err : %s", err.Error())
 	}
 
 	pubKey := new(rsa.PublicKey)
@@ -78,24 +78,24 @@ func ExtractPublicKey(x5c []string) (*ecdsa.PublicKey, error) {
 	case *ecdsa.PublicKey:
 		return pk, nil
 	default:
-		return nil, errors.NewWithMessage(errors.ErrInternal, "appstore public key must be of type ecdsa.PublicKey")
+		return nil, erx.Newf(errcode.ErrUnknown, "appstore public key must be of type ecdsa.PublicKey")
 	}
 }
 
 func ParseAppleJWT(jwtToken string) (jwt.MapClaims, error) {
 	jwtTokenPart := strings.Split(jwtToken, ".")
 	if len(jwtTokenPart) != 3 {
-		return nil, errors.Wrap(errors.ErrInternal, "wrong json web token")
+		return nil, erx.Newf(errcode.ErrUnknown, "wrong json web token")
 	}
 
 	jwtHeaderBs, err := jwt.DecodeSegment(jwtTokenPart[0])
 	if err != nil {
-		return nil, errors.Wrapf(errors.ErrInternal, "DecodeSegment fail err: %s", err.Error())
+		return nil, erx.Newf(errcode.ErrUnknown, "DecodeSegment fail err: %s", err.Error())
 	}
 
 	var jwtHeader JwtHeader
 	if err := json.Unmarshal(jwtHeaderBs, &jwtHeader); err != nil {
-		return nil, errors.Wrapf(errors.ErrInternal, "Unmarshal fail err: %s", err.Error())
+		return nil, erx.Newf(errcode.ErrUnknown, "Unmarshal fail err: %s", err.Error())
 	}
 
 	claims := jwt.MapClaims{}
@@ -112,7 +112,7 @@ func ParseAppleJWT(jwtToken string) (jwt.MapClaims, error) {
 	}
 
 	if err != nil {
-		return nil, errors.Wrapf(errors.ErrInternal, "ParseWithClaims fail err: %s", err.Error())
+		return nil, erx.Newf(errcode.ErrUnknown, "ParseWithClaims fail err: %s", err.Error())
 	}
 
 	return claims, nil
