@@ -1,5 +1,8 @@
 # Heap
 
+push faster 4%
+pop faster 39%
+
 ```txt
 cpu: Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz
 BenchmarkCustomHeap_Init-12          918           1214760 ns/op          802854 B/op       2 allocs/op
