@@ -1,6 +1,7 @@
 package rank
 
-// TopNWithUpdate is extremely optimized for small N(<=50) with only incremented scores
+var _ TopNWithUpdate = (*TopNCache)(nil)
+
 type TopNWithUpdate interface {
 	SetScore(id string, newScore int)
 	GetTopN() []RankEntry
@@ -12,6 +13,8 @@ type RankEntry struct {
 	Score int
 }
 
+// TopNWithUpdate is extremely optimized for small N(<=50) with only incremented scores
+// Time: O(N), Space: O(N), where N is the capacity of the rank list
 type TopNCache struct {
 	topN     []RankEntry
 	lowBound int
