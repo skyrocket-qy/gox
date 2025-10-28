@@ -1,5 +1,7 @@
 package rank
 
+import "sync"
+
 var _ TopNWithUpdate = (*TopNCache)(nil)
 
 type TopNWithUpdate interface {
@@ -18,16 +20,21 @@ type RankEntry struct {
 type TopNCache struct {
 	topN     []RankEntry
 	lowBound int
+	mu       *sync.RWMutex
 }
 
 func NewTopNCache(cap int) *TopNCache {
 	return &TopNCache{
 		topN:     make([]RankEntry, 0, cap),
 		lowBound: 0,
+		mu:       &sync.RWMutex{},
 	}
 }
 
 func (c *TopNCache) SetScore(Id string, score int) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	if len(c.topN) == cap(c.topN) && score <= c.lowBound {
 		return
 	}
@@ -75,12 +82,19 @@ func (c *TopNCache) addEntry(id string, score int) {
 }
 
 func (c *TopNCache) GetTopN() []RankEntry {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
 	result := make([]RankEntry, len(c.topN))
 	copy(result, c.topN)
+
 	return result
 }
 
 func (c *TopNCache) Clear() {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	c.topN = c.topN[:0]
 	c.lowBound = 0
 }
