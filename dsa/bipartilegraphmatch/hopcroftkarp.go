@@ -1,5 +1,7 @@
 package bipartilegraphmatch
 
+// Reference: https://www.youtube.com/watch?v=pJHdqbxvZOI https://brilliant.org/wiki/hopcroft-karp/
+
 // HopcroftKarp: Finds Quickest Paths (BFS) + Adds Matches (DFS).
 // Complexity: O(E * sqrt(V))
 const Infinity = 1000000000
