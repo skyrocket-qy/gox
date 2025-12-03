@@ -27,6 +27,7 @@ func HopcroftKarpWithLogging[T comparable](adj map[T][]T, uCount, vCount int) ma
 				dist[u] = 999999999 // Infinite
 			}
 		}
+		fmt.Println("dist:", dist)
 
 		distNIL := 999999999
 		fmt.Println("  BFS Queue processing...")

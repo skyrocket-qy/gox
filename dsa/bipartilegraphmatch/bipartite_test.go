@@ -85,11 +85,11 @@ func TestMatchingString(t *testing.T) {
 func TestHopcroftKarpVisualizer(t *testing.T) {
 	// Example from explanation
 	// Workers: A, B
-	// Jobs: 1, 2
-	// Edges: A-1, A-2, B-1
+	// Jobs: a, b
+	// Edges: A-a, A-b, B-a
 	adj := map[string][]string{
-		"A": {"1", "2"},
-		"B": {"1"},
+		"A": {"a", "b"},
+		"B": {"a"},
 	}
 	uCount := 2
 	vCount := 2
