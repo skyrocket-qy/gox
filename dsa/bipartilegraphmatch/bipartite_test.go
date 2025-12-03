@@ -1,6 +1,7 @@
 package bipartilegraphmatch
 
 import (
+	"fmt"
 	"math/rand"
 	"testing"
 )
@@ -79,6 +80,23 @@ func TestMatchingString(t *testing.T) {
 	checkResult("HopcroftKarp", HopcroftKarp(adj, uCount, vCount))
 	checkResult("KuhnsAlgorithm", KuhnsAlgorithm(adj, uCount, vCount))
 	checkResult("DinicMatching", DinicMatching(adj, uCount, vCount))
+}
+
+func TestHopcroftKarpVisualizer(t *testing.T) {
+	// Example from explanation
+	// Workers: A, B
+	// Jobs: 1, 2
+	// Edges: A-1, A-2, B-1
+	adj := map[string][]string{
+		"A": {"1", "2"},
+		"B": {"1"},
+	}
+	uCount := 2
+	vCount := 2
+
+	fmt.Println("\n=== Running Hopcroft-Karp Visualizer ===")
+	res := HopcroftKarpWithLogging(adj, uCount, vCount)
+	fmt.Printf("Result: %v\n", res)
 }
 
 // Benchmarks
