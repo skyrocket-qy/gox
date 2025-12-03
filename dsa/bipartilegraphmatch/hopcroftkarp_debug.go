@@ -5,21 +5,21 @@ import (
 )
 
 // HopcroftKarpWithLogging: Same as HopcroftKarp but prints execution steps.
-func HopcroftKarpWithLogging[T comparable](adj map[T][]T, uCount, vCount int) map[T]T {
-	pairU := make(map[T]T)  // Worker -> Job
-	pairV := make(map[T]T)  // Job -> Worker
-	dist := make(map[T]int) // Distances for BFS layering
+func HopcroftKarpWithLogging[W, J comparable](adj map[W][]J) map[W]J {
+	pairU := make(map[W]J)  // Worker -> Job
+	pairV := make(map[J]W)  // Job -> Worker
+	dist := make(map[W]int) // Distances for Quickest Paths
 
 	fmt.Println("Starting Hopcroft-Karp Algorithm...")
 
 	round := 1
 
-	// BFS: Builds level graph, returns true if an augmenting path exists
+	// BFS: Finds Quickest Paths, returns true if an improvement path exists
 	bfs := func() bool {
 		fmt.Printf("\n--- Round %d: Find Quickest Paths (BFS) ---\n", round)
-		q := []T{}
+		q := []W{}
 		for u := range adj {
-			if _, ok := pairU[u]; !ok { // If worker is free, add to queue
+			if _, ok := pairU[u]; !ok { // If worker is Available, add to queue
 				dist[u] = 0
 				q = append(q, u)
 				fmt.Printf("  [BFS Init] Worker %v is Available -> Add to Q (Dist: 0)\n", u)
@@ -37,22 +37,22 @@ func HopcroftKarpWithLogging[T comparable](adj map[T][]T, uCount, vCount int) ma
 			q = q[1:]
 			fmt.Printf("  [BFS Dequeue] Processing Worker %v (Dist: %d)\n", u, dist[u])
 
-			if dist[u] < distNIL {
+			if dist[u] < distNIL { // worker u is available
 				for _, v := range adj[u] {
 					fmt.Printf("    -> Checking Neighbor Job %v... ", v)
-					if worker, ok := pairV[v]; !ok {
+					if worker, ok := pairV[v]; !ok { // job v is available
 						// v is free
 						fmt.Printf("Available! ")
-						if distNIL == Infinity {
-							distNIL = dist[u] + 1
+						if distNIL == Infinity { // first available job
+							distNIL = dist[u] + 1 // set distance to 1
 							fmt.Printf("Found Quickest Path Length: %d\n", distNIL)
 						} else {
 							fmt.Printf("(Path Length %d already found)\n", distNIL)
 						}
-					} else {
+					} else { // job v is taken
 						// v is matched to worker
 						fmt.Printf("Taken by Worker %v. ", worker)
-						if d, exists := dist[worker]; !exists || d == Infinity {
+						if d, exists := dist[worker]; !exists || d == Infinity { // worker is available
 							dist[worker] = dist[u] + 1
 							q = append(q, worker)
 							fmt.Printf("Update Dist[%v] = %d -> Add to Q\n", worker, dist[worker])
@@ -73,9 +73,9 @@ func HopcroftKarpWithLogging[T comparable](adj map[T][]T, uCount, vCount int) ma
 		return false
 	}
 
-	// DFS: Finds augmenting paths using the levels from BFS
-	var dfs func(u T, path []T) bool
-	dfs = func(u T, path []T) bool {
+	// DFS: Finds Improvement Paths using the distances from BFS
+	var dfs func(u W, path []W) bool
+	dfs = func(u W, path []W) bool {
 		indent := ""
 		for i := 0; i < len(path); i++ {
 			indent += "  "
@@ -97,7 +97,16 @@ func HopcroftKarpWithLogging[T comparable](adj map[T][]T, uCount, vCount int) ma
 				fmt.Printf("    %s-> Job %v is Taken by %v. Checking Dist...\n", indent, v, worker)
 				if dist[worker] == dist[u]+1 {
 					fmt.Printf("    %s   Dist[%v](%d) == Dist[%v](%d) + 1. Recursing to %v...\n", indent, worker, dist[worker], u, dist[u], worker)
-					if dfs(worker, append(path, v)) {
+					if dfs(worker, path) { // Pass current path, don't append J node
+						// The path in explanation is U -> V -> U -> V.
+						// But our DFS only tracks U nodes in recursion.
+						// Let's just track U nodes in path for logging simplicity or convert V to string if needed.
+						// Actually, the previous code appended v (type T) to path (type []T).
+						// Now W and J are different. We can't append J to []W.
+						// Let's just append the next worker to the path in the recursive call.
+						// The path variable is just for logging.
+						// We can't easily mix types in a slice in Go without interface{}.
+						// Let's just log the worker path.
 						pairV[v] = u
 						pairU[u] = v
 						fmt.Printf("    %s   (Match: %v <==> %v)\n", indent, u, v)
@@ -119,7 +128,7 @@ func HopcroftKarpWithLogging[T comparable](adj map[T][]T, uCount, vCount int) ma
 		for u := range adj {
 			if _, ok := pairU[u]; !ok {
 				fmt.Printf("  [DFS Start] Trying to match Available Worker %v...\n", u)
-				if dfs(u, []T{}) {
+				if dfs(u, []W{}) {
 					matching++
 					fmt.Printf("  [DFS Success] Matched Worker %v. Total Matching: %d\n", u, matching)
 				} else {

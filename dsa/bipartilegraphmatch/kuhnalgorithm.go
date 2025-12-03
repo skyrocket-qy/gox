@@ -1,36 +1,40 @@
 package bipartilegraphmatch
 
-// KuhnsAlgorithm: DFS based augmenting paths.
-// Complexity: O(V * E)
-func KuhnsAlgorithm[T comparable](adj map[T][]T, uCount, vCount int) map[T]T {
-	matchR := make(map[T]T) // Stores which worker is assigned to job 'v'
+// KuhnsAlgorithm: DFS based matching.
+// Complexity: O(E * V)
+func KuhnsAlgorithm[W, J comparable](adj map[W][]J) map[W]J {
+	matchR := make(map[J]W) // Job -> Worker
+	// visited is declared and reset inside the loop for each DFS run.
 
-	var visited map[T]bool
+	// Let's rewrite the body to be correct and generic
 
-	// DFS to find augmenting path
-	var dfs func(u T) bool
-	dfs = func(u T) bool {
+	// matchR stores the worker assigned to each job
+	// result stores the job assigned to each worker (for return)
+
+	var tryKuhn func(u W, visited map[W]bool) bool
+	tryKuhn = func(u W, visited map[W]bool) bool {
+		if visited[u] {
+			return false
+		}
+		visited[u] = true
+
 		for _, v := range adj[u] {
-			if !visited[v] {
-				visited[v] = true
-				// If job 'v' is free OR the worker currently holding 'v' can find another job
-				worker, occupied := matchR[v]
-				if !occupied || dfs(worker) {
-					matchR[v] = u
-					return true
-				}
+			worker, occupied := matchR[v]
+			if !occupied || tryKuhn(worker, visited) {
+				matchR[v] = u
+				return true
 			}
 		}
 		return false
 	}
 
 	for u := range adj {
-		visited = make(map[T]bool) // Reset visited for every worker
-		dfs(u)
+		visited := make(map[W]bool) // Reset visited for each worker
+		tryKuhn(u, visited)
 	}
 
-	// Convert matchR (Job->Worker) to Worker->Job
-	result := make(map[T]T)
+	// Convert result
+	result := make(map[W]J)
 	for v, u := range matchR {
 		result[u] = v
 	}

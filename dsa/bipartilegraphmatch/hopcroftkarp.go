@@ -4,14 +4,14 @@ package bipartilegraphmatch
 // Complexity: O(E * sqrt(V))
 const Infinity = 1000000000
 
-func HopcroftKarp[T comparable](adj map[T][]T, uCount, vCount int) map[T]T {
-	pairU := make(map[T]T)  // Worker -> Job
-	pairV := make(map[T]T)  // Job -> Worker
-	dist := make(map[T]int) // Distances for Quickest Paths
+func HopcroftKarp[W, J comparable](adj map[W][]J) map[W]J {
+	pairU := make(map[W]J)  // Worker -> Job
+	pairV := make(map[J]W)  // Job -> Worker
+	dist := make(map[W]int) // Distances for Quickest Paths
 
 	// BFS: Finds Quickest Paths, returns true if an improvement path exists
 	bfs := func() bool {
-		q := []T{}
+		q := []W{}
 		for u := range adj {
 			if _, ok := pairU[u]; !ok { // If worker is Available, add to queue
 				dist[u] = 0
@@ -31,7 +31,7 @@ func HopcroftKarp[T comparable](adj map[T][]T, uCount, vCount int) map[T]T {
 				for _, v := range adj[u] {
 					if worker, ok := pairV[v]; !ok { // job v is available
 						if distNIL == Infinity { // first available job
-							distNIL = 1
+							distNIL = dist[u] + 1 // set distance to 1
 						}
 					} else { // job v is taken
 						if d, exists := dist[worker]; !exists || d == Infinity { // worker is available
@@ -46,26 +46,26 @@ func HopcroftKarp[T comparable](adj map[T][]T, uCount, vCount int) map[T]T {
 	}
 
 	// DFS: Finds Improvement Paths using the distances from BFS
-	var dfs func(u T) bool
-	dfs = func(u T) bool {
+	var dfs func(u W) bool
+	dfs = func(u W) bool {
+		// u is always a valid worker here
 		for _, v := range adj[u] {
 			worker, occupied := pairV[v]
 			if !occupied {
-				pairV[v] = u
-				pairU[u] = v
-				return true // found an improvement path
+				pairV[v] = u // job v is now taken by worker u
+				pairU[u] = v // worker u is now matched to job v
+				return true  // found an improvement path
 			} else {
 				if dist[worker] == dist[u]+1 { // can swap
-					if dfs(worker) {
+					if dfs(worker) { // found an improvement path
 						pairV[v] = u
 						pairU[u] = v
-						return true // found an improvement path
+						return true
 					}
 				}
 			}
 		}
-
-		dist[u] = Infinity // no path found, mark as visited/no path for this round
+		dist[u] = Infinity // Mark as visited/no path for this round
 		return false
 	}
 

@@ -1,50 +1,48 @@
 package bipartilegraphmatch
 
-// BacktrackingMatching: Pure recursive trial and error.
-// Complexity: Exponential O(2^E) in worst case without memoization.
-func BacktrackingMatching[T comparable](adj map[T][]T, uCount, vCount int) map[T]T {
-	matchR := make(map[T]T)    // Job -> Worker
-	bestMatch := make(map[T]T) // Worker -> Job (Result)
-	maxMatches := 0
-
-	// Collect workers (keys of adj)
-	var workers []T
-	for u := range adj {
-		workers = append(workers, u)
+// BacktrackingMatching: Simple recursive backtracking.
+// Complexity: Exponential O(2^E)
+func BacktrackingMatching[W, J comparable](adj map[W][]J) map[W]J {
+	// Convert map keys to a slice for deterministic iteration
+	var workers []W
+	for w := range adj {
+		workers = append(workers, w)
 	}
 
-	// recursive function to process worker at index 'idx'
-	var solve func(idx int, currentMatches int)
-	solve = func(idx int, currentMatches int) {
-		if idx == len(workers) {
-			if currentMatches > maxMatches {
-				maxMatches = currentMatches
-				// Save current state to bestMatch
-				// matchR is Job->Worker. We want Worker->Job.
-				clear(bestMatch)
-				for v, u := range matchR {
-					bestMatch[u] = v
+	bestMatching := make(map[W]J)
+	currentMatching := make(map[W]J)
+	usedJobs := make(map[J]bool)
+
+	var backtrack func(index int)
+	backtrack = func(index int) {
+		if index == len(workers) {
+			if len(currentMatching) > len(bestMatching) {
+				// Copy current matching to best matching
+				bestMatching = make(map[W]J)
+				for k, v := range currentMatching {
+					bestMatching[k] = v
 				}
 			}
 			return
 		}
 
-		u := workers[idx]
+		w := workers[index]
 
 		// Option 1: Don't match this worker
-		solve(idx+1, currentMatches)
+		backtrack(index + 1)
 
-		// Option 2: Try to match with all neighbors
-		for _, v := range adj[u] {
-			// Check if job 'v' is free
-			if _, occupied := matchR[v]; !occupied {
-				matchR[v] = u // Assign
-				solve(idx+1, currentMatches+1)
-				delete(matchR, v) // Backtrack
+		// Option 2: Try to match with each available neighbor
+		for _, job := range adj[w] {
+			if !usedJobs[job] {
+				usedJobs[job] = true
+				currentMatching[w] = job
+				backtrack(index + 1)
+				delete(currentMatching, w)
+				usedJobs[job] = false
 			}
 		}
 	}
 
-	solve(0, 0)
-	return bestMatch
+	backtrack(0)
+	return bestMatching
 }

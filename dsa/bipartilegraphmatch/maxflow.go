@@ -5,104 +5,72 @@ type Edge struct {
 	cap, flow int
 }
 
-// DinicMatching: Solves using Flow Network construction.
-// Complexity: O(V^2 E) generally, but O(E * sqrt(V)) for unit networks (like this).
-func DinicMatching[T comparable](adj map[T][]T, uCount, vCount int) map[T]T {
-	// Map T to int IDs
-	// We must distinguish between U nodes and V nodes.
-	// Source = 0
-	// U nodes = 1..N
-	// V nodes = N+1..M
-	// Sink = M+1
+// DinicMatching: Max Flow based matching.
+// Complexity: O(E * sqrt(V))
+func DinicMatching[W, J comparable](adj map[W][]J) map[W]J {
+	// Map W and J to integer IDs for the flow network
+	// 0: Source, 1: Sink
+	// Workers: 2 ... 2+len(W)-1
+	// Jobs: 2+len(W) ... 2+len(W)+len(J)-1
 
-	uIDMap := make(map[T]int)
-	vIDMap := make(map[T]int)
-	revVMap := make(map[int]T) // ID -> T (for V nodes only)
+	uIDMap := make(map[W]int)
+	vIDMap := make(map[J]int)
+	revUMap := make(map[int]W)
+	revVMap := make(map[int]J)
 
-	nextID := 1
+	nextID := 2 // Start after Source(0) and Sink(1)
 
-	getUID := func(node T) int {
-		if id, ok := uIDMap[node]; ok {
-			return id
+	// Collect all unique workers and jobs and assign IDs
+	// First assign IDs to all workers
+	for u := range adj {
+		if _, exists := uIDMap[u]; !exists {
+			uIDMap[u] = nextID
+			revUMap[nextID] = u
+			nextID++
 		}
-		id := nextID
-		nextID++
-		uIDMap[node] = id
-		return id
 	}
-
-	getVID := func(node T) int {
-		if id, ok := vIDMap[node]; ok {
-			return id
+	// Then assign IDs to all jobs
+	for _, neighbors := range adj {
+		for _, v := range neighbors {
+			if _, exists := vIDMap[v]; !exists {
+				vIDMap[v] = nextID
+				revVMap[nextID] = v
+				nextID++
+			}
 		}
-		id := nextID
-		nextID++
-		vIDMap[node] = id
-		revVMap[id] = node
-		return id
 	}
 
 	source := 0
-	sink := -1 // Will set later
+	sink := 1
+	n := nextID // Total number of nodes in the flow network
 
-	// Collect edges and nodes
-	type edgeReq struct {
-		u, v T
+	// Build Flow Network
+	graph := make([][]Edge, n)
+	addEdge := func(from, to, cap int) {
+		graph[from] = append(graph[from], Edge{to: to, rev: len(graph[to]), cap: cap, flow: 0})
+		graph[to] = append(graph[to], Edge{to: from, rev: len(graph[from]) - 1, cap: 0, flow: 0})
 	}
-	var edges []edgeReq
 
-	uNodes := make(map[T]bool)
-	vNodes := make(map[T]bool)
+	// Edges from Source to Workers
+	for _, id := range uIDMap {
+		addEdge(source, id, 1)
+	}
 
+	// Edges from Jobs to Sink
+	for _, id := range vIDMap {
+		addEdge(id, sink, 1)
+	}
+
+	// Edges from Workers to Jobs
 	for u, neighbors := range adj {
-		uNodes[u] = true
+		uID := uIDMap[u]
 		for _, v := range neighbors {
-			vNodes[v] = true
-			edges = append(edges, edgeReq{u, v})
+			vID := vIDMap[v]
+			addEdge(uID, vID, 1)
 		}
 	}
 
-	// Assign IDs
-	// Source = 0
-	// U nodes
-	for u := range uNodes {
-		getUID(u)
-	}
-	// V nodes
-	for v := range vNodes {
-		getVID(v)
-	}
-
-	sink = nextID
-	n := sink + 1
-
-	graph := make([][]Edge, n)
-
-	addEdge := func(from, to, cap int) {
-		graph[from] = append(graph[from], Edge{to, len(graph[to]), cap, 0})
-		graph[to] = append(graph[to], Edge{from, len(graph[from]) - 1, 0, 0})
-	}
-
-	// 1. Connect Source -> Workers
-	for u := range uNodes {
-		uid := getUID(u)
-		addEdge(source, uid, 1)
-	}
-
-	// 2. Connect Workers -> Jobs
-	for _, e := range edges {
-		uid := getUID(e.u)
-		vid := getVID(e.v)
-		addEdge(uid, vid, 1)
-	}
-
-	// 3. Connect Jobs -> Sink
-	for v := range vNodes {
-		vid := getVID(v)
-		addEdge(vid, sink, 1)
-	}
-
-	// Dinic Implementation (same as before, just using graph)
+	// Dinic's Algorithm
 	level := make([]int, n)
 	ptr := make([]int, n)
 
@@ -131,17 +99,14 @@ func DinicMatching[T comparable](adj map[T][]T, uCount, vCount int) map[T]T {
 			return pushed
 		}
 		for ; ptr[u] < len(graph[u]); ptr[u]++ {
-			idx := ptr[u]
-			e := &graph[u][idx]
+			e := &graph[u][ptr[u]]
 			if level[u]+1 != level[e.to] || e.cap-e.flow == 0 {
 				continue
 			}
-
 			tr := dfs(e.to, min(pushed, e.cap-e.flow))
 			if tr == 0 {
 				continue
 			}
-
 			e.flow += tr
 			graph[e.to][e.rev].flow -= tr
 			return tr
@@ -149,6 +114,7 @@ func DinicMatching[T comparable](adj map[T][]T, uCount, vCount int) map[T]T {
 		return 0
 	}
 
+	maxFlow := 0
 	for bfs() {
 		for i := range ptr {
 			ptr[i] = 0
@@ -158,21 +124,18 @@ func DinicMatching[T comparable](adj map[T][]T, uCount, vCount int) map[T]T {
 			if pushed == 0 {
 				break
 			}
+			maxFlow += pushed
 		}
 	}
 
 	// Extract matching
-	result := make(map[T]T)
-	// Iterate over U nodes and find edges with flow=1 to V nodes
-	for u := range uNodes {
-		uid := getUID(u)
-		for _, e := range graph[uid] {
-			// Check if edge is to a V node and has flow 1
-			// V nodes are not source or sink.
-			// e.to must be a V node ID.
-			// And flow must be 1.
-			if e.flow == 1 && e.to != source && e.to != sink {
-				// Verify e.to is a V node (it should be if graph construction is correct)
+	result := make(map[W]J)
+	for u, uID := range uIDMap {
+		for _, e := range graph[uID] {
+			// Check if this edge goes from a worker node to a job node
+			// and has a flow of 1 (indicating a match).
+			// e.to must be a job node ID.
+			if e.flow == 1 {
 				if v, ok := revVMap[e.to]; ok {
 					result[u] = v
 					break // One match per worker

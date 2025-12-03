@@ -15,8 +15,6 @@ func TestMatchingInt(t *testing.T) {
 		2: {4},
 		3: {6},
 	}
-	uCount := 3
-	vCount := 3
 
 	expectedSize := 3 // 1-5, 2-4, 3-6
 
@@ -39,10 +37,10 @@ func TestMatchingInt(t *testing.T) {
 		}
 	}
 
-	checkResult("BacktrackingMatching", BacktrackingMatching(adj, uCount, vCount))
-	checkResult("HopcroftKarp", HopcroftKarp(adj, uCount, vCount))
-	checkResult("KuhnsAlgorithm", KuhnsAlgorithm(adj, uCount, vCount))
-	checkResult("DinicMatching", DinicMatching(adj, uCount, vCount))
+	checkResult("BacktrackingMatching", BacktrackingMatching(adj))
+	checkResult("HopcroftKarp", HopcroftKarp(adj))
+	checkResult("KuhnsAlgorithm", KuhnsAlgorithm(adj))
+	checkResult("DinicMatching", DinicMatching(adj))
 }
 
 func TestMatchingString(t *testing.T) {
@@ -53,8 +51,6 @@ func TestMatchingString(t *testing.T) {
 		"A": {"X", "Y"},
 		"B": {"X"},
 	}
-	uCount := 2
-	vCount := 2
 
 	expectedSize := 2 // A-Y, B-X
 
@@ -76,10 +72,10 @@ func TestMatchingString(t *testing.T) {
 		}
 	}
 
-	checkResult("BacktrackingMatching", BacktrackingMatching(adj, uCount, vCount))
-	checkResult("HopcroftKarp", HopcroftKarp(adj, uCount, vCount))
-	checkResult("KuhnsAlgorithm", KuhnsAlgorithm(adj, uCount, vCount))
-	checkResult("DinicMatching", DinicMatching(adj, uCount, vCount))
+	checkResult("BacktrackingMatching", BacktrackingMatching(adj))
+	checkResult("HopcroftKarp", HopcroftKarp(adj))
+	checkResult("KuhnsAlgorithm", KuhnsAlgorithm(adj))
+	checkResult("DinicMatching", DinicMatching(adj))
 }
 
 func TestHopcroftKarpVisualizer(t *testing.T) {
@@ -91,11 +87,9 @@ func TestHopcroftKarpVisualizer(t *testing.T) {
 		"A": {"a", "b"},
 		"B": {"a"},
 	}
-	uCount := 2
-	vCount := 2
 
 	fmt.Println("\n=== Running Hopcroft-Karp Visualizer ===")
-	res := HopcroftKarpWithLogging(adj, uCount, vCount)
+	res := HopcroftKarpWithLogging(adj)
 	fmt.Printf("Result: %v\n", res)
 }
 
@@ -108,8 +102,6 @@ func TestOverlappingIDs(t *testing.T) {
 		1: {2},
 		2: {1},
 	}
-	uCount := 2
-	vCount := 2
 
 	expectedSize := 2
 
@@ -126,10 +118,10 @@ func TestOverlappingIDs(t *testing.T) {
 		}
 	}
 
-	checkResult("BacktrackingMatching", BacktrackingMatching(adj, uCount, vCount))
-	checkResult("HopcroftKarp", HopcroftKarp(adj, uCount, vCount))
-	checkResult("KuhnsAlgorithm", KuhnsAlgorithm(adj, uCount, vCount))
-	checkResult("DinicMatching", DinicMatching(adj, uCount, vCount))
+	checkResult("BacktrackingMatching", BacktrackingMatching(adj))
+	checkResult("HopcroftKarp", HopcroftKarp(adj))
+	checkResult("KuhnsAlgorithm", KuhnsAlgorithm(adj))
+	checkResult("DinicMatching", DinicMatching(adj))
 }
 
 func TestComplexCases(t *testing.T) {
@@ -153,10 +145,10 @@ func TestComplexCases(t *testing.T) {
 					}
 				}
 			}
-			check("Backtracking", BacktrackingMatching(adj, uCount, vCount))
-			check("HopcroftKarp", HopcroftKarp(adj, uCount, vCount))
-			check("Kuhn", KuhnsAlgorithm(adj, uCount, vCount))
-			check("Dinic", DinicMatching(adj, uCount, vCount))
+			check("Backtracking", BacktrackingMatching(adj))
+			check("HopcroftKarp", HopcroftKarp(adj))
+			check("Kuhn", KuhnsAlgorithm(adj))
+			check("Dinic", DinicMatching(adj))
 		})
 	}
 
@@ -216,26 +208,26 @@ func runBenchmark(b *testing.B, u, v int, density float64, includeBacktracking b
 	if includeBacktracking {
 		b.Run("Backtracking", func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				BacktrackingMatching(adj, u, v)
+				BacktrackingMatching(adj)
 			}
 		})
 	}
 
 	b.Run("Kuhn", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
-			KuhnsAlgorithm(adj, u, v)
+			KuhnsAlgorithm(adj)
 		}
 	})
 
 	b.Run("HopcroftKarp", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
-			HopcroftKarp(adj, u, v)
+			HopcroftKarp(adj)
 		}
 	})
 
 	b.Run("Dinic", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
-			DinicMatching(adj, u, v)
+			DinicMatching(adj)
 		}
 	})
 }
