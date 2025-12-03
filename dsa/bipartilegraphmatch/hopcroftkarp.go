@@ -31,7 +31,6 @@ func HopcroftKarp[W, J comparable](adj map[W][]J) map[W]J {
 				for _, v := range adj[u] {
 					if worker, ok := pairV[v]; !ok { // job v is available
 						if distNIL == Infinity { // first available job
-							distNIL = dist[u] + 1 // set distance to 1
 							return true
 						}
 					} else { // job v is taken
@@ -43,7 +42,7 @@ func HopcroftKarp[W, J comparable](adj map[W][]J) map[W]J {
 				}
 			}
 		}
-		return distNIL != Infinity // found an improvement path
+		return false
 	}
 
 	// DFS: Finds Improvement Paths using the distances from BFS
