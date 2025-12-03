@@ -24,12 +24,12 @@ func HopcroftKarpWithLogging[T comparable](adj map[T][]T, uCount, vCount int) ma
 				q = append(q, u)
 				fmt.Printf("  [BFS Init] Worker %v is Available -> Add to Q (Dist: 0)\n", u)
 			} else {
-				dist[u] = 999999999 // Infinite
+				dist[u] = Infinity // Infinite (Worker is Taken)
 			}
 		}
 		fmt.Printf("  [BFS State] Initial Distances: %v\n", dist)
 
-		distNIL := 999999999
+		distNIL := Infinity
 		fmt.Println("  [BFS Loop] Starting Queue processing...")
 
 		for len(q) > 0 {
@@ -43,7 +43,7 @@ func HopcroftKarpWithLogging[T comparable](adj map[T][]T, uCount, vCount int) ma
 					if worker, ok := pairV[v]; !ok {
 						// v is free
 						fmt.Printf("Available! ")
-						if distNIL == 999999999 {
+						if distNIL == Infinity {
 							distNIL = dist[u] + 1
 							fmt.Printf("Found Quickest Path Length: %d\n", distNIL)
 						} else {
@@ -52,7 +52,7 @@ func HopcroftKarpWithLogging[T comparable](adj map[T][]T, uCount, vCount int) ma
 					} else {
 						// v is matched to worker
 						fmt.Printf("Taken by Worker %v. ", worker)
-						if d, exists := dist[worker]; !exists || d == 999999999 {
+						if d, exists := dist[worker]; !exists || d == Infinity {
 							dist[worker] = dist[u] + 1
 							q = append(q, worker)
 							fmt.Printf("Update Dist[%v] = %d -> Add to Q\n", worker, dist[worker])
@@ -65,7 +65,7 @@ func HopcroftKarpWithLogging[T comparable](adj map[T][]T, uCount, vCount int) ma
 				fmt.Printf("    Skipping (Dist %d >= Quickest Path Length %d)\n", dist[u], distNIL)
 			}
 		}
-		if distNIL != 999999999 {
+		if distNIL != Infinity {
 			fmt.Printf("  [BFS Done] Quickest path length found: %d\n", distNIL)
 			return true
 		}
@@ -108,7 +108,7 @@ func HopcroftKarpWithLogging[T comparable](adj map[T][]T, uCount, vCount int) ma
 				}
 			}
 		}
-		dist[u] = 999999999 // Mark as visited/useless for this phase
+		dist[u] = Infinity // Mark as visited/useless for this phase
 		fmt.Printf("    %s[DFS Backtrack] No path from %v. Mark Dist[%v] = Inf\n", indent, u, u)
 		return false
 	}

@@ -31,7 +31,25 @@ Example: `Available Worker -> Job A == Worker B -> Available Job`
 *   `->` : **Available Edge** (Not currently used in a match)
 *   `==` : **Taken Edge** (Currently used in a match)
 
-### 2. The "Swap" (Why it works)
+### 2. BFS Distance Logic (`dist[worker] = dist[u] + 1`)
+When we are at Worker `u` and find a Job `v` that is **Taken** by another Worker `w`:
+*   We follow the match: `u -> v == w`.
+*   This counts as moving to the **Next Layer**.
+*   So, `dist[w] = dist[u] + 1`.
+    *   If `u` is at Layer 0, `w` is at Layer 1.
+    *   This builds the layers: `Layer 0 -> Layer 1 -> Layer 2...`
+
+**Meaning of `dist[u]`**:
+*   It tells us **"How many steps away is Worker `u` from a Free Worker?"**
+*   `dist[u] = 0`: Worker `u` IS a Free Worker.
+*   `dist[u] = 1`: Worker `u` is reached from a Free Worker.
+    *   **Path**: `FreeWorker -> Job (Taken by u) == Worker u`
+    *   (The Free Worker connects to a Job, which is currently matched to Worker `u`)
+*   `dist[u] = 2`: Worker `u` is reached from a Free Worker via another matched worker.
+    *   **Path**: `FreeWorker -> Job == Worker(dist=1) -> Job == Worker u`
+*   `dist[u] = Infinite`: Worker `u` cannot be reached (or is already taken/processed).
+
+### 3. The "Swap" (Why it works)
 Every Improvement Path has an odd number of edges (1, 3, 5...).
 It always has **one more** available edge than taken edges.
 

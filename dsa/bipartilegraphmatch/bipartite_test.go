@@ -132,6 +132,61 @@ func TestOverlappingIDs(t *testing.T) {
 	checkResult("DinicMatching", DinicMatching(adj, uCount, vCount))
 }
 
+func TestComplexCases(t *testing.T) {
+	runTest := func(name string, adj map[int][]int, uCount, vCount, expectedSize int) {
+		t.Run(name, func(t *testing.T) {
+			check := func(algoName string, res map[int]int) {
+				if len(res) != expectedSize {
+					t.Errorf("%s failed: expected size %d, got %d", algoName, expectedSize, len(res))
+				}
+				// Verify validity
+				for u, v := range res {
+					found := false
+					for _, neighbor := range adj[u] {
+						if neighbor == v {
+							found = true
+							break
+						}
+					}
+					if !found {
+						t.Errorf("%s returned invalid edge: %d-%d", algoName, u, v)
+					}
+				}
+			}
+			check("Backtracking", BacktrackingMatching(adj, uCount, vCount))
+			check("HopcroftKarp", HopcroftKarp(adj, uCount, vCount))
+			check("Kuhn", KuhnsAlgorithm(adj, uCount, vCount))
+			check("Dinic", DinicMatching(adj, uCount, vCount))
+		})
+	}
+
+	// Case 1: Disconnected
+	runTest("Disconnected", map[int][]int{
+		1: {},
+		2: {},
+	}, 2, 2, 0)
+
+	// Case 2: Fully Connected (2x2)
+	runTest("FullyConnected", map[int][]int{
+		1: {3, 4},
+		2: {3, 4},
+	}, 2, 2, 2)
+
+	// Case 3: Chain/Path (1-4, 1-5, 2-5, 2-6, 3-6) -> Match: 1-4, 2-5, 3-6
+	runTest("Chain", map[int][]int{
+		1: {4, 5},
+		2: {5, 6},
+		3: {6},
+	}, 3, 3, 3)
+
+	// Case 4: Star (All workers want Job 4)
+	runTest("Star", map[int][]int{
+		1: {4},
+		2: {4},
+		3: {4},
+	}, 3, 1, 1)
+}
+
 // Benchmarks
 
 func generateGraph(uCount, vCount int, density float64) map[int][]int {
