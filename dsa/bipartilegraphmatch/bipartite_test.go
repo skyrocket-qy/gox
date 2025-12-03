@@ -84,8 +84,9 @@ func TestHopcroftKarpVisualizer(t *testing.T) {
 	// Jobs: a, b
 	// Edges: A-a, A-b, B-a
 	adj := map[string][]string{
-		"A": {"a", "b"},
-		"B": {"a"},
+		"A": {"a", "c"},
+		"B": {"b", "c"},
+		"C": {"a", "b"},
 	}
 
 	fmt.Println("\n=== Running Hopcroft-Karp Visualizer ===")

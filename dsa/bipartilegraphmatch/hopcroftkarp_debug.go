@@ -44,7 +44,7 @@ func HopcroftKarpWithLogging[W, J comparable](adj map[W][]J) map[W]J {
 						// v is free
 						fmt.Printf("Available! ")
 						if distNIL == Infinity { // first available job
-							distNIL = dist[u] + 1 // set distance to 1
+							distNIL = dist[u] + 1
 							fmt.Printf("Found Quickest Path Length: %d\n", distNIL)
 						} else {
 							fmt.Printf("(Path Length %d already found)\n", distNIL)
