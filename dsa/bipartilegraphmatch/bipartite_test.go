@@ -99,6 +99,39 @@ func TestHopcroftKarpVisualizer(t *testing.T) {
 	fmt.Printf("Result: %v\n", res)
 }
 
+func TestOverlappingIDs(t *testing.T) {
+	// Worker IDs: 1, 2
+	// Job IDs: 1, 2
+	// Edges: Worker 1 -> Job 2, Worker 2 -> Job 1
+	// This tests if the algorithms handle key collisions between U and V sets correctly.
+	adj := map[int][]int{
+		1: {2},
+		2: {1},
+	}
+	uCount := 2
+	vCount := 2
+
+	expectedSize := 2
+
+	checkResult := func(name string, res map[int]int) {
+		if len(res) != expectedSize {
+			t.Errorf("%s failed: expected size %d, got %d", name, expectedSize, len(res))
+		}
+		// Check specific matches
+		if res[1] != 2 {
+			t.Errorf("%s failed: Worker 1 should match Job 2, got %d", name, res[1])
+		}
+		if res[2] != 1 {
+			t.Errorf("%s failed: Worker 2 should match Job 1, got %d", name, res[2])
+		}
+	}
+
+	checkResult("BacktrackingMatching", BacktrackingMatching(adj, uCount, vCount))
+	checkResult("HopcroftKarp", HopcroftKarp(adj, uCount, vCount))
+	checkResult("KuhnsAlgorithm", KuhnsAlgorithm(adj, uCount, vCount))
+	checkResult("DinicMatching", DinicMatching(adj, uCount, vCount))
+}
+
 // Benchmarks
 
 func generateGraph(uCount, vCount int, density float64) map[int][]int {
