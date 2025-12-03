@@ -32,11 +32,10 @@ func HopcroftKarp[T comparable](adj map[T][]T, uCount, vCount int) map[T]T {
 					if worker, ok := pairV[v]; !ok { // job v is available
 						if distNIL == Infinity { // first available job
 							distNIL = 1
-							return true
 						}
 					} else { // job v is taken
 						if d, exists := dist[worker]; !exists || d == Infinity { // worker is available
-							dist[worker] = 1
+							dist[worker] = dist[u] + 1
 							q = append(q, worker)
 						}
 					}
