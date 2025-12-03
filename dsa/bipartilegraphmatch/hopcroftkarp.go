@@ -2,7 +2,7 @@ package bipartilegraphmatch
 
 // HopcroftKarp: BFS for layering + DFS for augmenting.
 // Complexity: O(E * sqrt(V))
-func HopcroftKarp[T comparable](adj map[T][]T, uCount, vCount int) int {
+func HopcroftKarp[T comparable](adj map[T][]T, uCount, vCount int) map[T]T {
 	pairU := make(map[T]T)  // Worker -> Job
 	pairV := make(map[T]T)  // Job -> Worker
 	dist := make(map[T]int) // Distances for BFS layering
@@ -110,5 +110,5 @@ func HopcroftKarp[T comparable](adj map[T][]T, uCount, vCount int) int {
 			}
 		}
 	}
-	return matching
+	return pairU
 }

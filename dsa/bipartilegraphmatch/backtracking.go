@@ -2,10 +2,10 @@ package bipartilegraphmatch
 
 // BacktrackingMatching: Pure recursive trial and error.
 // Complexity: Exponential O(2^E) in worst case without memoization.
-func BacktrackingMatching[T comparable](adj map[T][]T, uCount, vCount int) int {
-	matchR := make(map[T]T) // Job -> Worker
-
-	var maxMatches int
+func BacktrackingMatching[T comparable](adj map[T][]T, uCount, vCount int) map[T]T {
+	matchR := make(map[T]T)    // Job -> Worker
+	bestMatch := make(map[T]T) // Worker -> Job (Result)
+	maxMatches := 0
 
 	// Collect workers (keys of adj)
 	var workers []T
@@ -19,6 +19,12 @@ func BacktrackingMatching[T comparable](adj map[T][]T, uCount, vCount int) int {
 		if idx == len(workers) {
 			if currentMatches > maxMatches {
 				maxMatches = currentMatches
+				// Save current state to bestMatch
+				// matchR is Job->Worker. We want Worker->Job.
+				clear(bestMatch)
+				for v, u := range matchR {
+					bestMatch[u] = v
+				}
 			}
 			return
 		}
@@ -40,5 +46,5 @@ func BacktrackingMatching[T comparable](adj map[T][]T, uCount, vCount int) int {
 	}
 
 	solve(0, 0)
-	return maxMatches
+	return bestMatch
 }

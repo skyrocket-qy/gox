@@ -4,7 +4,7 @@ package bipartilegraphmatch
 // Complexity: O(V * E)
 // KuhnsAlgorithm: DFS based augmenting paths.
 // Complexity: O(V * E)
-func KuhnsAlgorithm[T comparable](adj map[T][]T, uCount, vCount int) int {
+func KuhnsAlgorithm[T comparable](adj map[T][]T, uCount, vCount int) map[T]T {
 	matchR := make(map[T]T) // Stores which worker is assigned to job 'v'
 
 	var visited map[T]bool
@@ -26,12 +26,15 @@ func KuhnsAlgorithm[T comparable](adj map[T][]T, uCount, vCount int) int {
 		return false
 	}
 
-	result := 0
 	for u := range adj {
 		visited = make(map[T]bool) // Reset visited for every worker
-		if dfs(u) {
-			result++
-		}
+		dfs(u)
+	}
+
+	// Convert matchR (Job->Worker) to Worker->Job
+	result := make(map[T]T)
+	for v, u := range matchR {
+		result[u] = v
 	}
 	return result
 }

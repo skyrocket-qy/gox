@@ -17,20 +17,31 @@ func TestMatchingInt(t *testing.T) {
 	uCount := 3
 	vCount := 3
 
-	expected := 3 // 1-5, 2-4, 3-6
+	expectedSize := 3 // 1-5, 2-4, 3-6
 
-	if res := BacktrackingMatching(adj, uCount, vCount); res != expected {
-		t.Errorf("BacktrackingMatching failed: expected %d, got %d", expected, res)
+	checkResult := func(name string, res map[int]int) {
+		if len(res) != expectedSize {
+			t.Errorf("%s failed: expected size %d, got %d", name, expectedSize, len(res))
+		}
+		// Verify validity (edges exist)
+		for u, v := range res {
+			found := false
+			for _, neighbor := range adj[u] {
+				if neighbor == v {
+					found = true
+					break
+				}
+			}
+			if !found {
+				t.Errorf("%s returned invalid edge: %d-%d", name, u, v)
+			}
+		}
 	}
-	if res := HopcroftKarp(adj, uCount, vCount); res != expected {
-		t.Errorf("HopcroftKarp failed: expected %d, got %d", expected, res)
-	}
-	if res := KuhnsAlgorithm(adj, uCount, vCount); res != expected {
-		t.Errorf("KuhnsAlgorithm failed: expected %d, got %d", expected, res)
-	}
-	if res := DinicMatching(adj, uCount, vCount); res != expected {
-		t.Errorf("DinicMatching failed: expected %d, got %d", expected, res)
-	}
+
+	checkResult("BacktrackingMatching", BacktrackingMatching(adj, uCount, vCount))
+	checkResult("HopcroftKarp", HopcroftKarp(adj, uCount, vCount))
+	checkResult("KuhnsAlgorithm", KuhnsAlgorithm(adj, uCount, vCount))
+	checkResult("DinicMatching", DinicMatching(adj, uCount, vCount))
 }
 
 func TestMatchingString(t *testing.T) {
@@ -44,20 +55,30 @@ func TestMatchingString(t *testing.T) {
 	uCount := 2
 	vCount := 2
 
-	expected := 2 // A-Y, B-X
+	expectedSize := 2 // A-Y, B-X
 
-	if res := BacktrackingMatching(adj, uCount, vCount); res != expected {
-		t.Errorf("BacktrackingMatching failed: expected %d, got %d", expected, res)
+	checkResult := func(name string, res map[string]string) {
+		if len(res) != expectedSize {
+			t.Errorf("%s failed: expected size %d, got %d", name, expectedSize, len(res))
+		}
+		for u, v := range res {
+			found := false
+			for _, neighbor := range adj[u] {
+				if neighbor == v {
+					found = true
+					break
+				}
+			}
+			if !found {
+				t.Errorf("%s returned invalid edge: %s-%s", name, u, v)
+			}
+		}
 	}
-	if res := HopcroftKarp(adj, uCount, vCount); res != expected {
-		t.Errorf("HopcroftKarp failed: expected %d, got %d", expected, res)
-	}
-	if res := KuhnsAlgorithm(adj, uCount, vCount); res != expected {
-		t.Errorf("KuhnsAlgorithm failed: expected %d, got %d", expected, res)
-	}
-	if res := DinicMatching(adj, uCount, vCount); res != expected {
-		t.Errorf("DinicMatching failed: expected %d, got %d", expected, res)
-	}
+
+	checkResult("BacktrackingMatching", BacktrackingMatching(adj, uCount, vCount))
+	checkResult("HopcroftKarp", HopcroftKarp(adj, uCount, vCount))
+	checkResult("KuhnsAlgorithm", KuhnsAlgorithm(adj, uCount, vCount))
+	checkResult("DinicMatching", DinicMatching(adj, uCount, vCount))
 }
 
 // Benchmarks

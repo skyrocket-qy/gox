@@ -5,9 +5,9 @@ type Edge struct {
 	cap, flow int
 }
 
-// DinicMaxFlow: Solves using Flow Network construction.
+// DinicMatching: Solves using Flow Network construction.
 // Complexity: O(V^2 E) generally, but O(E * sqrt(V)) for unit networks (like this).
-func DinicMatching[T comparable](adj map[T][]T, uCount, vCount int) int {
+func DinicMatching[T comparable](adj map[T][]T, uCount, vCount int) map[T]T {
 	// Map T to int IDs
 	// Source = 0
 	// Workers = 1..uCount (or just mapped)
@@ -18,6 +18,7 @@ func DinicMatching[T comparable](adj map[T][]T, uCount, vCount int) int {
 	// Since we don't have a list of all jobs (V nodes) explicitly, we must scan adj.
 
 	idMap := make(map[T]int)
+	revMap := make(map[int]T) // ID -> T
 	nextID := 1
 
 	getID := func(node T) int {
@@ -27,6 +28,7 @@ func DinicMatching[T comparable](adj map[T][]T, uCount, vCount int) int {
 		id := nextID
 		nextID++
 		idMap[node] = id
+		revMap[id] = node
 		return id
 	}
 
@@ -70,9 +72,6 @@ func DinicMatching[T comparable](adj map[T][]T, uCount, vCount int) int {
 	// BUT, usually with generic maps, the keys and values *are* the unique identifiers.
 	// If Worker 1 and Job 1 are distinct, they should have different values (e.g. "W1", "J1").
 	// If the user uses `int` and expects implicit separation, `map[T][]T` is ambiguous.
-	// However, the prompt says "adj must be [][]T" (originally) then "map[T][]T".
-	// If I assume `T` values are unique across the whole graph (U union V), then `idMap` is correct.
-	// If `T` values overlap (e.g. 0..N for U and 0..M for V), then `map[T][]T` is a bad representation unless `T` includes a tag.
 	// Given `T` is `comparable`, I will assume `T` values are unique identifiers for nodes in the graph.
 	// i.e. U and V are disjoint sets of values.
 
@@ -187,7 +186,6 @@ func DinicMatching[T comparable](adj map[T][]T, uCount, vCount int) int {
 		return 0
 	}
 
-	maxFlow := 0
 	for bfs() {
 		for i := range ptr {
 			ptr[i] = 0
@@ -197,8 +195,30 @@ func DinicMatching[T comparable](adj map[T][]T, uCount, vCount int) int {
 			if pushed == 0 {
 				break
 			}
-			maxFlow += pushed
 		}
 	}
-	return maxFlow
+
+	// Extract matching
+	result := make(map[T]T)
+	// Iterate over U nodes and find edges with flow=1 to V nodes
+	for u := range uNodes {
+		uid := getID(u)
+		for _, e := range graph[uid] {
+			// Check if edge is to a V node and has flow 1
+			// V nodes are not source or sink.
+			// e.to must be a V node ID.
+			// And flow must be 1.
+			if e.flow == 1 && e.to != source && e.to != sink {
+				// Verify e.to is a V node (it should be if graph construction is correct)
+				if v, ok := revMap[e.to]; ok {
+					if vNodes[v] {
+						result[u] = v
+						break // One match per worker
+					}
+				}
+			}
+		}
+	}
+
+	return result
 }
