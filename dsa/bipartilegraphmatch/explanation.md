@@ -27,6 +27,10 @@ It alternates between **Available** and **Taken** edges.
 
 Example: `Available Worker -> Job A == Worker B -> Available Job`
 
+**Symbols**:
+*   `->` : **Available Edge** (Not currently used in a match)
+*   `==` : **Taken Edge** (Currently used in a match)
+
 ### 2. The "Swap" (Why it works)
 Every Improvement Path has an odd number of edges (1, 3, 5...).
 It always has **one more** available edge than taken edges.
@@ -46,6 +50,14 @@ We flip every edge status.
 *   **Score**: 2 Taken matches (`B-a`, `A-b`).
 
 **Result**: We gained +1 match.
+
+### 3. Why Multiple Rounds?
+In each round, we only look for the **Quickest Paths** (shortest length).
+*   **Round 1**: We might find many easy matches (length 1).
+*   **Round 2**: Now that those easy matches are taken, we might need to look deeper (length 3) to find more matches.
+*   **Round 3**: We might need even longer paths (length 5).
+
+We repeat this until no more paths exist. This strategy is much faster than looking for any path randomly.
 
 ---
 

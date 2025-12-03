@@ -12,17 +12,17 @@ func HopcroftKarpWithLogging[T comparable](adj map[T][]T, uCount, vCount int) ma
 
 	fmt.Println("Starting Hopcroft-Karp Algorithm...")
 
-	phase := 1
+	round := 1
 
 	// BFS: Builds level graph, returns true if an augmenting path exists
 	bfs := func() bool {
-		fmt.Printf("\n--- Phase %d: BFS (Layering) ---\n", phase)
+		fmt.Printf("\n--- Round %d: Find Quickest Paths (BFS) ---\n", round)
 		q := []T{}
 		for u := range adj {
 			if _, ok := pairU[u]; !ok { // If worker is free, add to queue
 				dist[u] = 0
 				q = append(q, u)
-				fmt.Printf("  Worker %v is free, adding to queue (Dist: 0)\n", u)
+				fmt.Printf("  Worker %v is Available, adding to queue (Dist: 0)\n", u)
 			} else {
 				dist[u] = 999999999 // Infinite
 			}
@@ -35,31 +35,32 @@ func HopcroftKarpWithLogging[T comparable](adj map[T][]T, uCount, vCount int) ma
 		for len(q) > 0 {
 			u := q[0]
 			q = q[1:]
-
+			fmt.Printf("  Processing Worker %v (Dist: %d)\n", u, dist[u])
 			if dist[u] < distNIL {
 				for _, v := range adj[u] {
+					fmt.Printf("    Checking Job %v...\n", v)
 					if worker, ok := pairV[v]; !ok {
 						// v is free
 						if distNIL == 999999999 {
 							distNIL = dist[u] + 1
-							fmt.Printf("  Found free Job %v at distance %d! (Shortest Path Length set)\n", v, distNIL)
+							fmt.Printf("  Found Available Job %v at distance %d! (Quickest Path Length set)\n", v, distNIL)
 						}
 					} else {
 						// v is matched to worker
 						if d, exists := dist[worker]; !exists || d == 999999999 {
 							dist[worker] = dist[u] + 1
 							q = append(q, worker)
-							fmt.Printf("  Job %v is matched to Worker %v. Setting Dist[%v] = %d\n", v, worker, worker, dist[worker])
+							fmt.Printf("  Job %v is Taken by Worker %v. Setting Dist[%v] = %d\n", v, worker, worker, dist[worker])
 						}
 					}
 				}
 			}
 		}
 		if distNIL != 999999999 {
-			fmt.Printf("  BFS finished. Shortest augmenting path length: %d\n", distNIL)
+			fmt.Printf("  BFS finished. Quickest path length: %d\n", distNIL)
 			return true
 		}
-		fmt.Println("  BFS finished. No augmenting paths found.")
+		fmt.Println("  BFS finished. No paths found.")
 		return false
 	}
 
@@ -75,7 +76,7 @@ func HopcroftKarpWithLogging[T comparable](adj map[T][]T, uCount, vCount int) ma
 				// But standard HK logic with distNIL check in BFS ensures we only find shortest paths if we follow dist.
 				// However, here we don't have distNIL easily available unless we store it or just trust the flow.
 				// Let's print the augmentation.
-				fmt.Printf("    DFS reached free Job %v via path %v. Augmenting!\n", v, path)
+				fmt.Printf("    DFS reached Available Job %v via path %v. Swapping!\n", v, path)
 				pairV[v] = u
 				pairU[u] = v
 				return true
@@ -95,7 +96,7 @@ func HopcroftKarpWithLogging[T comparable](adj map[T][]T, uCount, vCount int) ma
 
 	matching := 0
 	for bfs() {
-		fmt.Printf("--- Phase %d: DFS (Augmenting) ---\n", phase)
+		fmt.Printf("--- Round %d: Add Matches (DFS) ---\n", round)
 		for u := range adj {
 			if _, ok := pairU[u]; !ok {
 				if dfs(u, []T{}) {
@@ -104,7 +105,7 @@ func HopcroftKarpWithLogging[T comparable](adj map[T][]T, uCount, vCount int) ma
 				}
 			}
 		}
-		phase++
+		round++
 	}
 
 	fmt.Println("\nAlgorithm Finished.")
