@@ -125,7 +125,7 @@ func TestOverlappingIDs(t *testing.T) {
 }
 
 func TestComplexCases(t *testing.T) {
-	runTest := func(name string, adj map[int][]int, uCount, vCount, expectedSize int) {
+	runTest := func(name string, adj map[int][]int, expectedSize int) {
 		t.Run(name, func(t *testing.T) {
 			check := func(algoName string, res map[int]int) {
 				if len(res) != expectedSize {
@@ -156,27 +156,27 @@ func TestComplexCases(t *testing.T) {
 	runTest("Disconnected", map[int][]int{
 		1: {},
 		2: {},
-	}, 2, 2, 0)
+	}, 0)
 
 	// Case 2: Fully Connected (2x2)
 	runTest("FullyConnected", map[int][]int{
 		1: {3, 4},
 		2: {3, 4},
-	}, 2, 2, 2)
+	}, 2)
 
 	// Case 3: Chain/Path (1-4, 1-5, 2-5, 2-6, 3-6) -> Match: 1-4, 2-5, 3-6
 	runTest("Chain", map[int][]int{
 		1: {4, 5},
 		2: {5, 6},
 		3: {6},
-	}, 3, 3, 3)
+	}, 3)
 
 	// Case 4: Star (All workers want Job 4)
 	runTest("Star", map[int][]int{
 		1: {4},
 		2: {4},
 		3: {4},
-	}, 3, 1, 1)
+	}, 1)
 }
 
 // Benchmarks
