@@ -2,33 +2,39 @@ package bipartilegraphmatch
 
 // BacktrackingMatching: Pure recursive trial and error.
 // Complexity: Exponential O(2^E) in worst case without memoization.
-func BacktrackingMatching(adj [][]int, uCount, vCount int) int {
-	matchR := make([]int, vCount)
-	for i := range matchR {
-		matchR[i] = -1 // -1 means Job is free
-	}
+func BacktrackingMatching[T comparable](adj map[T][]T, uCount, vCount int) int {
+	matchR := make(map[T]T) // Job -> Worker
 
 	var maxMatches int
 
-	// recursive function to process worker 'u'
-	var solve func(u int, currentMatches int)
-	solve = func(u int, currentMatches int) {
-		if u == uCount {
+	// Collect workers (keys of adj)
+	var workers []T
+	for u := range adj {
+		workers = append(workers, u)
+	}
+
+	// recursive function to process worker at index 'idx'
+	var solve func(idx int, currentMatches int)
+	solve = func(idx int, currentMatches int) {
+		if idx == len(workers) {
 			if currentMatches > maxMatches {
 				maxMatches = currentMatches
 			}
 			return
 		}
 
+		u := workers[idx]
+
 		// Option 1: Don't match this worker
-		solve(u+1, currentMatches)
+		solve(idx+1, currentMatches)
 
 		// Option 2: Try to match with all neighbors
 		for _, v := range adj[u] {
-			if matchR[v] == -1 { // If job is available
+			// Check if job 'v' is free
+			if _, occupied := matchR[v]; !occupied {
 				matchR[v] = u // Assign
-				solve(u+1, currentMatches+1)
-				matchR[v] = -1 // Backtrack
+				solve(idx+1, currentMatches+1)
+				delete(matchR, v) // Backtrack
 			}
 		}
 	}
